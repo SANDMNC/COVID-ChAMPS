@@ -1,7 +1,7 @@
 ---
 title: "COVID_scoring"
 author: "Kate Bray"
-date: "17 May 2020"
+date: "1 June 2020"
 output: html_document
 
 # This script currently takes a csv file exported from Qualtrics. In future may need to adapt to take a file exported from ACCESS database.
@@ -12,7 +12,9 @@ output: html_document
 # Manually deleted the email column to deidentify, and the 2nd and 3rd rows with additional qualtrics headings.
 
 # Outputs:
-# ...No csv file yet but can prepare a scored csv for output
+# Two csv files with combination of raw and scored data.
+# First csv each parent is a seperate row.
+# Second csv each child is a seperate row.
 
 ---
 
@@ -33,13 +35,7 @@ library(ggplot2)
 library(summarytools) #for freq - frequency tables
 library(corrplot) #For correlation plot
 
-
-
-
-
 ```
-
-
 
 ```{r}
 # General cleaning----------------------------------------------------------------------------------------------
@@ -158,13 +154,11 @@ countrypiedata<- summarytools::freq(covid_data$country, order = "freq", totals=F
 pie(countrypiedata[1:13,1])
 
 #Make a number variable just in case want to use it analysis. Just first 5 countries all others are other
-covid_data$country_num<- ifelse(covid_data$country == "Australia",1,
-                                ifelse(covid_data$country == "United Kingdom",2,
-                                       ifelse(covid_data$country == "Canada",3,
-                                              ifelse(covid_data$country == "New Zealand",4,5))))
+covid_data$country_num<- ifelse(covid_data$country == "Australia ",1,
+                                ifelse(covid_data$country == "United Kingdom ",2,
+                                       ifelse(covid_data$country == "Canada ",3,
+                                              ifelse(covid_data$country == "New Zealand ",4,5))))
                                                      
-                                            
-
 
 #Ethnicity
 # Some of the other could be placed in a group (a lot of White British identifying as other rather than choosing western european)
