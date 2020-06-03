@@ -34,7 +34,7 @@ library(naniar) #for examining missing
 library(ggplot2)
 library(summarytools) #for freq - frequency tables
 library(corrplot) #For correlation plot
-
+install.packages("summarytools")
 ```
 
 ```{r}
@@ -555,6 +555,80 @@ parent_type <- stack(parent_type)
 ##Show frequency
 summarytools::freq(as.factor(parent_type$values), order = "freq")
 
+#COVID communication
+
+childvarnames <- names(covid_data_child)
+#Grab the relevant variable names
+comm_vars <- vars_select(childvarnames, starts_with("ch_talk"))
+
+#blank dataframe
+commnumvars=data.frame(matrix(ncol=length(comm_vars),nrow=nrow(covid_data_child[,comm_vars])))
+
+#recodes as ordinal
+commnumvars <-ifelse(covid_data_child[,comm_vars] == "Not at all", 0, 
+                      ifelse(covid_data_child[,comm_vars] == "A little", 1, 
+                               ifelse(covid_data_child[,comm_vars] == "Moderately", 2,3)))
+                                           
+#Put new variable names in
+colnames(commnumvars)<- c("ch_talk_num", "ch_talk_about_1_num", "ch_talk_about_2_num", "ch_talk_about_3_num", 
+                           "ch_talk_about_4_num", "ch_talk_about_5_num", "ch_talk_about_6_num", "ch_talk_about_7_num",
+                              "ch_talk_about_8_num")
+
+#join this dataframe to the main one
+covid_data_child<- cbind(covid_data_child, commnumvars)
+
+#check correlations between different communication vbls
+corrmatrix <-  dplyr::select(covid_data_child, ch_talk_num, ch_talk_about_1_num, ch_talk_about_2_num, ch_talk_about_3_num, 
+                             ch_talk_about_4_num, ch_talk_about_5_num, ch_talk_about_6_num, ch_talk_about_7_num,
+                             ch_talk_about_8_num)
+
+
+M <- cor(corrmatrix, use = "complete.obs")
+res1 <- cor.mtest(corrmatrix, use = "complete.obs", 
+                  conf.level = .95)
+
+corrplot.mixed(M,  order = "hclust", lower.col = "black", number.cex = .6,
+               tl.col = "black", tl.srt = 45,tl.cex = 0.8, tl.pos= "lt",
+               p.mat = res1$p, sig.level = .05, insig = "blank") 
+
+
+
+#Scoring the communication - need to add the >70% impute missing
+#scoring code from psych package. 
+# Items grouped according to correlations between them and inline with Wilson, et al (2010). Journal of Clinical Child & Adolescent Psychology, 39(4), 445-459.
+# While Wilson et al. separated emotion and reassurance, for us, reassurance correlates highly with emotion items (.67 with child's emotions)
+keys.list.cov.comm <- list(facts_comm=c("ch_talk_about_1_num", "ch_talk_about_2_num"), 
+                           emotion_comm=c("ch_talk_about_3_num", "ch_talk_about_4_num", 
+                                           "ch_talk_about_5_num", "ch_talk_about_6_num"), 
+                           self_comm=c("ch_talk_about_7_num", "ch_talk_about_8_num"))
+
+cov_comm_scored <- scoreItems(keys.list.cov.comm, covid_data_child, impute= "mean", totals=TRUE, min=0,max=3) # note - FALSE:average, TRUE:sum
+
+cov_comm_scored$scores #The scores themselves
+cov_comm_totals <- as.data.frame(cov_comm_scored$scores)#just the total scores
+covid_data_child <- cbind(covid_data_child, cov_comm_totals)#totals and raw scores
+
+#Get rid of participants total scores who have less than 70% of items
+## This line tells you how people had more than X missing (but not the whole scale missing)
+nrow(covid_data_child[rowSums(is.na(covid_data_child[, c( "ch_talk_about_1_num", "ch_talk_about_2_num")]))>1 & rowSums(is.na(covid_data_child[, c( "ch_talk_about_1_num", "ch_talk_about_2_num")])) <2,]) 
+nrow(covid_data_child[rowSums(is.na(covid_data_child[, c( "ch_talk_about_3_num", "ch_talk_about_4_num", "ch_talk_about_5_num", "ch_talk_about_6_num")]))>1 & rowSums(is.na(covid_data_child[, c( "ch_talk_about_3_num", "ch_talk_about_4_num", "ch_talk_about_5_num", "ch_talk_about_6_num")])) <3,]) 
+nrow(covid_data_child[rowSums(is.na(covid_data_child[, c( "ch_talk_about_7_num", "ch_talk_about_8_num")]))>1 & rowSums(is.na(covid_data_child[, c( "ch_talk_about_7_num", "ch_talk_about_8_num")])) <2,]) 
+#This line should replace all missing more than 0, 1, 0 for each scale, respetively with NA to the total 
+covid_data_child[which(rowSums(is.na(covid_data_child[, c("ch_talk_about_1_num", "ch_talk_about_2_num")]))>0),"facts_comm"] <- NA
+covid_data_child[which(rowSums(is.na(covid_data_child[, c("ch_talk_about_3_num", "ch_talk_about_4_num", "ch_talk_about_5_num", "ch_talk_about_6_num")]))>1),"emotion_comm"] <- NA
+covid_data_child[which(rowSums(is.na(covid_data_child[, c("ch_talk_about_7_num", "ch_talk_about_8_num")]))>0),"self_comm"] <- NA
+
+#Means, sds, range, histogram
+summary(covid_data_child[,c("facts_comm")])
+summary(covid_data_child[,c("emotion_comm")])
+summary(covid_data_child[,c("self_comm")])
+summary(commnumvars)
+sd(covid_data_child$facts_comm, na.rm =TRUE)
+sd(covid_data_child$emotion_comm, na.rm =TRUE)
+sd(covid_data_child$self_comm, na.rm =TRUE)
+hist(covid_data_child$facts_comm)
+hist(covid_data_child$emotion_comm)
+hist(covid_data_child$self_comm)
 
 # SDQ scoring --------------------------------------------------------------------------------------------
 
