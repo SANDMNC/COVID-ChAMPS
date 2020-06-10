@@ -1,10 +1,8 @@
----
-title: "COVID_scoring"
-author: "Kate Bray"
-date: "1 June 2020"
-output: html_document
+
 
 # This script currently takes a csv file exported from Qualtrics. In future may need to adapt to take a file exported from ACCESS database.
+
+#Script made with R version 3.5.2 (2018-12-20)
 
 # Inputs:
 # csv file exported from Qualtrics
@@ -16,13 +14,9 @@ output: html_document
 # First csv each parent is a seperate row.
 # Second csv each child is a seperate row.
 
----
-
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
 
 # Set working directory to where the data is.
-setwd("/Volumes/Groups/Adaptdir/COVID-CHAMPS/Data")
+#setwd("/Volumes/Groups/Adaptdir/COVID-CHAMPS/Data")
 
 
 # Load packages (install them first if don't have them using install.packages("package_name") )
@@ -34,10 +28,8 @@ library(naniar) #for examining missing
 library(ggplot2)
 library(summarytools) #for freq - frequency tables
 library(corrplot) #For correlation plot
-install.packages("summarytools")
-```
 
-```{r}
+
 # General cleaning----------------------------------------------------------------------------------------------
 
 # Read in the csv file
@@ -45,8 +37,10 @@ covid_data <- read.csv("covid_data.csv", header=TRUE, stringsAsFactors = FALSE)
 
 
 #Make the age variables numeric rather than characters
+#Change this from "9y" to just "9" otherwise it gets cut
+covid_data[covid_data$ch2_age=="9y", "ch2_age"] <- "9"
 
-covid_data$ch2_age <- as.numeric(covid_data$ch2_age)
+covid_data$ch2_age <- as.numeric(covid_data$ch2_age) 
 covid_data$ch3_age <- as.numeric(covid_data$ch3_age)
 covid_data$ch4_age <- as.numeric(covid_data$ch4_age)
 covid_data$ch5_age <- as.numeric(covid_data$ch5_age)
@@ -58,6 +52,8 @@ covid_data <- cbind(id=id, covid_data)
 
 #Missing values - change them from "" to NA to make easier to work with
 covid_data[(covid_data=="")] <- NA
+
+
 
 
 # Inclusion criteria ---------------------------------------------------------------------------------
@@ -75,7 +71,7 @@ nrow(covid_data[!is.na(covid_data[covid_data$Q261=="On a secure, password-protec
 
 #Cut those who didn't consent out of the dataframe
 covid_data <- covid_data[(covid_data$Q259=="Both" & covid_data$Q260=="15-20 minutes for one child" & 
-                   covid_data$Q261=="On a secure, password-protected server") ,]
+                            covid_data$Q261=="On a secure, password-protected server") ,]
 
 covid_data <- covid_data[!is.na(covid_data$Q259) & !is.na(covid_data$Q260) &!is.na(covid_data$Q261), ]
 
@@ -95,8 +91,8 @@ nrow(covid_data[which(rowSums(!is.na(covid_data[, grep("ch1_SDQ.1", varnames)]))
 
 #cutting inelgible people based on SDQ and PSD out of larger sample
 covid_data <- covid_data[which(rowSums(!is.na(covid_data[, grep("ch1_SDQ.1", varnames)]))>=18
-                     # | rowSums(!is.na(covid_data[, grep("ch1_SDQ.2", varnames)]))>=18
-                      | rowSums(!is.na(covid_data[, grep("ch1_PTSD", varnames)]))>=11), ]
+                               # | rowSums(!is.na(covid_data[, grep("ch1_SDQ.2", varnames)]))>=18
+                               | rowSums(!is.na(covid_data[, grep("ch1_PTSD", varnames)]))>=11), ]
 
 
 
@@ -109,6 +105,7 @@ which(covid_data$validity_1=="Agree a lot" | covid_data$validity_1=="Agree")
 which(covid_data$validity_2=="Yes")
 
 #These participants are not the same so neither gets excluded
+
 
 
 # Missing data display ---------------------------------------------------------
@@ -141,6 +138,8 @@ vis_miss(covid_data[,which(colnames(covid_data)=="DASS_1"):which(colnames(covid_
 #"Progres" through the survey
 hist(covid_data$Progress)
 
+
+
 # Demographics parents-------------------------------------------------------------------------------------------
 
 ## Country family lives in
@@ -158,7 +157,7 @@ covid_data$country_num<- ifelse(covid_data$country == "Australia ",1,
                                 ifelse(covid_data$country == "United Kingdom ",2,
                                        ifelse(covid_data$country == "Canada ",3,
                                               ifelse(covid_data$country == "New Zealand ",4,5))))
-                                                     
+
 
 #Ethnicity
 # Some of the other could be placed in a group (a lot of White British identifying as other rather than choosing western european)
@@ -206,10 +205,10 @@ covid_data[which(covid_data$home_num == "6 or more: please indicate number in te
 #Now recode the income to the midpoint
 covid_data$income_mid<- ifelse(covid_data$income == "Less than AU$36,400 (US$23,230) per year", 18200, 
                                ifelse(covid_data$income == "Up to AU$699 per week (AU$36,400 or US$23,230 per year)", 26000,
-                                  ifelse(covid_data$income == "AU$700 to AU$999 per week (up to AU$52,000 or US$33,168 per year)", 44200, 
-                                    ifelse(covid_data$income == "AU$1,000 to AU$1,730 per week (up to AU$90,000 or US$57,407 per year)", 71000,
-                                      ifelse(covid_data$income == "AU$1,731 to AU$2,700 per week (up to AU$140,000 or US$89,307 per year)", 115000, 140000
-                                        )))))
+                                      ifelse(covid_data$income == "AU$700 to AU$999 per week (up to AU$52,000 or US$33,168 per year)", 44200, 
+                                             ifelse(covid_data$income == "AU$1,000 to AU$1,730 per week (up to AU$90,000 or US$57,407 per year)", 71000,
+                                                    ifelse(covid_data$income == "AU$1,731 to AU$2,700 per week (up to AU$140,000 or US$89,307 per year)", 115000, 140000
+                                                    )))))
 
 #Midpoint of bracket divided by the sqrt of people in the house
 covid_data$income_famsize<-covid_data$income_mid/sqrt(as.numeric(covid_data$home_num))
@@ -222,20 +221,27 @@ hist(covid_data$income_famsize)
 #recoding as ordinal data
 covid_data$par_ed_ord<- ifelse(covid_data$par_ed == "Partial primary / elementary school", 1, 
                                ifelse(covid_data$par_ed == "Completed primary / elementary school (Grade 6, typically age ~11)", 2,
-                                  ifelse(covid_data$par_ed == "Partial high school / upper secondary school", 3 ,
-                                    ifelse(covid_data$par_ed == "Completed high school / upper secondary school (Grade 12, typically age ~18)", 4,
-                                      ifelse(covid_data$par_ed == "TAFE (Technical And Further Education) / Vocational training course",5,
-                                             ifelse(covid_data$par_ed == "Partial University/ College" , 6,
-                                                    ifelse(covid_data$par_ed == "Graduated three-year University / College (Bachelor's) degree", 7,
-                                                           ifelse(covid_data$par_ed == "Honours (four year University / College degree)", 8,
-                                                                  ifelse(covid_data$par_ed == "Partial graduate school (Master's, PhD / doctorate, etc.)", 9, 10 )))))))))
+                                      ifelse(covid_data$par_ed == "Partial high school / upper secondary school", 3 ,
+                                             ifelse(covid_data$par_ed == "Completed high school / upper secondary school (Grade 12, typically age ~18)", 4,
+                                                    ifelse(covid_data$par_ed == "TAFE (Technical And Further Education) / Vocational training course",5,
+                                                           ifelse(covid_data$par_ed == "Partial University/ College" , 6,
+                                                                  ifelse(covid_data$par_ed == "Graduated three-year University / College (Bachelor's) degree", 7,
+                                                                         ifelse(covid_data$par_ed == "Honours (four year University / College degree)", 8,
+                                                                                ifelse(covid_data$par_ed == "Partial graduate school (Master's, PhD / doctorate, etc.)", 9, 10 )))))))))
 
 #Frequency and percentage of people in the different groups
 summarytools::freq(as.factor(covid_data$par_ed_ord), order = "freq")
 hist(covid_data$par_ed_ord)
 
+
+# known hospitalised
+covid_data$other_hosp_num<- ifelse(covid_data$other_hosp == "No", 0,1)
+
+
 #Other demographics - contained in child section
 ##Parent-type (biol versus other)
+
+
 
 # COVID impact ------------------------------------------------------------------------------------------
 # Frequencies/% for COVID 
@@ -253,12 +259,18 @@ summarytools::freq(as.factor(covid_data$other_died), order = "freq")
 summarytools::freq(as.factor(covid_data$stay_home), order = "freq")
 ##stay at home length, 
 #to calulate this would do date implemented to date done survey if "no", or date lifted if "yes"
+# There may be discepancies in formatting of dates - if want to use - check
+#Found that the year is wrong - manually correct it
+covid_data[covid_data$stay_home_date == "7/04/2021" & !is.na(covid_data$stay_home_date), "stay_home_date"] <- "7/04/2020"
+#Also found this date presumably around the wrong way
+covid_data[covid_data$leave_home_date=="4/11/2020" & !is.na(covid_data$leave_home_date), "leave_home_date"] <- "11/04/2020"
+
 
 covid_data$datdiff_lifted <- as.vector(as.Date(as.character(covid_data$leave_home_date), format="%d/%m/%Y")-
-                  as.Date(as.character(covid_data$stay_home_date), format="%d/%m/%Y"))
+                                         as.Date(as.character(covid_data$stay_home_date), format="%d/%m/%Y"))
 
 covid_data$datdiff_stillhome <- as.vector(as.Date(as.character(covid_data$StartDate), format="%d/%m/%Y")-
-                  as.Date(as.character(covid_data$stay_home_date), format="%d/%m/%Y"))
+                                            as.Date(as.character(covid_data$stay_home_date), format="%d/%m/%Y"))
 
 #Create new variable time_iso which is mostly the date for those still at home, but for those who restrictions have been relaxed add that number in there
 covid_data$iso <- covid_data$datdiff_stillhome
@@ -267,8 +279,6 @@ covid_data[covid_data$leave_home=="Yes" & !is.na(covid_data$leave_home),"iso"] <
 summary(covid_data$iso)
 hist(covid_data$iso)
 
-#There is an error in one date - to be removed - -332
-covid_data[covid_data$iso<0, "iso"]
 
 ##restriction lifted?, 
 summarytools::freq(as.factor(covid_data$leave_home), order = "freq")
@@ -278,6 +288,8 @@ summarytools::freq(as.factor(covid_data$soc_dist), order = "freq")
 summarytools::freq(as.factor(covid_data$soc_dist_why), order = "freq")
 ##job change, this has a lot of chnages there refer to job related ones
 summarytools::freq(as.factor(covid_data$covid_change), order = "freq")
+
+
 
 # COVID distress ------------------------------------------------------------
 
@@ -296,11 +308,11 @@ covidnumvars=data.frame(matrix(ncol=length(covid_vars),nrow=nrow(covid_data[,cov
 
 #recodes as ordinal
 covidnumvars <-ifelse(covid_data[,covid_vars] == "Not at all", 0, 
-                     ifelse(covid_data[,covid_vars] == "Very Slightly", 1, 
-                            ifelse(covid_data[,covid_vars] == "Slightly", 2,
+                      ifelse(covid_data[,covid_vars] == "Very Slightly", 1, 
+                             ifelse(covid_data[,covid_vars] == "Slightly", 2,
                                     ifelse(covid_data[,covid_vars] == "Moderately", 3,
-                                            ifelse(covid_data[,covid_vars] == "Quite a Bit", 4,
-                                   5)))))
+                                           ifelse(covid_data[,covid_vars] == "Quite a Bit", 4,
+                                                  5)))))
 #Put new variable names in
 colnames(covidnumvars)<- c("covid_finance_num", "covid_uncertain_num", "covid_plans_num", "covid_worry_1_num", 
                            "covid_worry_2_num", "covid_worry_3_num", "covid_neg_num", "covid_pos_num")
@@ -312,7 +324,7 @@ covid_data<- cbind(covid_data, covidnumvars)
 #scoring code from psych package. Note "-" before items reverse scored.
 # Need to rearrange this in a better way than than just 1 total
 keys.list.cov.dist <- list(totalcov_dist=c("covid_finance_num", "covid_uncertain_num", "covid_plans_num", "covid_worry_1_num", 
-                           "covid_worry_2_num", "covid_worry_3_num", "covid_neg_num", "-covid_pos_num"))
+                                           "covid_worry_2_num", "covid_worry_3_num", "covid_neg_num", "-covid_pos_num"))
 
 cov_dist_scored <- scoreItems(keys.list.cov.dist, covid_data, impute= "mean", totals=TRUE, min=0,max=5) # note - FALSE:average, TRUE:sum
 
@@ -322,7 +334,7 @@ covid_data <- cbind(covid_data, cov_dist_totals)#totals and raw scores
 
 #Get rid of participants total scores who have less than 70% of items (need 6/8)
 ## This line tells you how people had more than 2 missing (but not the whole scale missing)
- nrow(covid_data[rowSums(is.na(covid_data[, colnames(covidnumvars)]))>2 & rowSums(is.na(covid_data[, colnames(covidnumvars)])) <8,])
+nrow(covid_data[rowSums(is.na(covid_data[, colnames(covidnumvars)]))>2 & rowSums(is.na(covid_data[, colnames(covidnumvars)])) <8,])
 #This line should replace all missing more than 2 with NA to the total 
 covid_data[which(rowSums(is.na(covid_data[, colnames(covidnumvars)]))>2),"totalcov_dist"] <- NA
 
@@ -348,13 +360,17 @@ hist(covid_data$covid_worry_3_num)
 hist(covid_data$covid_neg_num)
 hist(covid_data$covid_pos_num)
 
+
+
 # Parent mental health-------------------------------------------------------------------------------------------
 
 covid_data$par_past_mh_num<- ifelse(covid_data$par_past_mh == "Yes (describe:)", 1,2)
 summarytools::freq(as.factor(covid_data$par_past_mh_num), order = "freq")
 
+
+
 # DASS scoring -------------------------------------------------------------------------------------------
-#DASS still needs <70% items removed
+
 
 #Subscale scores (already scored within qualtrics). Mean, sd, range of scores and histograms
 summary(covid_data$Dep)
@@ -396,15 +412,32 @@ colnames(DASSnumvars)<- c("DASS_1_num", "DASS_2_num", "DASS_3_num", "DASS_4_num"
                           "DASS_11_num", "DASS_12_num", "DASS_13_num", "DASS_14_num", "DASS_15_num", "DASS_16_num", "DASS_17_num", "DASS_18_num", "DASS_19_num", "DASS_20_num",
                           "DASS_21_num" )
 
-#Score each and also total
-
-
-
 #join this dataframe to the main one
 covid_data<- cbind(covid_data, DASSnumvars)
 
-#Section to remove people who are missing more than 70% of their DASS scores (need 15/21) - so if more than 6 missing, goodbye
-#...still to make this section
+#Score each and also total
+keys.listDASS <- list(totalDASS=c("DASS_1_num", "DASS_2_num", "DASS_3_num", "DASS_4_num", "DASS_5_num", "DASS_6_num", "DASS_7_num", "DASS_8_num", "DASS_9_num", "DASS_10_num",
+                                  "DASS_11_num", "DASS_12_num", "DASS_13_num", "DASS_14_num", "DASS_15_num", "DASS_16_num", "DASS_17_num", "DASS_18_num", "DASS_19_num", "DASS_20_num",
+                                  "DASS_21_num"),
+                      DASSDep=c("DASS_3_num","DASS_5_num","DASS_10_num","DASS_13_num","DASS_16_num","DASS_17_num","DASS_21_num"), 
+                      DASSAnx=c("DASS_2_num","DASS_4_num","DASS_7_num","DASS_9_num","DASS_15_num","DASS_19_num","DASS_20_num"),
+                      DASSStress=c("DASS_1_num","DASS_6_num","DASS_8_num","DASS_11_num","DASS_12_num","DASS_14_num","DASS_18_num"))
+
+DASSscored <- scoreItems(keys.listDASS, covid_data, impute= "mean", totals=TRUE, min=0,max=3) # note - FALSE:average, TRUE:sum
+DASSscored$scores #The scores themselves
+DASS_totals <- as.data.frame(DASSscored$scores)#just the total scores
+covid_data <- cbind(covid_data, DASS_totals)#totals and raw scores
+
+
+#Section to remove people who are missing more than 70% of their DASS scores (need 15/21) - so if more than 6 missing get rid of (or 5/7 for subscales so no more than 2 missing)
+nrow(covid_data[rowSums(is.na(covid_data[, keys.listDASS$totalDASS]))>6,])
+covid_data[which(rowSums(is.na(covid_data[, keys.listDASS$totalDASS]))>6),"totalDASS"] <- NA
+nrow(covid_data[rowSums(is.na(covid_data[, keys.listDASS$DASSStress]))>2,])
+covid_data[which(rowSums(is.na(covid_data[, keys.listDASS$DASSDep]))>2),"DASSDep"] <- NA
+nrow(covid_data[rowSums(is.na(covid_data[, keys.listDASS$DASSAnx]))>2,])
+covid_data[which(rowSums(is.na(covid_data[, keys.listDASS$DASSAnx]))>2),"DASSAnx"] <- NA
+nrow(covid_data[rowSums(is.na(covid_data[, keys.listDASS$DASSStress]))>2,])
+covid_data[which(rowSums(is.na(covid_data[, keys.listDASS$DASSStress]))>2),"DASSStress"] <- NA
 
 
 # FES cohesion scoring -------------------------------------------------------------------------------------------
@@ -438,7 +471,7 @@ covid_data <- cbind(covid_data, FES_totals)#totals and raw scores
 
 #Get rid of participants total scores who have less than 70% of items (need 7/9)
 ## This line tells you how people had more than 2 missing (but not the whole scale missing)
- nrow(covid_data[rowSums(is.na(covid_data[, colnames(FESnumvars)]))>2 & rowSums(is.na(covid_data[, colnames(FESnumvars)])) <9,])
+nrow(covid_data[rowSums(is.na(covid_data[, colnames(FESnumvars)]))>2 & rowSums(is.na(covid_data[, colnames(FESnumvars)])) <9,])
 #This line should replace all missing more than 2 with NA to the total 
 covid_data[which(rowSums(is.na(covid_data[, colnames(FESnumvars)]))>2),"totalFES"] <- NA
 
@@ -483,13 +516,14 @@ names(covid_data_ch6) <- sub("ch6_", "ch_", names(covid_data_ch6))
 covid_data_ch1$ch_trigger <- NA
 #Change it to a character type variable otherwise it won't match the original variable for the merge
 covid_data_ch1$ch_trigger<- as.character(covid_data_ch1$ch_trigger)
-  
+
 #Delete blank children by use of Yes in trigger column
-covid_data_ch2<- covid_data_ch2[(complete.cases(covid_data_ch2$ch_trigger=="Yes")),]
-covid_data_ch3<- covid_data_ch3[(complete.cases(covid_data_ch3$ch_trigger=="Yes")),]
-covid_data_ch4<- covid_data_ch4[(complete.cases(covid_data_ch4$ch_trigger=="Yes")),]
-covid_data_ch5<- covid_data_ch5[(complete.cases(covid_data_ch5$ch_trigger=="Yes")),]
-covid_data_ch6<- covid_data_ch6[(complete.cases(covid_data_ch6$ch_trigger=="Yes")),]
+
+covid_data_ch2<-covid_data_ch2[covid_data_ch2$ch_trigger=="Yes" & !is.na(covid_data_ch2$ch_trigger),]
+covid_data_ch3<-covid_data_ch3[covid_data_ch3$ch_trigger=="Yes" & !is.na(covid_data_ch3$ch_trigger),]
+covid_data_ch4<-covid_data_ch4[covid_data_ch4$ch_trigger=="Yes" & !is.na(covid_data_ch4$ch_trigger),]
+covid_data_ch5<-covid_data_ch5[covid_data_ch5$ch_trigger=="Yes" & !is.na(covid_data_ch5$ch_trigger),]
+covid_data_ch6<-covid_data_ch6[covid_data_ch6$ch_trigger=="Yes" & !is.na(covid_data_ch6$ch_trigger),]
 
 
 #See how many children were entered in the additional rounds
@@ -526,6 +560,8 @@ vis_miss(covid_data_child[,which(colnames(covid_data_child)=="ch_SDQ.1_1"):which
   theme(axis.text.x = element_text(size=6, angle=90))
 vis_miss(covid_data_child[,which(colnames(covid_data_child)=="ch_PTSD_1"):which(colnames(covid_data_child)=="ch_parenting.1_29")])  +
   theme(axis.text.x = element_text(size=6, angle=90))
+
+
 
 # Demographics for children -------------------------------------------------------------------------------------------------
 
@@ -566,13 +602,13 @@ commnumvars=data.frame(matrix(ncol=length(comm_vars),nrow=nrow(covid_data_child[
 
 #recodes as ordinal
 commnumvars <-ifelse(covid_data_child[,comm_vars] == "Not at all", 0, 
-                      ifelse(covid_data_child[,comm_vars] == "A little", 1, 
-                               ifelse(covid_data_child[,comm_vars] == "Moderately", 2,3)))
-                                           
+                     ifelse(covid_data_child[,comm_vars] == "A little", 1, 
+                            ifelse(covid_data_child[,comm_vars] == "Moderately", 2,3)))
+
 #Put new variable names in
 colnames(commnumvars)<- c("ch_talk_num", "ch_talk_about_1_num", "ch_talk_about_2_num", "ch_talk_about_3_num", 
-                           "ch_talk_about_4_num", "ch_talk_about_5_num", "ch_talk_about_6_num", "ch_talk_about_7_num",
-                              "ch_talk_about_8_num")
+                          "ch_talk_about_4_num", "ch_talk_about_5_num", "ch_talk_about_6_num", "ch_talk_about_7_num",
+                          "ch_talk_about_8_num")
 
 #join this dataframe to the main one
 covid_data_child<- cbind(covid_data_child, commnumvars)
@@ -599,7 +635,7 @@ corrplot.mixed(M,  order = "hclust", lower.col = "black", number.cex = .6,
 # While Wilson et al. separated emotion and reassurance, for us, reassurance correlates highly with emotion items (.67 with child's emotions)
 keys.list.cov.comm <- list(facts_comm=c("ch_talk_about_1_num", "ch_talk_about_2_num"), 
                            emotion_comm=c("ch_talk_about_3_num", "ch_talk_about_4_num", 
-                                           "ch_talk_about_5_num", "ch_talk_about_6_num"), 
+                                          "ch_talk_about_5_num", "ch_talk_about_6_num"), 
                            self_comm=c("ch_talk_about_7_num", "ch_talk_about_8_num"))
 
 cov_comm_scored <- scoreItems(keys.list.cov.comm, covid_data_child, impute= "mean", totals=TRUE, min=0,max=3) # note - FALSE:average, TRUE:sum
@@ -629,6 +665,8 @@ sd(covid_data_child$self_comm, na.rm =TRUE)
 hist(covid_data_child$facts_comm)
 hist(covid_data_child$emotion_comm)
 hist(covid_data_child$self_comm)
+
+
 
 # SDQ scoring --------------------------------------------------------------------------------------------
 
@@ -664,14 +702,14 @@ covid_data_child<- cbind(covid_data_child, SDQ1numvars, SDQ2numvars)
 #Scoring the total SDQ and subscales 
 #scoring code from psych package.Note "-" before items reverse scored.Note pro not included in total SDQ.
 keys.listSDQ <- list(totalSDQ=c("ch_SDQ.1_2_num" , "ch_SDQ.1_3_num" , "ch_SDQ.1_5_num" , "ch_SDQ.1_6_num" , "-ch_SDQ.1_7_num" ,
-                                  "ch_SDQ.1_8_num" , "ch_SDQ.1_10_num" , "-ch_SDQ.1_11_num" , "ch_SDQ.1_12_num" , "ch_SDQ.1_13_num" , "-ch_SDQ.1_14_num" ,
-                                  "ch_SDQ.1_15_num" , "ch_SDQ.1_16_num" , "ch_SDQ.1_18_num" , "ch_SDQ.1_19_num" ,
-                                  "-ch_SDQ.1_21_num" , "ch_SDQ.1_22_num" , "ch_SDQ.1_23_num" , "ch_SDQ.1_24_num" , "-ch_SDQ.1_25_num"),
-                      SDQemo=c("ch_SDQ.1_3_num","ch_SDQ.1_8_num","ch_SDQ.1_13_num" ,"ch_SDQ.1_16_num" , "ch_SDQ.1_24_num") , 
-                      SDQcon=c("ch_SDQ.1_5_num" ,"-ch_SDQ.1_7_num","ch_SDQ.1_12_num","ch_SDQ.1_18_num" , "ch_SDQ.1_22_num") ,
-                      SDQhyp=c("ch_SDQ.1_2_num","ch_SDQ.1_10_num","ch_SDQ.1_15_num","-ch_SDQ.1_21_num"  , "-ch_SDQ.1_25_num") ,
-                      SDQpeer=c("ch_SDQ.1_6_num","-ch_SDQ.1_11_num","-ch_SDQ.1_14_num" ,"ch_SDQ.1_19_num" , "ch_SDQ.1_23_num") ,
-                      SDQpro=c("ch_SDQ.1_1_num" ,"ch_SDQ.1_4_num","ch_SDQ.1_9_num" ,"ch_SDQ.1_17_num" , "ch_SDQ.1_20_num"))
+                                "ch_SDQ.1_8_num" , "ch_SDQ.1_10_num" , "-ch_SDQ.1_11_num" , "ch_SDQ.1_12_num" , "ch_SDQ.1_13_num" , "-ch_SDQ.1_14_num" ,
+                                "ch_SDQ.1_15_num" , "ch_SDQ.1_16_num" , "ch_SDQ.1_18_num" , "ch_SDQ.1_19_num" ,
+                                "-ch_SDQ.1_21_num" , "ch_SDQ.1_22_num" , "ch_SDQ.1_23_num" , "ch_SDQ.1_24_num" , "-ch_SDQ.1_25_num"),
+                     SDQemo=c("ch_SDQ.1_3_num","ch_SDQ.1_8_num","ch_SDQ.1_13_num" ,"ch_SDQ.1_16_num" , "ch_SDQ.1_24_num") , 
+                     SDQcon=c("ch_SDQ.1_5_num" ,"-ch_SDQ.1_7_num","ch_SDQ.1_12_num","ch_SDQ.1_18_num" , "ch_SDQ.1_22_num") ,
+                     SDQhyp=c("ch_SDQ.1_2_num","ch_SDQ.1_10_num","ch_SDQ.1_15_num","-ch_SDQ.1_21_num"  , "-ch_SDQ.1_25_num") ,
+                     SDQpeer=c("ch_SDQ.1_6_num","-ch_SDQ.1_11_num","-ch_SDQ.1_14_num" ,"ch_SDQ.1_19_num" , "ch_SDQ.1_23_num") ,
+                     SDQpro=c("ch_SDQ.1_1_num" ,"ch_SDQ.1_4_num","ch_SDQ.1_9_num" ,"ch_SDQ.1_17_num" , "ch_SDQ.1_20_num"))
 
 SDQscored <- scoreItems(keys.listSDQ, covid_data_child, impute= "mean", totals=TRUE, min=0,max=2) # note - FALSE:average, TRUE:sum
 SDQscored$scores #The scores themselves
@@ -706,32 +744,32 @@ nrow(covid_data_child[rowSums(is.na(covid_data_child[, c( "ch_SDQ.2_5_num" ,"ch_
 covid_data_child[which(rowSums(is.na(covid_data_child[, c("ch_SDQ.1_5_num" ,"ch_SDQ.1_7_num","ch_SDQ.1_12_num","ch_SDQ.1_18_num" , "ch_SDQ.1_22_num" , "ch_SDQ.1_2_num","ch_SDQ.1_10_num","ch_SDQ.1_15_num","ch_SDQ.1_21_num"  , "ch_SDQ.1_25_num" , "ch_SDQ.1_6_num","ch_SDQ.1_11_num","ch_SDQ.1_14_num" ,"ch_SDQ.1_19_num" , "ch_SDQ.1_23_num")]))>7),"totalSDQ"] <- NA
 covid_data_child[which(rowSums(is.na(covid_data_child[, c("ch_SDQ.2_5_num" ,"ch_SDQ.2_7_num","ch_SDQ.2_12_num","ch_SDQ.2_18_num" , "ch_SDQ.2_22_num" , "ch_SDQ.2_2_num","ch_SDQ.2_10_num","ch_SDQ.2_15_num","ch_SDQ.2_21_num"  , "ch_SDQ.2_25_num" , "ch_SDQ.2_6_num","ch_SDQ.2_11_num","ch_SDQ.2_14_num" ,"ch_SDQ.2_19_num" , "ch_SDQ.2_23_num")]))>7),"totalSDQ2"] <- NA
 #Subscale - SDQemo
- nrow(covid_data_child[rowSums(is.na(covid_data_child[, c("ch_SDQ.1_3_num","ch_SDQ.1_8_num","ch_SDQ.1_13_num" ,"ch_SDQ.1_16_num" , "ch_SDQ.1_24_num")]))>1 & rowSums(is.na(covid_data_child[, c("ch_SDQ.1_3_num","ch_SDQ.1_8_num","ch_SDQ.1_13_num" ,"ch_SDQ.1_16_num" , "ch_SDQ.1_24_num")])) <5,])
- nrow(covid_data_child[rowSums(is.na(covid_data_child[, c("ch_SDQ.2_3_num","ch_SDQ.2_8_num","ch_SDQ.2_13_num" ,"ch_SDQ.2_16_num" , "ch_SDQ.2_24_num")]))>1 & rowSums(is.na(covid_data_child[, c("ch_SDQ.2_3_num","ch_SDQ.2_8_num","ch_SDQ.2_13_num" ,"ch_SDQ.2_16_num" , "ch_SDQ.2_24_num")])) <5,])
+nrow(covid_data_child[rowSums(is.na(covid_data_child[, c("ch_SDQ.1_3_num","ch_SDQ.1_8_num","ch_SDQ.1_13_num" ,"ch_SDQ.1_16_num" , "ch_SDQ.1_24_num")]))>1 & rowSums(is.na(covid_data_child[, c("ch_SDQ.1_3_num","ch_SDQ.1_8_num","ch_SDQ.1_13_num" ,"ch_SDQ.1_16_num" , "ch_SDQ.1_24_num")])) <5,])
+nrow(covid_data_child[rowSums(is.na(covid_data_child[, c("ch_SDQ.2_3_num","ch_SDQ.2_8_num","ch_SDQ.2_13_num" ,"ch_SDQ.2_16_num" , "ch_SDQ.2_24_num")]))>1 & rowSums(is.na(covid_data_child[, c("ch_SDQ.2_3_num","ch_SDQ.2_8_num","ch_SDQ.2_13_num" ,"ch_SDQ.2_16_num" , "ch_SDQ.2_24_num")])) <5,])
 #This line should replace all missing more than 2 with NA to the total 
 covid_data_child[which(rowSums(is.na(covid_data_child[, c("ch_SDQ.1_3_num","ch_SDQ.1_8_num","ch_SDQ.1_13_num" ,"ch_SDQ.1_16_num" , "ch_SDQ.1_24_num")]))>1),"SDQemo"] <- NA
 covid_data_child[which(rowSums(is.na(covid_data_child[, c("ch_SDQ.2_3_num","ch_SDQ.2_8_num","ch_SDQ.2_13_num" ,"ch_SDQ.2_16_num" , "ch_SDQ.2_24_num")]))>1),"SDQemo2"] <- NA
 #Subscale -  SDQcon
- nrow(covid_data_child[rowSums(is.na(covid_data_child[, c("ch_SDQ.1_5_num" ,"ch_SDQ.1_7_num","ch_SDQ.1_12_num","ch_SDQ.1_18_num" , "ch_SDQ.1_22_num")]))>1 & rowSums(is.na(covid_data_child[, c("ch_SDQ.1_5_num" ,"ch_SDQ.1_7_num","ch_SDQ.1_12_num","ch_SDQ.1_18_num" , "ch_SDQ.1_22_num")])) <5,])
- nrow(covid_data_child[rowSums(is.na(covid_data_child[, c("ch_SDQ.2_5_num" ,"ch_SDQ.2_7_num","ch_SDQ.2_12_num","ch_SDQ.2_18_num" , "ch_SDQ.2_22_num")]))>1 & rowSums(is.na(covid_data_child[, c("ch_SDQ.2_5_num" ,"ch_SDQ.2_7_num","ch_SDQ.2_12_num","ch_SDQ.2_18_num" , "ch_SDQ.2_22_num")])) <5,])
+nrow(covid_data_child[rowSums(is.na(covid_data_child[, c("ch_SDQ.1_5_num" ,"ch_SDQ.1_7_num","ch_SDQ.1_12_num","ch_SDQ.1_18_num" , "ch_SDQ.1_22_num")]))>1 & rowSums(is.na(covid_data_child[, c("ch_SDQ.1_5_num" ,"ch_SDQ.1_7_num","ch_SDQ.1_12_num","ch_SDQ.1_18_num" , "ch_SDQ.1_22_num")])) <5,])
+nrow(covid_data_child[rowSums(is.na(covid_data_child[, c("ch_SDQ.2_5_num" ,"ch_SDQ.2_7_num","ch_SDQ.2_12_num","ch_SDQ.2_18_num" , "ch_SDQ.2_22_num")]))>1 & rowSums(is.na(covid_data_child[, c("ch_SDQ.2_5_num" ,"ch_SDQ.2_7_num","ch_SDQ.2_12_num","ch_SDQ.2_18_num" , "ch_SDQ.2_22_num")])) <5,])
 #This line should replace all missing more than 2 with NA to the total 
 covid_data_child[which(rowSums(is.na(covid_data_child[, c("ch_SDQ.1_5_num" ,"ch_SDQ.1_7_num","ch_SDQ.1_12_num","ch_SDQ.1_18_num" , "ch_SDQ.1_22_num")]))>1),"SDQcon"] <- NA
 covid_data_child[which(rowSums(is.na(covid_data_child[, c("ch_SDQ.2_5_num" ,"ch_SDQ.2_7_num","ch_SDQ.2_12_num","ch_SDQ.2_18_num" , "ch_SDQ.2_22_num")]))>1),"SDQcon2"] <- NA
 #Subscale -  SDQhyp
- nrow(covid_data_child[rowSums(is.na(covid_data_child[, c("ch_SDQ.1_2_num","ch_SDQ.1_10_num","ch_SDQ.1_15_num","ch_SDQ.1_21_num"  , "ch_SDQ.1_25_num")]))>1 & rowSums(is.na(covid_data_child[, c("ch_SDQ.1_2_num","ch_SDQ.1_10_num","ch_SDQ.1_15_num","ch_SDQ.1_21_num"  , "ch_SDQ.1_25_num")])) <5,])
- nrow(covid_data_child[rowSums(is.na(covid_data_child[, c("ch_SDQ.2_2_num","ch_SDQ.2_10_num","ch_SDQ.2_15_num","ch_SDQ.2_21_num"  , "ch_SDQ.2_25_num")]))>1 & rowSums(is.na(covid_data_child[, c("ch_SDQ.2_2_num","ch_SDQ.2_10_num","ch_SDQ.2_15_num","ch_SDQ.2_21_num"  , "ch_SDQ.2_25_num")])) <5,])
+nrow(covid_data_child[rowSums(is.na(covid_data_child[, c("ch_SDQ.1_2_num","ch_SDQ.1_10_num","ch_SDQ.1_15_num","ch_SDQ.1_21_num"  , "ch_SDQ.1_25_num")]))>1 & rowSums(is.na(covid_data_child[, c("ch_SDQ.1_2_num","ch_SDQ.1_10_num","ch_SDQ.1_15_num","ch_SDQ.1_21_num"  , "ch_SDQ.1_25_num")])) <5,])
+nrow(covid_data_child[rowSums(is.na(covid_data_child[, c("ch_SDQ.2_2_num","ch_SDQ.2_10_num","ch_SDQ.2_15_num","ch_SDQ.2_21_num"  , "ch_SDQ.2_25_num")]))>1 & rowSums(is.na(covid_data_child[, c("ch_SDQ.2_2_num","ch_SDQ.2_10_num","ch_SDQ.2_15_num","ch_SDQ.2_21_num"  , "ch_SDQ.2_25_num")])) <5,])
 #This line should replace all missing more than 2 with NA to the total 
 covid_data_child[which(rowSums(is.na(covid_data_child[, c("ch_SDQ.1_2_num","ch_SDQ.1_10_num","ch_SDQ.1_15_num","ch_SDQ.1_21_num","ch_SDQ.1_25_num")]))>1),"SDQhyp"] <- NA
 covid_data_child[which(rowSums(is.na(covid_data_child[, c("ch_SDQ.2_2_num","ch_SDQ.2_10_num","ch_SDQ.2_15_num","ch_SDQ.2_21_num","ch_SDQ.2_25_num")]))>1),"SDQhyp2"] <- NA
 #Subscale -  SDQpeer
- nrow(covid_data_child[rowSums(is.na(covid_data_child[, c("ch_SDQ.1_6_num","ch_SDQ.1_11_num","ch_SDQ.1_14_num" ,"ch_SDQ.1_19_num" , "ch_SDQ.1_23_num")]))>1 & rowSums(is.na(covid_data_child[, c("ch_SDQ.1_6_num","ch_SDQ.1_11_num","ch_SDQ.1_14_num" ,"ch_SDQ.1_19_num" , "ch_SDQ.1_23_num")])) <5,])
- nrow(covid_data_child[rowSums(is.na(covid_data_child[, c("ch_SDQ.2_6_num","ch_SDQ.2_11_num","ch_SDQ.2_14_num" ,"ch_SDQ.2_19_num" , "ch_SDQ.2_23_num")]))>1 & rowSums(is.na(covid_data_child[, c("ch_SDQ.2_6_num","ch_SDQ.2_11_num","ch_SDQ.2_14_num" ,"ch_SDQ.2_19_num" , "ch_SDQ.2_23_num")])) <5,])
+nrow(covid_data_child[rowSums(is.na(covid_data_child[, c("ch_SDQ.1_6_num","ch_SDQ.1_11_num","ch_SDQ.1_14_num" ,"ch_SDQ.1_19_num" , "ch_SDQ.1_23_num")]))>1 & rowSums(is.na(covid_data_child[, c("ch_SDQ.1_6_num","ch_SDQ.1_11_num","ch_SDQ.1_14_num" ,"ch_SDQ.1_19_num" , "ch_SDQ.1_23_num")])) <5,])
+nrow(covid_data_child[rowSums(is.na(covid_data_child[, c("ch_SDQ.2_6_num","ch_SDQ.2_11_num","ch_SDQ.2_14_num" ,"ch_SDQ.2_19_num" , "ch_SDQ.2_23_num")]))>1 & rowSums(is.na(covid_data_child[, c("ch_SDQ.2_6_num","ch_SDQ.2_11_num","ch_SDQ.2_14_num" ,"ch_SDQ.2_19_num" , "ch_SDQ.2_23_num")])) <5,])
 #This line should replace all missing more than 2 with NA to the total 
 covid_data_child[which(rowSums(is.na(covid_data_child[, c("ch_SDQ.1_6_num","ch_SDQ.1_11_num","ch_SDQ.1_14_num" ,"ch_SDQ.1_19_num","ch_SDQ.1_23_num")]))>1),"SDQpeer"] <- NA
 covid_data_child[which(rowSums(is.na(covid_data_child[, c("ch_SDQ.2_6_num","ch_SDQ.2_11_num","ch_SDQ.2_14_num" ,"ch_SDQ.2_19_num","ch_SDQ.2_23_num")]))>1),"SDQpeer2"] <- NA
 #Subscale -  SDQpro
- nrow(covid_data_child[rowSums(is.na(covid_data_child[, c("ch_SDQ.1_1_num" ,"ch_SDQ.1_4_num","ch_SDQ.1_9_num" ,"ch_SDQ.1_17_num" , "ch_SDQ.1_20_num")]))>1 & rowSums(is.na(covid_data_child[, c("ch_SDQ.1_1_num" ,"ch_SDQ.1_4_num","ch_SDQ.1_9_num" ,"ch_SDQ.1_17_num" , "ch_SDQ.1_20_num")])) <5,])
- nrow(covid_data_child[rowSums(is.na(covid_data_child[, c("ch_SDQ.2_1_num" ,"ch_SDQ.2_4_num","ch_SDQ.2_9_num" ,"ch_SDQ.2_17_num" , "ch_SDQ.2_20_num")]))>1 & rowSums(is.na(covid_data_child[, c("ch_SDQ.2_1_num" ,"ch_SDQ.2_4_num","ch_SDQ.2_9_num" ,"ch_SDQ.2_17_num" , "ch_SDQ.2_20_num")])) <5,])
+nrow(covid_data_child[rowSums(is.na(covid_data_child[, c("ch_SDQ.1_1_num" ,"ch_SDQ.1_4_num","ch_SDQ.1_9_num" ,"ch_SDQ.1_17_num" , "ch_SDQ.1_20_num")]))>1 & rowSums(is.na(covid_data_child[, c("ch_SDQ.1_1_num" ,"ch_SDQ.1_4_num","ch_SDQ.1_9_num" ,"ch_SDQ.1_17_num" , "ch_SDQ.1_20_num")])) <5,])
+nrow(covid_data_child[rowSums(is.na(covid_data_child[, c("ch_SDQ.2_1_num" ,"ch_SDQ.2_4_num","ch_SDQ.2_9_num" ,"ch_SDQ.2_17_num" , "ch_SDQ.2_20_num")]))>1 & rowSums(is.na(covid_data_child[, c("ch_SDQ.2_1_num" ,"ch_SDQ.2_4_num","ch_SDQ.2_9_num" ,"ch_SDQ.2_17_num" , "ch_SDQ.2_20_num")])) <5,])
 #This line should replace all missing more than 2 with NA to the total 
 covid_data_child[which(rowSums(is.na(covid_data_child[, c("ch_SDQ.1_1_num" ,"ch_SDQ.1_4_num","ch_SDQ.1_9_num","ch_SDQ.1_17_num","ch_SDQ.1_20_num")]))>1),"SDQpro"] <- NA
 covid_data_child[which(rowSums(is.na(covid_data_child[, c("ch_SDQ.2_1_num" ,"ch_SDQ.2_4_num","ch_SDQ.2_9_num","ch_SDQ.2_17_num","ch_SDQ.2_20_num")]))>1),"SDQpro2"] <- NA
@@ -786,6 +824,8 @@ table(covid_data_child$SDQpeer_cat, useNA = "ifany")
 covid_data_child$SDQpro_cat <- as.factor(car::recode(covid_data_child$SDQpro, "NA=NA; 6:10='Average';5='S_low';else='Low'"))
 table(covid_data_child$SDQpro_cat, useNA = "ifany")
 
+
+
 # PTSD scoring --------------------------------------------------------------------------------------------
 
 childvarnames <- names(covid_data_child)
@@ -832,8 +872,10 @@ covid_data_child[which(rowSums(is.na(covid_data_child[, c("ch_PTSD_1_num" , "ch_
 
 #Means, sds, range, histogram
 summary(covid_data_child[,c("totalPTSD")])
-sd(covid_data_child$totalPTSD)
+sd(covid_data_child$totalPTSD, na.rm =TRUE)
 hist(covid_data_child$totalPTSD)
+
+
 
 # PARQ scoring --------------------------------------------------------------------------------------------
 
@@ -848,22 +890,22 @@ PARQ2numvars=data.frame(matrix(ncol=29,nrow=nrow(covid_data_child[,PARQ2vars])))
 
 #recodes the words to numbers
 PARQ1numvars<- ifelse(covid_data_child[,PARQ1vars] == "Almost never true", 1, 
-                     ifelse(covid_data_child[,PARQ1vars] == "Rarely true", 2, 
-                        ifelse(covid_data_child[,PARQ1vars] == "Sometimes true", 3,4)))
+                      ifelse(covid_data_child[,PARQ1vars] == "Rarely true", 2, 
+                             ifelse(covid_data_child[,PARQ1vars] == "Sometimes true", 3,4)))
 PARQ2numvars<- ifelse(covid_data_child[,PARQ2vars] == "Less since COVID", -1, 
-                     ifelse(covid_data_child[,PARQ2vars] == "Same since COVID", 0, 1))
+                      ifelse(covid_data_child[,PARQ2vars] == "Same since COVID", 0, 1))
 
 #Put the names of the new variables in
 colnames(PARQ1numvars)<- c("ch_parenting.1_1_num" , "ch_parenting.1_2_num" , "ch_parenting.1_3_num" , "ch_parenting.1_4_num" , "ch_parenting.1_5_num" , "ch_parenting.1_6_num" , "ch_parenting.1_7_num" ,
-                          "ch_parenting.1_8_num" , "ch_parenting.1_9_num" , "ch_parenting.1_10_num" , "ch_parenting.1_11_num" , "ch_parenting.1_12_num" , "ch_parenting.1_13_num" , "ch_parenting.1_14_num" ,
-                          "ch_parenting.1_15_num" , "ch_parenting.1_16_num" , "ch_parenting.1_17_num" , "ch_parenting.1_18_num" , "ch_parenting.1_19_num" , "ch_parenting.1_20_num" ,
-                          "ch_parenting.1_21_num" , "ch_parenting.1_22_num" , "ch_parenting.1_23_num" , "ch_parenting.1_24_num" , "ch_parenting.1_25_num",
-"ch_parenting.1_26_num" , "ch_parenting.1_27_num" , "ch_parenting.1_28_num" , "ch_parenting.1_29_num")
+                           "ch_parenting.1_8_num" , "ch_parenting.1_9_num" , "ch_parenting.1_10_num" , "ch_parenting.1_11_num" , "ch_parenting.1_12_num" , "ch_parenting.1_13_num" , "ch_parenting.1_14_num" ,
+                           "ch_parenting.1_15_num" , "ch_parenting.1_16_num" , "ch_parenting.1_17_num" , "ch_parenting.1_18_num" , "ch_parenting.1_19_num" , "ch_parenting.1_20_num" ,
+                           "ch_parenting.1_21_num" , "ch_parenting.1_22_num" , "ch_parenting.1_23_num" , "ch_parenting.1_24_num" , "ch_parenting.1_25_num",
+                           "ch_parenting.1_26_num" , "ch_parenting.1_27_num" , "ch_parenting.1_28_num" , "ch_parenting.1_29_num")
 colnames(PARQ2numvars)<- c("ch_parenting.2_1_num" , "ch_parenting.2_2_num" , "ch_parenting.2_3_num" , "ch_parenting.2_4_num" , "ch_parenting.2_5_num" , "ch_parenting.2_6_num" , "ch_parenting.2_7_num" ,
-                          "ch_parenting.2_8_num" , "ch_parenting.2_9_num" , "ch_parenting.2_10_num" , "ch_parenting.2_11_num" , "ch_parenting.2_12_num" , "ch_parenting.2_13_num" , "ch_parenting.2_14_num" ,
-                          "ch_parenting.2_15_num" , "ch_parenting.2_16_num" , "ch_parenting.2_17_num" , "ch_parenting.2_18_num" , "ch_parenting.2_19_num" , "ch_parenting.2_20_num" ,
-                          "ch_parenting.2_21_num" , "ch_parenting.2_22_num" , "ch_parenting.2_23_num" , "ch_parenting.2_24_num" , "ch_parenting.2_25_num",
-"ch_parenting.2_26_num" , "ch_parenting.2_27_num" , "ch_parenting.2_28_num" , "ch_parenting.2_29_num")
+                           "ch_parenting.2_8_num" , "ch_parenting.2_9_num" , "ch_parenting.2_10_num" , "ch_parenting.2_11_num" , "ch_parenting.2_12_num" , "ch_parenting.2_13_num" , "ch_parenting.2_14_num" ,
+                           "ch_parenting.2_15_num" , "ch_parenting.2_16_num" , "ch_parenting.2_17_num" , "ch_parenting.2_18_num" , "ch_parenting.2_19_num" , "ch_parenting.2_20_num" ,
+                           "ch_parenting.2_21_num" , "ch_parenting.2_22_num" , "ch_parenting.2_23_num" , "ch_parenting.2_24_num" , "ch_parenting.2_25_num",
+                           "ch_parenting.2_26_num" , "ch_parenting.2_27_num" , "ch_parenting.2_28_num" , "ch_parenting.2_29_num")
 
 
 #join this dataframe to the main one
@@ -886,22 +928,69 @@ PARQscored$scores #The scores themselves
 PARQ_totals <- as.data.frame(PARQscored$scores)#just the total scores
 covid_data_child <- cbind(covid_data_child, PARQ_totals)#totals and raw scores
 
+# Get rid of any px that have less than 70% of the scales missing
+# totalPARQ
+# Put the variable names in
+totalPARQvars<- c("ch_parenting.1_1_num" , "ch_parenting.1_2_num" , "ch_parenting.1_4_num" , "ch_parenting.1_5_num" , "ch_parenting.1_6_num" ,                                 "ch_parenting.1_8_num" , "ch_parenting.1_9_num" , "ch_parenting.1_10_num" , "ch_parenting.1_11_num" , "ch_parenting.1_12_num" ,"ch_parenting.1_13_num" , "ch_parenting.1_14_num" ,
+                  "ch_parenting.1_15_num" , "ch_parenting.1_16_num" , "ch_parenting.1_17_num" , "ch_parenting.1_18_num" , "ch_parenting.1_19_num" , 
+                  "ch_parenting.1_21_num" , "ch_parenting.1_22_num" , "ch_parenting.1_23_num" , "ch_parenting.1_24_num" , "ch_parenting.1_25_num", "ch_parenting.1_27_num", "ch_parenting.1_28_num", "ch_parenting.1_29_num")
+# PARQwarmth
+PARQwarmthvars <- c("ch_parenting.1_1_num","ch_parenting.1_4_num","ch_parenting.1_11_num","ch_parenting.1_15_num","ch_parenting.1_21_num","ch_parenting.1_23_num","ch_parenting.1_27_num","ch_parenting.1_29_num")
+#PARQhostile
+PARQhostilevars <- c("ch_parenting.1_5_num","ch_parenting.1_8_num","ch_parenting.1_12_num","ch_parenting.1_17_num","ch_parenting.1_22_num","ch_parenting.1_24_num")
+#PARQneglect
+PARQneglectvars <- c("ch_parenting.1_2_num","ch_parenting.1_9_num","ch_parenting.1_13_num","ch_parenting.1_16_num","ch_parenting.1_18_num","ch_parenting.1_28_num")
+#PARQundiff
+PARQundiffvars <- c("ch_parenting.1_6_num","ch_parenting.1_10_num","ch_parenting.1_19_num","ch_parenting.1_25_num")
+#PARQcontrol
+PARQcontrolvars <- c("ch_parenting.1_3_num","ch_parenting.1_7_num","ch_parenting.1_14_num","ch_parenting.1_20_num","ch_parenting.1_26_num")
+
+#Need 21 out of 29 - can't have more than 8 missing (or for subscales 6/8 , no more than 2 missing, 5/6, 3/4, 4/5, no more than 1 missing)
+## How mnay will be cut
+nrow(covid_data_child[rowSums(is.na(covid_data_child[, totalPARQvars]))>8,]) 
+#This line should replace all missing more than 8 with NA to the total 
+covid_data_child[which(rowSums(is.na(covid_data_child[, totalPARQvars]))>8),"totalPARQ"] <- NA
+## How mnay will be cut
+nrow(covid_data_child[rowSums(is.na(covid_data_child[, PARQwarmthvars]))>2,]) 
+#This line should replace all missing more than 2 with NA to the total 
+covid_data_child[which(rowSums(is.na(covid_data_child[, PARQwarmthvars]))>2),"PARQwarmth"] <- NA
+## How mnay will be cut
+nrow(covid_data_child[rowSums(is.na(covid_data_child[, PARQhostilevars]))>1,]) 
+#This line should replace all missing more than 1 with NA to the total 
+covid_data_child[which(rowSums(is.na(covid_data_child[, PARQhostilevars]))>1),"PARQhostile"] <- NA
+## How mnay will be cut
+nrow(covid_data_child[rowSums(is.na(covid_data_child[, PARQneglectvars]))>1,]) 
+#This line should replace all missing more than 1 with NA to the total 
+covid_data_child[which(rowSums(is.na(covid_data_child[, PARQneglectvars]))>1),"PARQneglect"] <- NA
+## How mnay will be cut
+nrow(covid_data_child[rowSums(is.na(covid_data_child[, PARQundiffvars]))>1,]) 
+#This line should replace all missing more than 1 with NA to the total 
+covid_data_child[which(rowSums(is.na(covid_data_child[, PARQundiffvars]))>1),"PARQundiff"] <- NA
+## How mnay will be cut
+nrow(covid_data_child[rowSums(is.na(covid_data_child[, PARQcontrolvars]))>1,]) 
+#This line should replace all missing more than 1 with NA to the total 
+covid_data_child[which(rowSums(is.na(covid_data_child[, PARQcontrolvars]))>1),"PARQcontrol"] <- NA
+
+
+
 #Means, sds, range, histogram
 summary(covid_data_child[,c("totalPARQ", "PARQwarmth" ,  "PARQhostile", "PARQneglect", "PARQundiff", "PARQcontrol")])
 
-sd(covid_data_child$totalPARQ)
-sd(covid_data_child$PARQwarmth)
-sd(covid_data_child$PARQhostile)
-sd(covid_data_child$PARQneglect)
-sd(covid_data_child$PARQundiff)
-sd(covid_data_child$PARQcontrol)
+sd(covid_data_child$totalPARQ, na.rm =TRUE)
+sd(covid_data_child$PARQwarmth, na.rm =TRUE)
+sd(covid_data_child$PARQhostile, na.rm =TRUE)
+sd(covid_data_child$PARQneglect, na.rm =TRUE)
+sd(covid_data_child$PARQundiff, na.rm =TRUE)
+sd(covid_data_child$PARQcontrol, na.rm =TRUE)
 
 hist(covid_data_child$totalPARQ)
-hist(covid_data_child$ PARQwarmth)
-hist(covid_data_child$ PARQhostile)
-hist(covid_data_child$ PARQneglect)
-hist(covid_data_child$ PARQundiff)
-hist(covid_data_child$ PARQcontrol)
+hist(covid_data_child$PARQwarmth)
+hist(covid_data_child$PARQhostile)
+hist(covid_data_child$PARQneglect)
+hist(covid_data_child$PARQundiff)
+hist(covid_data_child$PARQcontrol)
+
+
 
 # Correlation plot --------------------------------------------------------------------------- 
 ##Make the matrix
@@ -922,6 +1011,8 @@ corrplot.mixed(M,  order = "hclust", lower.col = "black", number.cex = .6,
                p.mat = res1$p, sig.level = .05, insig = "blank") 
 
 
+
+
 # Followups -----------------------------------------------------------------------------------------------------
 # how many people interested in followup survey?
 
@@ -931,8 +1022,5 @@ summarytools::freq(as.factor(covid_data$fllwup), order = "freq")
 # Writing the scored files ----------------------------------------
 # This will currently save in the working directory - you can set the path to save where you want
 
-write.csv(covid_data, file = "covid_data_test.csv")
+write.csv(covid_data, file = "covid_data_scored.csv")
 write.csv(covid_data_child, file = "covid_data_child_scored.csv")
-
-```
-
