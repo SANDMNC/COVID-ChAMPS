@@ -16,7 +16,7 @@
 
 
 # Set working directory to where the data is.
-#setwd("/Volumes/Groups/Adaptdir/COVID-CHAMPS/Data")
+setwd("/Volumes/Groups/Adaptdir/COVID-CHAMPS/Data")
 
 
 # Load packages (install them first if don't have them using install.packages("package_name") )
@@ -153,7 +153,7 @@ countrypiedata<- summarytools::freq(covid_data$country, order = "freq", totals=F
 pie(countrypiedata[1:13,1])
 
 #Make a number variable just in case want to use it analysis. Just first 5 countries all others are other
-covid_data$country_num<- ifelse(covid_data$country == "Australia ",1,
+covid_data$country_cat<- ifelse(covid_data$country == "Australia ",1,
                                 ifelse(covid_data$country == "United Kingdom ",2,
                                        ifelse(covid_data$country == "Canada ",3,
                                               ifelse(covid_data$country == "New Zealand ",4,5))))
@@ -1017,6 +1017,54 @@ corrplot.mixed(M,  order = "hclust", lower.col = "black", number.cex = .6,
 # how many people interested in followup survey?
 
 summarytools::freq(as.factor(covid_data$fllwup), order = "freq")
+
+# Create centered variables
+
+#Create centred variables for analysis
+PARQhostile.mean <- mean(covid_data_child$PARQhostile, na.rm = TRUE)
+totalSDQ.mean <- mean(covid_data_child$totalSDQ, na.rm = TRUE)
+ch_age.mean <- mean(covid_data_child$ch_age, na.rm = TRUE)
+totalFES.mean <- mean(covid_data_child$totalFES, na.rm = TRUE)
+totalPTSD.mean <- mean(covid_data_child$totalPTSD, na.rm = TRUE)
+SDQemo.mean <- mean(covid_data_child$SDQemo, na.rm = TRUE)
+SDQhyp.mean <- mean(covid_data_child$SDQhyp, na.rm = TRUE)
+SDQcon.mean <- mean(covid_data_child$SDQcon, na.rm = TRUE)
+SDQpeer.mean <- mean(covid_data_child$SDQpeer, na.rm = TRUE)
+DASSDep.mean <- mean(covid_data_child$DASSDep, na.rm = TRUE)
+DASSAnx.mean <- mean(covid_data_child$DASSAnx, na.rm = TRUE)
+DASSStress.mean <- mean(covid_data_child$DASSStress, na.rm = TRUE)
+totalcov_dist.mean <- mean(covid_data_child$totalcov_dist, na.rm = TRUE)
+covid_pos_num.mean <- mean(covid_data_child$covid_pos_num, na.rm = TRUE)
+totalFES.mean <- mean(covid_data_child$totalFES, na.rm = TRUE)
+covid_finance_num.mean <- mean(covid_data_child$covid_finance_num, na.rm = TRUE)
+PARQcontrol.mean <- mean(covid_data_child$PARQcontrol, na.rm = TRUE)
+PARQwarmth.mean <- mean(covid_data_child$PARQwarmth, na.rm = TRUE)
+facts_comm.mean <- mean(covid_data_child$facts_comm, na.rm = TRUE)
+emotion_comm.mean <- mean(covid_data_child$emotion_comm, na.rm = TRUE)
+self_comm.mean <- mean(covid_data_child$self_comm, na.rm = TRUE)
+ch_talk_about_6_num.mean <- mean(covid_data_child$ch_talk_about_6_num, na.rm = TRUE)
+covid_data_child$ch_talk_about_6_num.c <- (covid_data_child$ch_talk_about_6_num-ch_talk_about_6_num.mean)
+covid_data_child$facts_comm.c <- (covid_data_child$facts_comm-facts_comm.mean)
+covid_data_child$emotion_comm.c <- (covid_data_child$emotion_comm-emotion_comm.mean)
+covid_data_child$self_comm.c <- (covid_data_child$self_comm-self_comm.mean)
+covid_data_child$PARQwarmth.c <- (covid_data_child$PARQwarmth-PARQwarmth.mean)
+covid_data_child$PARQcontrol.c <- (covid_data_child$PARQcontrol-PARQcontrol.mean)
+covid_data_child$covid_finance_num.c <- (covid_data_child$covid_finance_num-covid_finance_num.mean)
+covid_data_child$totalFES.c <- (covid_data_child$totalFES-totalFES.mean)
+covid_data_child$covid_pos_num.c <- (covid_data_child$covid_pos_num-covid_pos_num.mean)
+covid_data_child$totalcov_dist.c <- (covid_data_child$totalcov_dist-totalcov_dist.mean)
+covid_data_child$DASSStress.c <- (covid_data_child$DASSStress-DASSStress.mean)
+covid_data_child$DASSAnx.c <- (covid_data_child$DASSAnx-DASSAnx.mean)
+covid_data_child$DASSDep.c <- (covid_data_child$DASSDep-DASSDep.mean)
+covid_data_child$SDQpeer.c <- (covid_data_child$SDQpeer-SDQpeer.mean)
+covid_data_child$SDQcon.c <- (covid_data_child$SDQcon-SDQcon.mean)
+covid_data_child$SDQhyp.c <- (covid_data_child$SDQhyp-SDQhyp.mean)
+covid_data_child$SDQemo.c <- (covid_data_child$SDQemo-SDQemo.mean)
+covid_data_child$totalSDQ.c <- (covid_data_child$totalSDQ-totalSDQ.mean)
+covid_data_child$PARQhostile.c <- (covid_data_child$PARQhostile-PARQhostile.mean)
+covid_data_child$ch_age.c <- (covid_data_child$ch_age-ch_age.mean)
+covid_data_child$totalFES.c <- (covid_data_child$totalFES-totalFES.mean)
+covid_data_child$totalPTSD.c <- (covid_data_child$totalPTSD-totalPTSD.mean)
 
 
 # Writing the scored files ----------------------------------------
