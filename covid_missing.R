@@ -9,19 +9,23 @@
 
 #set to appropriate working directory
 #setwd("/Users/sarah/Dropbox/2020/COVID_parenting/COVID_script/")
+covid_data_child_MI <- read.csv("covid_data_child_scored_test_MI.csv", header=TRUE, stringsAsFactors = FALSE)
+
 
 #Load packages
 library(dplyr)
 library(naniar) #for examining missing
 library(ggplot2)
 library(mice) #missing data imputation 
+install.packages("VIM")
 library(VIM)
+install.packages("finalfit")
 library(finalfit) #another package which has functions to examine missing
 
 
 #Selecting the variables used in analysis
-covid_child_missing<- dplyr::select(covid_data_child, 
-                             ch_age, par_age, par_ed_ord, income_famsize, country_num, ch_gender_num,
+covid_child_missing<- dplyr::select(covid_data_child_MI, 
+                             ch_age, par_age, par_ed_ord, income_famsize, country_cat, ch_gender_num,
                              PARQhostile, PARQcontrol, PARQwarmth,
                              totalSDQ,SDQemo, SDQhyp, SDQcon, SDQpeer,
                              totalSDQ2, SDQemo2, SDQhyp2, SDQcon2, SDQpeer2,
@@ -29,7 +33,7 @@ covid_child_missing<- dplyr::select(covid_data_child,
                              totalFES, totalPTSD,
                              totalcov_dist, covid_pos_num, covid_finance_num, 
                              facts_comm, emotion_comm, self_comm,
-                             ch_talk_about_6_num, par_past_mh_num)
+                             par_past_mh_num)
 
 #visualising overall main data
 vis_miss(covid_child_missing) + theme(axis.text.x = element_text(size=6, angle=90))
@@ -48,14 +52,14 @@ aggr_plot <- aggr(covid_child_missing, col=c('navyblue','red'), numbers=TRUE, so
 marginplot(covid_child_missing[c("totalSDQ2","DASSStress")])
 
 #compare missing and non-missing
-explanatory = c("ch_age", "par_age", "par_ed_ord", "income_famsize", "country_num", "ch_gender_num",
+explanatory = c("ch_age", "par_age", "par_ed_ord", "income_famsize", "country_cat", "ch_gender_num",
                              "PARQhostile", "PARQcontrol", "PARQwarmth",
                              "totalSDQ", "SDQemo", "SDQhyp", "SDQcon", "SDQpeer",
                              "DASSDep", "DASSAnx", "DASSStress",
                              "totalFES", "totalPTSD",
                              "totalcov_dist", "covid_pos_num", "covid_finance_num", 
                              "facts_comm", "emotion_comm", "self_comm",
-                             "ch_talk_about_6_num", "par_past_mh_num")
+                             "par_past_mh_num")
 dependent = "totalSDQ2"
 covid_child_missing %>% 
   missing_compare(dependent, explanatory) %>% 
