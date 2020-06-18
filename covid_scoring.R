@@ -781,19 +781,19 @@ covid_data_child[which(rowSums(is.na(covid_data_child[, c("ch_SDQ.2_1_num" ,"ch_
 summary(covid_data_child[,c("totalSDQ", "SDQemo" ,  "SDQcon", "SDQhyp", "SDQpeer", "SDQpro")])
 summary(covid_data_child[,c("totalSDQ2", "SDQemo2" ,  "SDQcon2", "SDQhyp2", "SDQpeer2", "SDQpro2")])
 
-sd(covid_data_child$totalSDQ)
-sd(covid_data_child$SDQemo)
-sd(covid_data_child$SDQcon)
-sd(covid_data_child$SDQhyp)
-sd(covid_data_child$SDQpeer)
-sd(covid_data_child$SDQpro)
+sd(covid_data_child$totalSDQ, na.rm =TRUE)
+sd(covid_data_child$SDQemo, na.rm =TRUE)
+sd(covid_data_child$SDQcon, na.rm =TRUE)
+sd(covid_data_child$SDQhyp, na.rm =TRUE)
+sd(covid_data_child$SDQpeer, na.rm =TRUE)
+sd(covid_data_child$SDQpro, na.rm =TRUE)
 
-sd(covid_data_child$totalSDQ2)
-sd(covid_data_child$SDQemo2)
-sd(covid_data_child$SDQcon2)
-sd(covid_data_child$SDQhyp2)
-sd(covid_data_child$SDQpeer2)
-sd(covid_data_child$SDQpro2)
+sd(covid_data_child$totalSDQ2, na.rm =TRUE)
+sd(covid_data_child$SDQemo2, na.rm =TRUE)
+sd(covid_data_child$SDQcon2, na.rm =TRUE)
+sd(covid_data_child$SDQhyp2, na.rm =TRUE)
+sd(covid_data_child$SDQpeer2, na.rm =TRUE)
+sd(covid_data_child$SDQpro2, na.rm =TRUE)
 
 hist(covid_data_child$totalSDQ)
 hist(covid_data_child$SDQemo)
@@ -1017,6 +1017,21 @@ corrplot.mixed(M,  order = "hclust", lower.col = "black", number.cex = .6,
 # how many people interested in followup survey?
 
 summarytools::freq(as.factor(covid_data$fllwup), order = "freq")
+
+cov_ffllup <- covid_data[(covid_data$fllwup =="I am interested in being sent a follow-up survey in the future" | covid_data$fllwup == "Both please!") & !is.na(covid_data$fllwup),]
+#How many people for a followup survey?
+nrow(cov_ffllup)
+#What country are they from?
+summarytools::freq(as.factor(cov_ffllup$country), order = "freq")
+#Check that DASS means aren't too different between the groups
+summary(cov_ffllup$DASSAnx)
+summary(covid_data$DASSAnx)
+
+summary(cov_ffllup$DASSDep)
+summary(covid_data$DASSDep)
+
+summary(cov_ffllup$DASSStress)
+summary(covid_data$DASSStress)
 
 # Create centered variables
 
