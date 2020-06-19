@@ -8,32 +8,30 @@
 # Source of code and plots: https://datascienceplus.com/imputing-missing-data-with-r-mice-package/
 
 #set to appropriate working directory
-#setwd("/Users/sarah/Dropbox/2020/COVID_parenting/COVID_script/")
-covid_data_child_MI <- read.csv("covid_data_child_scored_test_MI.csv", header=TRUE, stringsAsFactors = FALSE)
-
+setwd("/Users/sarah/Dropbox/2020/COVID_parenting/COVID_script/")
+covid_data_child_MI <- read.csv("covid_data_child_scored_final_MI.csv", header=TRUE, stringsAsFactors = FALSE)
+# This file aso on server
 
 #Load packages
 library(dplyr)
 library(naniar) #for examining missing
 library(ggplot2)
 library(mice) #missing data imputation 
-install.packages("VIM")
 library(VIM)
-install.packages("finalfit")
 library(finalfit) #another package which has functions to examine missing
 
 
 #Selecting the variables used in analysis
-covid_child_missing<- dplyr::select(covid_data_child_MI, 
-                             ch_age, par_age, par_ed_ord, income_famsize, country_cat, ch_gender_num,
-                             PARQhostile, PARQcontrol, PARQwarmth,
-                             totalSDQ,SDQemo, SDQhyp, SDQcon, SDQpeer,
+covid_child_missing<- dplyr::select(covid_data_child_MI, id, 
+                             ch_age.c, par_age, par_ed_ord, income_famsize, country_cat, ch_gender_num,
+                             PARQhostile.c, PARQcontrol.c, PARQwarmth.c, par_gender_num,
+                             totalSDQ.c,SDQemo.c, SDQhyp.c, SDQcon.c, SDQpeer.c,
                              totalSDQ2, SDQemo2, SDQhyp2, SDQcon2, SDQpeer2,
-                             DASSDep, DASSAnx, DASSStress,
-                             totalFES, totalPTSD,
-                             totalcov_dist, covid_pos_num, covid_finance_num, 
-                             facts_comm, emotion_comm, self_comm,
-                             par_past_mh_num)
+                             DASSDep.c, DASSAnx.c, DASSStress.c,
+                             totalFES.c, totalPTSD.c,
+                             totalcov_dist.c, covid_pos_num.c, covid_finance_num.c, 
+                             facts_comm.c, emotion_comm.c, self_comm.c,
+                             par_past_mh_num, other_hosp_num)
 
 #visualising overall main data
 vis_miss(covid_child_missing) + theme(axis.text.x = element_text(size=6, angle=90))
@@ -74,14 +72,15 @@ covid_child_missing %>%
 # m=5 refers to the number of imputed datasets. Five is the default value.
 # meth='pmm' refers to the imputation method. In this case we are using predictive mean matching as imputation method. Other imputation methods can be used, type methods(mice) for a list of the available imputation methods.
 
-tempData <- mice(covid_child_missing,m=5,maxit=50,meth='pmm',seed=500)
-summary(tempData)
+miData <- mice(covid_child_missing,m=20,maxit=50,meth='pmm',seed=500)
+summary(miData)
 
 #Shows imputed datset and observed (blue)
-densityplot(tempData)
+densityplot(miData)
 
 #Another look at distributions
-stripplot(tempData, pch = 20, cex = 1.2)
+stripplot(miData, pch = 20, cex = 1.2)
 
 # Makes complete dataset based on imputed dataset (the number is the set it will use)
-completedData <- complete(tempData,1)
+completedData <- complete(miData,2)
+
