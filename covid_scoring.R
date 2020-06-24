@@ -566,9 +566,14 @@ vis_miss(covid_data_child[,which(colnames(covid_data_child)=="ch_PTSD_1"):which(
 # Demographics for children -------------------------------------------------------------------------------------------------
 
 ## Gender of child
+  # Note that 1 transgender child, but not male or female described, one child Other - 'X' - put into NA
+  # Have not dealt with the MAle, Female - currently put into NA
 covid_data_child$ch_gender <- as.factor(covid_data_child$ch_gender)
 summarytools::freq(covid_data_child$ch_gender, order = "freq")
-covid_data_child$ch_gender_num<- ifelse(covid_data_child$ch_gender == "Female", 1, 2)
+covid_data_child$ch_gender_num<- ifelse(covid_data_child$ch_gender == "Female", 1,
+                                        ifelse(covid_data_child$ch_gender == "Male", 2,
+                                               ifelse(covid_data_child$ch_gender == "Male,Prefer not to say", 2,
+                                                      NA)))
 
 ## Age of child
 #Note: this indicates some children yonger than 5 - need to remove them
