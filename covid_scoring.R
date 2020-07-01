@@ -11,8 +11,8 @@
 
 # Outputs:
 # Two csv files with combination of raw and scored data.
-# First csv each parent is a seperate row.
-# Second csv each child is a seperate row.
+# First csv each parent is a separate row.
+# Second csv each child is a separate row.
 
 
 # Set working directory to where the data is.
@@ -117,23 +117,25 @@ which(covid_data$validity_2=="Yes")
 
 #Broken up into 2 halfs for better visualisation - please note the 'TEXT' items make it appear that a lot is missing
 #Perhaps cut the TEXT variables out for this visualisation?
-vis_miss(covid_data[,which(colnames(covid_data)=="country"):which(colnames(covid_data)=="child_details.3_6")]) +
-  theme(axis.text.x = element_text(size=6, angle=90))
 
-vis_miss(covid_data[,which(colnames(covid_data)=="par_age"):which(colnames(covid_data)=="ethnicity_15_TEXT")]) +
-  theme(axis.text.x = element_text(size=6, angle=90))
-
-#COVID-related
-vis_miss(covid_data[,which(colnames(covid_data)=="par_tested"):which(colnames(covid_data)=="covid_pos_why_6_TEXT")]) +
-  theme(axis.text.x = element_text(size=6, angle=90))
-
-#family variables etc.
-vis_miss(covid_data[,which(colnames(covid_data)=="cohesion_1"):which(colnames(covid_data)=="validity_2")]) +
-  theme(axis.text.x = element_text(size=6, angle=90))
-
-#DASS missing
-vis_miss(covid_data[,which(colnames(covid_data)=="DASS_1"):which(colnames(covid_data)=="DASS_21")]) +
-  theme(axis.text.x = element_text(size=6, angle=90))
+#Uncomment to visualise the missing
+# vis_miss(covid_data[,which(colnames(covid_data)=="country"):which(colnames(covid_data)=="child_details.3_6")]) +
+#   theme(axis.text.x = element_text(size=6, angle=90))
+# 
+# vis_miss(covid_data[,which(colnames(covid_data)=="par_age"):which(colnames(covid_data)=="ethnicity_15_TEXT")]) +
+#   theme(axis.text.x = element_text(size=6, angle=90))
+# 
+# #COVID-related
+# vis_miss(covid_data[,which(colnames(covid_data)=="par_tested"):which(colnames(covid_data)=="covid_pos_why_6_TEXT")]) +
+#   theme(axis.text.x = element_text(size=6, angle=90))
+# 
+# #family variables etc.
+# vis_miss(covid_data[,which(colnames(covid_data)=="cohesion_1"):which(colnames(covid_data)=="validity_2")]) +
+#   theme(axis.text.x = element_text(size=6, angle=90))
+# 
+# #DASS missing
+# vis_miss(covid_data[,which(colnames(covid_data)=="DASS_1"):which(colnames(covid_data)=="DASS_21")]) +
+#   theme(axis.text.x = element_text(size=6, angle=90))
 
 #"Progres" through the survey
 hist(covid_data$Progress)
@@ -554,12 +556,13 @@ names(covid_data_ch1)[names(covid_data_ch1)=="ch_med_source_7_TEXT"] <- "ch_med_
 covid_data_child<- rbind(covid_data_ch1, covid_data_ch2, covid_data_ch3, covid_data_ch4, covid_data_ch5, covid_data_ch6)
 
 #Missing data for children - split up more for better viewing
-vis_miss(covid_data_child[,which(colnames(covid_data_child)=="ch_age"):which(colnames(covid_data_child)=="ch_concern")])  +
-  theme(axis.text.x = element_text(size=6, angle=90))
-vis_miss(covid_data_child[,which(colnames(covid_data_child)=="ch_SDQ.1_1"):which(colnames(covid_data_child)=="ch_SDQ.2_25")])  +
-  theme(axis.text.x = element_text(size=6, angle=90))
-vis_miss(covid_data_child[,which(colnames(covid_data_child)=="ch_PTSD_1"):which(colnames(covid_data_child)=="ch_parenting.1_29")])  +
-  theme(axis.text.x = element_text(size=6, angle=90))
+#Uncomment to visualise
+# vis_miss(covid_data_child[,which(colnames(covid_data_child)=="ch_age"):which(colnames(covid_data_child)=="ch_concern")])  +
+#   theme(axis.text.x = element_text(size=6, angle=90))
+# vis_miss(covid_data_child[,which(colnames(covid_data_child)=="ch_SDQ.1_1"):which(colnames(covid_data_child)=="ch_SDQ.2_25")])  +
+#   theme(axis.text.x = element_text(size=6, angle=90))
+# vis_miss(covid_data_child[,which(colnames(covid_data_child)=="ch_PTSD_1"):which(colnames(covid_data_child)=="ch_parenting.1_29")])  +
+#   theme(axis.text.x = element_text(size=6, angle=90))
 
 
 
@@ -567,9 +570,16 @@ vis_miss(covid_data_child[,which(colnames(covid_data_child)=="ch_PTSD_1"):which(
 
 ## Gender of child
   # Note that 1 transgender child, but not male or female described, one child Other - 'X' - put into NA
-  # Have not dealt with the MAle, Female - currently put into NA
 covid_data_child$ch_gender <- as.factor(covid_data_child$ch_gender)
 summarytools::freq(covid_data_child$ch_gender, order = "freq")
+# There are 2 children labeled as both males and female - on further investigation, using the earlier child table 
+# found that one of them was initially labeled male [row 195] and one female [457]
+#Check the row numbers for the children
+which(covid_data_child$ch_gender == "Male,Female")
+# Hardcode the gender for these 2 children
+covid_data_child[195,"ch_gender"] <- "Male"
+covid_data_child[457,"ch_gender"] <- "Female"
+#Recode to male, female and NA
 covid_data_child$ch_gender_num<- ifelse(covid_data_child$ch_gender == "Female", 1,
                                         ifelse(covid_data_child$ch_gender == "Male", 2,
                                                ifelse(covid_data_child$ch_gender == "Male,Prefer not to say", 2,
