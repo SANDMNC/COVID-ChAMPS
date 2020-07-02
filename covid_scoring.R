@@ -151,8 +151,12 @@ covid_data$country <- as.factor(covid_data$country)
 # Country frequency and percentage (% Valid is excluding NAs, % Total includes NAs)
 summarytools::freq(covid_data$country, order = "freq")
 
-countrypiedata<- summarytools::freq(covid_data$country, order = "freq", totals=FALSE)
-pie(countrypiedata[1:13,1])
+countrypiedata<- summarytools::freq(covid_data$country, order = "freq", rows = 1:5, totals=FALSE)
+
+#Plot frequencies
+pie(countrypiedata[1:6,1], labels = countrypiedata[1:6], col = rainbow(length(countrypiedata[1:6,1])))
+legend("topright", c("Australia","UK","Canada","US","NZ","other"), cex = 0.8,
+       fill = rainbow(length(countrypiedata[1:6,1])))
 
 #Make a number variable just in case want to use it analysis. Just first 5 countries all others are other
 covid_data$country_cat<- ifelse(covid_data$country == "Australia ",1,
@@ -178,14 +182,19 @@ pie(ethpiedata[1:27,1])
 ## Gender of parent
 covid_data$par_gender <- as.factor(covid_data$par_gender)
 # frequency and percentage (% Valid is excluding NAs, % Total includes NAs)
-summarytools::freq(covid_data$par_gender, order = "freq")
-covid_data$par_gender_num<- ifelse(covid_data$par_gender == "Female", 1, 2)
+genderpiedata<-summarytools::freq(covid_data$par_gender, rows=1:2, order = "freq")
 
+pie(genderpiedata[1:3,1], labels = genderpiedata[1:3], col = rainbow(length(genderpiedata[1:3,1])))
+legend("topright", c("Female","Male","Other"), cex = 0.8, fill = rainbow(length(genderpiedata[1:3,1])))
+
+covid_data$par_gender_num<- ifelse(covid_data$par_gender == "Female", 1, 2)       
+       
+       
 ## Age of parent
 #the following displays m, median, range, sd
 summary(covid_data$par_age)
 sd(covid_data$par_age, na.rm =TRUE)
-hist(covid_data$par_age)
+hist(covid_data$par_age, col = "lightblue", xlab = "Parent age", main = NULL)
 
 ## Occupation
 #This is a bit messy as people could choose more than 1  category - maybe for descriptives place the small numbers of multiple options into larger categories?
@@ -217,7 +226,8 @@ covid_data$income_famsize<-covid_data$income_mid/sqrt(as.numeric(covid_data$home
 
 summary(covid_data$income_famsize)
 sd(covid_data$income_famsize, na.rm =TRUE)
-hist(covid_data$income_famsize)
+hist(covid_data$income_mid, col = "lightblue", xlab = "Annual Income", main = NULL)
+hist(covid_data$income_famsize, col = "lightblue", xlab = "Income relative to family size", main = NULL)
 
 #Education - at the moment this is ordinal
 #recoding as ordinal data
@@ -233,11 +243,8 @@ covid_data$par_ed_ord<- ifelse(covid_data$par_ed == "Partial primary / elementar
 
 #Frequency and percentage of people in the different groups
 summarytools::freq(as.factor(covid_data$par_ed_ord), order = "freq")
-hist(covid_data$par_ed_ord)
+hist(covid_data$par_ed_ord, col = "lightblue", xlab = "Parent Education (1=partial primary, 10=grad school)", main = NULL)
 
-
-# known hospitalised
-covid_data$other_hosp_num<- ifelse(covid_data$other_hosp == "No", 0,1)
 
 
 #Other demographics - contained in child section
@@ -251,12 +258,32 @@ covid_data$other_hosp_num<- ifelse(covid_data$other_hosp == "No", 0,1)
 summarytools::freq(as.factor(covid_data$par_tested), order = "freq")
 ##hospitalized, 
 summarytools::freq(as.factor(covid_data$par_hosp), order = "freq")
+
 ##known, 
 summarytools::freq(as.factor(covid_data$other_covid), order = "freq")
+covid_data$other_covid <- as.factor(covid_data$other_covid)
+# frequency and percentage (% Valid is excluding NAs, % Total includes NAs)
+otherpiedata<-summarytools::freq(covid_data$other_covid, order = "freq")
+pie(otherpiedata[1:2,1], labels = otherpiedata[1:2,1], main = "Known someone with COVID19", col = rainbow(length(otherpiedata[1:2,1])))
+legend("topright", c("No","Yes"), cex = 0.8, fill = rainbow(length(otherpiedata[1:2,1])))
+
 ##known hospitalized, 
 summarytools::freq(as.factor(covid_data$other_hosp), order = "freq")
+covid_data$other_hosp <- as.factor(covid_data$other_hosp)
+# frequency and percentage (% Valid is excluding NAs, % Total includes NAs)
+hosppiedata<-summarytools::freq(covid_data$other_hosp, order = "freq")
+pie(hosppiedata[1:2,1], labels = hosppiedata[1:2,1], main = "Known someone hospitalised with COVID19", col = rainbow(length(hosppiedata[1:2,1])))
+legend("topright", c("No","Yes"), cex = 0.8, fill = rainbow(length(hosppiedata[1:2,1])))
+covid_data$other_hosp_num<- ifelse(covid_data$other_hosp == "No", 0,1)
+
 ##known died, 
 summarytools::freq(as.factor(covid_data$other_died), order = "freq")
+covid_data$other_died <- as.factor(covid_data$other_died)
+# frequency and percentage (% Valid is excluding NAs, % Total includes NAs)
+diedpiedata<-summarytools::freq(covid_data$other_died, order = "freq")
+pie(diedpiedata[1:2,1], labels = diedpiedata[1:2,1], main = "Known someone who died from COVID19", col = rainbow(length(diedpiedata[1:2,1])))
+legend("topright", c("No","Yes"), cex = 0.8, fill = rainbow(length(diedpiedata[1:2,1])))
+
 ##stay at home (Y/N), 
 summarytools::freq(as.factor(covid_data$stay_home), order = "freq")
 ##stay at home length, 
@@ -279,7 +306,7 @@ covid_data$iso <- covid_data$datdiff_stillhome
 covid_data[covid_data$leave_home=="Yes" & !is.na(covid_data$leave_home),"iso"] <- covid_data[covid_data$leave_home=="Yes" & !is.na(covid_data$leave_home),"datdiff_lifted"]
 
 summary(covid_data$iso)
-hist(covid_data$iso)
+hist(covid_data$iso, col = "lightblue", xlab = "Days in isolation ('stay-at-home' orders)", main = NULL)
 
 
 ##restriction lifted?, 
@@ -353,14 +380,14 @@ sd(covid_data$covid_worry_3_num, na.rm =TRUE)
 sd(covid_data$covid_neg_num, na.rm =TRUE)
 sd(covid_data$covid_pos_num, na.rm =TRUE)
 hist(covid_data$totalcov_dist)
-hist(covid_data$covid_finance_num)
+hist(covid_data$covid_finance_num, col = "lightblue", main = NULL, xlab = "Worry abour finances (0=not at all, 5=a lot)")
 hist(covid_data$covid_uncertain_num)
 hist(covid_data$covid_plans_num)
 hist(covid_data$covid_worry_1_num)
 hist(covid_data$covid_worry_2_num)
 hist(covid_data$covid_worry_3_num)
-hist(covid_data$covid_neg_num)
-hist(covid_data$covid_pos_num)
+hist(covid_data$covid_neg_num, col = "lightblue", main = NULL, xlab = "negative impact (0=not at all, 5=a lot)")
+hist(covid_data$covid_pos_num, col = "lightblue", main = NULL, xlab = "positive impact (0=not at all, 5=a lot)")
 
 
 
@@ -389,12 +416,17 @@ hist(covid_data$Stress)
 covid_data$DepCat <- as.factor(car::recode(covid_data$Dep, "NA=NA; 0:4='Normal';5:6='Mild';7:10='Moderate'; 11:13='Severe'; 
                                            else='Ex_severe'"))
 table(covid_data$DepCat, useNA = "ifany")
+ggplot(covid_data, aes(DepCat)) + geom_bar(fill = "steelblue")
+
 covid_data$AnxCat <- as.factor(car::recode(covid_data$Anx, "NA=NA; 0:3='Normal';4:5='Mild';6:7='Moderate'; 8:9='Severe'; 
                                            else='Ex_severe'"))
 table(covid_data$AnxCat, useNA = "ifany")
+ggplot(covid_data, aes(AnxCat)) + geom_bar(fill = "steelblue")
+
 covid_data$StressCat <- as.factor(car::recode(covid_data$Stress, "NA=NA; 0:7='Normal';8:9='Mild';10:12='Moderate'; 13:16='Severe'; 
                                               else='Ex_severe'"))
 table(covid_data$StressCat, useNA = "ifany")
+ggplot(covid_data, aes(StressCat)) + geom_bar(fill = "steelblue")
 
 #This section is for checking the scoring of individual items, and still to be added the 70% imputated section
 
@@ -585,6 +617,14 @@ covid_data_child$ch_gender_num<- ifelse(covid_data_child$ch_gender == "Female", 
                                                ifelse(covid_data_child$ch_gender == "Male,Prefer not to say", 2,
                                                       NA)))
 
+summarytools::freq(as.factor(covid_data_child$ch_gender), row=1:2, order = "freq")
+covid_data_child$ch_gender <- as.factor(covid_data$other_died)
+# frequency and percentage (% Valid is excluding NAs, % Total includes NAs)
+chgenderpiedata<-summarytools::freq(covid_data_child$ch_gender, order = "freq")
+pie(chgenderpiedata[1:3,1], labels = chgenderpiedata[1:3,1], main = "Child Gender", col = rainbow(length(chgenderpiedata[1:3,1])))
+legend("topright", c("Female","Male","Other"), cex = 0.8, fill = rainbow(length(chgenderpiedata[1:3,1])))
+
+
 ## Age of child
 #Note: this indicates some children yonger than 5 - need to remove them
 covid_data_child[covid_data_child$ch_age<5 & !is.na(covid_data_child$ch_age), "ch_age"]
@@ -594,7 +634,7 @@ covid_data_child<- covid_data_child[covid_data_child$ch_age>=5 , ]
 #the following displays m, median, range, sd
 summary(covid_data_child$ch_age)
 sd(covid_data_child$ch_age, na.rm =TRUE)
-hist(covid_data_child$ch_age)
+hist(covid_data_child$ch_age, col = "lightblue", main = NULL, xlab = "child age")
 
 
 ## Type of parent
