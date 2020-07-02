@@ -1,0 +1,7 @@
+# ignores the file type csv
+# to stop data been uploaded to remote repo.
+*.csv
+
+# ignores R history file
+*.Rhistory
+
