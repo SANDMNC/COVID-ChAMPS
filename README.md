@@ -8,3 +8,4 @@ To create this data file, download from qualtrics, delete rows 2 and 3 (addition
 # covid_scoring.R: Data cleaning, processing and Questionnaire scoring for COVID-ChAMPS project
 # covid_missing.R: Included some visualisations of missing data and runs the multiple imputation
 # analyses.R: Data analysis code
+# covid_tables.Rmd: Uses papaja package to create reproducible APA style tables
