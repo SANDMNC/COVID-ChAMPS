@@ -80,6 +80,7 @@ We used `r cite_r("r-references.bib")` for all our analyses.
 
 ```{r, tables, echo=FALSE, results='asis'}
 
+
 # This script calculates descriptive statistics and makes tables. 
 # It uses the same script that was the input for the analyses script.
 # Question: Need to check with Sarah whether those numbers will be correct depending on listwise deletion??
