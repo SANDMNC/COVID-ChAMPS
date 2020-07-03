@@ -1,0 +1,137 @@
+---
+title             : "COVID-19 Child & Adolescent Mental Health and Parenting Study"
+shorttitle        : "COVID-ChAMPS"
+
+author: 
+  - name          : "Sarah Whittle"
+    affiliation   : "1"
+    corresponding : yes    # Define only one corresponding author
+    address       : "Postal address"
+    email         : "swhittle@unimelb.edu.au"
+  - name          : "Other authors"
+    affiliation   : "2"
+
+affiliation:
+  - id            : "1"
+    institution   : "Melbourne Neuropsychiatry Centre (MNC), Department of Psychiatry, The University of Melbourne & Melbourne Health, Melbourne, Australia"
+  - id            : "2"
+    institution   : "Other Institute"
+
+authornote: |
+  Add complete departmental affiliations for each author here. Each new line herein must be indented, like this line.
+
+  Enter author note here.
+
+
+  
+keywords          : "keywords"
+wordcount         : "X"
+
+bibliography      : ["r-references.bib"]
+
+floatsintext      : no
+figurelist        : no
+tablelist         : no
+footnotelist      : no
+linenumbers       : yes
+mask              : no
+draft             : no
+
+documentclass     : "apa6"
+classoption       : "man"
+output            : papaja::apa6_word
+---
+
+```{r setup, include = FALSE}
+library("papaja")
+library(psych)
+library(dplyr)
+r_refs("r-references.bib")
+
+```
+
+```{r analysis-preferences}
+# Seed for random number generation
+set.seed(42)
+knitr::opts_chunk$set(cache.extra = knitr::rand_seed)
+```
+
+
+
+# Methods
+
+## Participants
+
+## Material
+
+## Procedure
+
+## Data analysis
+We used `r cite_r("r-references.bib")` for all our analyses.
+
+
+# Results
+
+## Reproducible table section
+
+
+```{r, tables, echo=FALSE, results='asis'}
+
+# This script calculates descriptive statistics and makes tables. 
+# It uses the same script that was the imput for the analyses script.
+# Question: Need to check with Sarah whether those numbers will be correct depending on listwise deletion??
+
+#read in data
+covid_data_child <- read.csv("covid_data_child_scored.csv", header=TRUE, stringsAsFactors = FALSE)
+
+#Things to do:
+# N's/stats for the sample used in analysis (i.e., those that completed SDQ1 or PTSD, n parents is 381):
+# Frequencies,% for demographic info - gender of parent and children, country, income, edu, occupation, ethnicity, biological vs other relationship to child
+# Frequencies/% for COVID - tested, hospitalized, known, known hospitalized, known died, stay at home (Y/N), stay at home length, restriction lifted?, follow rules, why?, job change
+# COVID total distress and COVID positive - M/SD
+# COVID communication - facts/emotion/self M/SD
+# Frequencies for any past/current mental illness of parent and children
+# SDQ change since COVID - M/SD + frequencies based on number of items where more is reported (something to indicate the extent of kids who had worsenign problems)
+
+
+
+#Mean, SD, range for continuous vbls - DASS Dep & Anx & Stress, FES, PARQ hostile & warmth, 
+# SDQ emo, hyp, con, peer, PTSD 
+# + Ns/% in each group based on clinical cut-off's (DASS, PARQ, SDQ).
+
+#Select the variables to go in
+
+analysis_vars<- dplyr::select(covid_data_child, DASSDep, DASSAnx, DASSStress, totalFES, PARQhostile, PARQwarmth, 
+              SDQemo, SDQhyp, SDQcon, SDQpeer, totalPTSD)
+
+#provides mean, sd, kurtosis, skew etc
+desc <- describe(analysis_vars)
+
+#Just select the columns want for table (at this point n,m,sd,range)
+desc1 <- desc[, c("n", "mean", "sd", "range")]
+
+row.names(desc1) <- c("DASS - Depression", "DASS - Anxiety", "DASS - Stress", "FES", "PARQ - Hostile", "PARQ - Warmth", 
+              "SDQ - emotional problems" , "SDQ - hyperactivity", "SDQ - conduct", "SDQ - peer problems", "PTSD symptoms")
+
+#Use the wrapper apa_table to make an apa table of the descriptive
+
+apa_table(desc1,
+          caption = "Means, standard deviations and range for the key measures",
+          #note = "bottom part",
+          align = c("l","c", "c", "c", "c"),
+          col.names = c("Measure of interest", "N","Mean","SD","Range"))
+```
+
+# Discussion
+
+
+\newpage
+
+# References
+
+\begingroup
+\setlength{\parindent}{-0.5in}
+\setlength{\leftskip}{0.5in}
+
+<div id="refs" custom-style="Bibliography"></div>
+\endgroup
