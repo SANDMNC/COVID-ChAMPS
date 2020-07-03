@@ -43,6 +43,9 @@ output            : papaja::apa6_word
 ---
 
 ```{r setup, include = FALSE}
+
+#papaja needs to be downloaded from github - instructions here - https://github.com/crsh/papaja
+
 library("papaja")
 library(psych)
 library(dplyr)
@@ -78,7 +81,7 @@ We used `r cite_r("r-references.bib")` for all our analyses.
 ```{r, tables, echo=FALSE, results='asis'}
 
 # This script calculates descriptive statistics and makes tables. 
-# It uses the same script that was the imput for the analyses script.
+# It uses the same script that was the input for the analyses script.
 # Question: Need to check with Sarah whether those numbers will be correct depending on listwise deletion??
 
 #read in data
