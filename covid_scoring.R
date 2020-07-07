@@ -401,34 +401,7 @@ summarytools::freq(as.factor(covid_data$par_past_mh_num), order = "freq")
 # DASS scoring -------------------------------------------------------------------------------------------
 
 
-#Subscale scores (already scored within qualtrics). Mean, sd, range of scores and histograms
-summary(covid_data$Dep)
-sd(covid_data$Dep, na.rm =TRUE)
-hist(covid_data$Dep)
-summary(covid_data$Anx)
-sd(covid_data$Anx, na.rm =TRUE)
-hist(covid_data$Anx)
-summary(covid_data$Stress)
-sd(covid_data$Stress, na.rm =TRUE)
-hist(covid_data$Stress)
-
-#Create new categorical variable for each subscale putting them in categories
-covid_data$DepCat <- as.factor(car::recode(covid_data$Dep, "NA=NA; 0:4='Normal';5:6='Mild';7:10='Moderate'; 11:13='Severe'; 
-                                           else='Ex_severe'"))
-table(covid_data$DepCat, useNA = "ifany")
-ggplot(covid_data, aes(DepCat)) + geom_bar(fill = "steelblue")
-
-covid_data$AnxCat <- as.factor(car::recode(covid_data$Anx, "NA=NA; 0:3='Normal';4:5='Mild';6:7='Moderate'; 8:9='Severe'; 
-                                           else='Ex_severe'"))
-table(covid_data$AnxCat, useNA = "ifany")
-ggplot(covid_data, aes(AnxCat)) + geom_bar(fill = "steelblue")
-
-covid_data$StressCat <- as.factor(car::recode(covid_data$Stress, "NA=NA; 0:7='Normal';8:9='Mild';10:12='Moderate'; 13:16='Severe'; 
-                                              else='Ex_severe'"))
-table(covid_data$StressCat, useNA = "ifany")
-ggplot(covid_data, aes(StressCat)) + geom_bar(fill = "steelblue")
-
-#This section is for checking the scoring of individual items, and still to be added the 70% imputated section
+#This section is for checking the scoring of individual items
 
 DASSvars <- vars_select(varnames, starts_with("DASS"))
 
@@ -473,6 +446,31 @@ covid_data[which(rowSums(is.na(covid_data[, keys.listDASS$DASSAnx]))>2),"DASSAnx
 nrow(covid_data[rowSums(is.na(covid_data[, keys.listDASS$DASSStress]))>2,])
 covid_data[which(rowSums(is.na(covid_data[, keys.listDASS$DASSStress]))>2),"DASSStress"] <- NA
 
+#Create new categorical variable for each subscale putting them in categories
+covid_data$DepCat <- as.factor(car::recode(covid_data$DASSDep, "NA=NA; 0:4='Normal';5:6='Mild';7:10='Moderate'; 11:13='Severe'; 
+                                           else='Ex_severe'"))
+table(covid_data$DepCat, useNA = "ifany")
+ggplot(covid_data, aes(DepCat)) + geom_bar(fill = "steelblue")
+
+covid_data$AnxCat <- as.factor(car::recode(covid_data$DASSAnx, "NA=NA; 0:3='Normal';4:5='Mild';6:7='Moderate'; 8:9='Severe'; 
+                                           else='Ex_severe'"))
+table(covid_data$AnxCat, useNA = "ifany")
+ggplot(covid_data, aes(AnxCat)) + geom_bar(fill = "steelblue")
+
+covid_data$StressCat <- as.factor(car::recode(covid_data$DASSStress, "NA=NA; 0:7='Normal';8:9='Mild';10:12='Moderate'; 13:16='Severe'; 
+                                              else='Ex_severe'"))
+table(covid_data$StressCat, useNA = "ifany")
+ggplot(covid_data, aes(StressCat)) + geom_bar(fill = "steelblue")
+
+summary(covid_data$DASSDep)
+sd(covid_data$DASSDep, na.rm =TRUE)
+hist(covid_data$DASSDep)
+summary(covid_data$DASSAnx)
+sd(covid_data$DASSAnx, na.rm =TRUE)
+hist(covid_data$DASSAnx)
+summary(covid_data$DASSStress)
+sd(covid_data$DASSStress, na.rm =TRUE)
+hist(covid_data$DASSStress)
 
 # FES cohesion scoring -------------------------------------------------------------------------------------------
 
@@ -586,6 +584,9 @@ names(covid_data_ch1)[names(covid_data_ch1)=="ch_med_source_7_TEXT"] <- "ch_med_
 
 #Merge all the different children into 1 dataset
 covid_data_child<- rbind(covid_data_ch1, covid_data_ch2, covid_data_ch3, covid_data_ch4, covid_data_ch5, covid_data_ch6)
+
+#Add on a second ID - to give each child a unique identifier
+covid_data_child$id2<- 1:nrow(covid_data_child)
 
 #Missing data for children - split up more for better viewing
 #Uncomment to visualise
@@ -1132,8 +1133,8 @@ covid_data_child$SDQhyp.c <- (covid_data_child$SDQhyp-SDQhyp.mean)
 covid_data_child$SDQemo.c <- (covid_data_child$SDQemo-SDQemo.mean)
 covid_data_child$totalSDQ.c <- (covid_data_child$totalSDQ-totalSDQ.mean)
 covid_data_child$PARQhostile.c <- (covid_data_child$PARQhostile-PARQhostile.mean)
-covid_data_child$ch_age.c <- (covid_data_child$ch_age-ch_age.mean)
 covid_data_child$totalFES.c <- (covid_data_child$totalFES-totalFES.mean)
+covid_data_child$ch_age.c <- (covid_data_child$ch_age-ch_age.mean)
 covid_data_child$totalPTSD.c <- (covid_data_child$totalPTSD-totalPTSD.mean)
 
 
