@@ -16,11 +16,14 @@ covid_data_child$other_par_num<- ifelse(covid_data_child$other_par == "No", 0,1)
 income_famsize.mean <- mean(covid_data_child$income_famsize, na.rm = TRUE)
 covid_data_child$income_famsize.c <- (covid_data_child$income_famsize-income_famsize.mean)
 
-
+# Remove first column (X)
 covid_data_child_for_MI <- covid_data_child[,c(2:537)]
                                               
 # Select variables for MI
 covid_data_child_for_MI <- covid_data_child_for_MI[c(1:298,300:368,370:373,375:410,412:435,438:457,459:463,466:469,471,473:474,477,479,482:497),c(1,44,295:300,303,313,338,353,422:427,449,514:533,535:536)]
+
+# Write file for listwise anr robust analyses
+write.csv(covid_data_child_for_MI, file = "covid_data_child_scored_for_MI.csv")
 
 #Load packages
 library(dplyr)
