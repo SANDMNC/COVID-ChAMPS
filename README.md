@@ -8,7 +8,7 @@ To create this data file, download from qualtrics, delete rows 2 and 3 (addition
 # covid_scoring.R: 
 Data cleaning, processing and Questionnaire scoring for COVID-ChAMPS project
 # covid_missing.R: 
-Included some visualisations of missing data and runs the multiple imputation
+Included some visualisations of missing data and runs the multiple imputation. Also creates the files child file that 'listwise deletion' and robust lme models are run on.
 # analyses.R: 
 Data analysis code
 # covid_tables.Rmd: 
