@@ -10,8 +10,17 @@
 #set to appropriate working directory
 setwd("/Volumes/Groups/Adaptdir/COVID-CHAMPS/Data")
 covid_data_child <- read.csv("covid_data_child_scored.csv", header=TRUE, stringsAsFactors = FALSE)
+
+#scoring of moderating factors, done here rather than the scoring.R file because it will drive me crazy to go back to that point!
+covid_data_child$other_par_num<- ifelse(covid_data_child$other_par == "No", 0,1)
+income_famsize.mean <- mean(covid_data_child$income_famsize, na.rm = TRUE)
+covid_data_child$income_famsize.c <- (covid_data_child$income_famsize-income_famsize.mean)
+
+
+covid_data_child_for_MI <- covid_data_child[,c(2:537)]
+                                              
 # Select variables for MI
-covid_data_child_for_MI <- covid_data_child[c(1:298,300:368,370:373,375:410,412:435,438:457,459:463,466:469,471,473:474,477,479,482:497),c(1,44,295:300,303,313,338,353,422:427,449,514:533)]
+covid_data_child_for_MI <- covid_data_child_for_MI[c(1:298,300:368,370:373,375:410,412:435,438:457,459:463,466:469,471,473:474,477,479,482:497),c(1,44,295:300,303,313,338,353,422:427,449,514:533,535:536)]
 
 #Load packages
 library(dplyr)
@@ -23,16 +32,15 @@ library(finalfit) #another package which has functions to examine missing
 
 
 #Selecting the variables used in analysis
-covid_child_missing<- dplyr::select(covid_data_child_for_MI, id, 
-                             ch_age.c, par_age, par_ed_ord, income_famsize, country_cat, ch_gender_num,
-                             PARQhostile.c, PARQcontrol.c, PARQwarmth.c, par_gender_num,
+covid_child_missing<- dplyr::select(covid_data_child_for_MI, id, ch_age.c, par_age, par_ed_ord, income_famsize.c, country_cat, 
+                             ch_gender_num, PARQhostile.c, PARQcontrol.c, PARQwarmth.c, par_gender_num,
                              totalSDQ.c,SDQemo.c, SDQhyp.c, SDQcon.c, SDQpeer.c,
                              totalSDQ2, SDQemo2, SDQhyp2, SDQcon2, SDQpeer2,
                              DASSDep.c, DASSAnx.c, DASSStress.c,
                              totalFES.c, totalPTSD, totalDASS, iso,
                              totalcov_dist.c, covid_pos_num.c, covid_finance_num.c, 
                              facts_comm.c, emotion_comm.c, self_comm.c,
-                             par_past_mh_num, other_hosp_num)
+                             par_past_mh_num, other_hosp_num, other_par_num)
 
 #visualising overall main data
 vis_miss(covid_child_missing) + theme(axis.text.x = element_text(size=6, angle=90))
