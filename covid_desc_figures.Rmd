@@ -45,6 +45,12 @@ for (i in 1:ncol(SDQ2numdf)) {
 
 SDQ.c.freq$varname <- c("Pr - considerate", "H - restless", "E - headaches", "Pr - share", "C - temper","Pe - solitary", "C - obedient", "E - worries", "Pr - helpful", "H - fidget", "Pe - friend", "C - fights", "E - unhappy", "Pe - liked", "H - distracted", "E - nervous", "Pr - kind", "C - lies", "Pe - bullied", "Pr - volunteers", "H - thinks", "C - steals", "Pe - adults", "E - fears", "H - attention")
 
+#calculating the percentage of things of more/less/same for each item
+ SDQ.c.freq$percentmore<- (SDQ.c.freq$More/rowSums(SDQ.c.freq[,c(1:3)]))*100
+ SDQ.c.freq$percentsame<- (SDQ.c.freq$Same/rowSums(SDQ.c.freq[,c(1:3)]))*100
+ SDQ.c.freq$percentless<- (SDQ.c.freq$Less/rowSums(SDQ.c.freq[,c(1:3)]))*100
+ 
+
 
 less <- SDQ.c.freq[,c("Less","varname")]
 colnames(less)[1] <- "Freq"
@@ -58,19 +64,16 @@ more <- SDQ.c.freq[,c("More","varname")]
 colnames(more)[1] <- "Freq"
 more$change <- 'more'
 
-SDQ.c.freq <- rbind(less, same, more)
+#change the name here so  can have 2 different dataframes
+freqforplot <- rbind(less, same, more)
 
 #Chnage order of the factors to chnage how th bars are stacked
-SDQ.c.freq$change <- factor(SDQ.c.freq$change, levels = c('same', 'less', 'more'))
+freqforplot$change <- factor(freqforplot$change, levels = c('same', 'less', 'more'))
 
-# SDQ.c.freq$varname <- factor(SDQ.c.freq$varname,
-#                              levels = SDQ.c.freq$varname[order(SDQ.c.freq$Freq, decreasing = TRUE)])
 
-ggplot(SDQ.c.freq, aes(fill=change, y=Freq, x= varname)) + 
+ggplot(freqforplot, aes(fill=change, y=Freq, x= varname)) + 
     geom_bar(stat = "identity") +
     theme(axis.text.x = element_text(angle = 45))
-
-
 
 
 ```
