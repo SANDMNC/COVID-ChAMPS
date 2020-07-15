@@ -1,35 +1,45 @@
-install.packages("interactions")
-install.packages("tidyverse")
 
 ```{r echo=FALSE, warning=FALSE}
 
-setwd("/Volumes/Groups/Adaptdir/COVID-CHAMPS/Data")
+#setwd("/Volumes/Groups/Adaptdir/COVID-CHAMPS/Data")
 covid_data_child <- read.csv("covid_data_child_scored.csv", header=TRUE, stringsAsFactors = FALSE)
 
+#read in packages
 library(tidyverse)
 library(interactions)
 library(ggplot2)
+library(jtools) #apa theme
+library(ggpubr) #ggarrange
 
-theme_set(
-  theme_bw() 
-)
+#theme_set(
+ # theme_bw() 
+#)
 
 #covid distress
 
-ggplot(covid_data_child, aes(x = totalcov_dist, y = SDQhyp2)) +
+p1<- ggplot(covid_data_child, aes(x = totalcov_dist, y = SDQhyp2)) +
 geom_jitter(color = "#00CC99", size = 1.5, shape = 23) +
 geom_smooth(color = "#00AFBB", fill = "#00AFBB", method = lm) +
-  labs(x = "Total COVID Negative Impact", y = "Change in Inattention-Hyperactivity")
+  labs(x = "Total COVID Negative Impact", y = "Change in Inattention-Hyperactivity")+ 
+  theme_apa()
 
-ggplot(covid_data_child, aes(x = totalcov_dist, y = SDQcon2)) +
+p2 <- ggplot(covid_data_child, aes(x = totalcov_dist, y = SDQcon2)) +
   geom_jitter(color = "#00CC99", size = 1.5, shape = 23) +
   geom_smooth(color = "#00AFBB", fill = "#00AFBB", method = lm) +
-  labs(x = "Total COVID Negative Impact", y = "Change in Conduct Problems")
+  labs(x = "Total COVID Negative Impact", y = "Change in Conduct Problems") + 
+  theme_apa()
 
-ggplot(covid_data_child, aes(x = totalcov_dist, y = totalPTSD)) +
+p3 <- ggplot(covid_data_child, aes(x = totalcov_dist, y = totalPTSD)) +
   geom_jitter(color = "#00CC99", size = 1.5, shape = 23) +
   geom_smooth(color = "#00AFBB", fill = "#00AFBB", method = lm) +
-  labs(x = "Total COVID Negative Impact", y = "Trauma Symptoms")
+  labs(x = "Total COVID Negative Impact", y = "Trauma Symptoms") + 
+  theme_apa()
+
+#put these 3 plots in a row in one figure
+figure1 <- ggarrange(p1, p2, p3,
+                    labels = c("A", "B", "C"),
+                    ncol = 3, nrow = 1)
+figure1
 
 ggplot(covid_data_child, aes(x = totalcov_dist, y = SDQemo2, color = SDQemo_cat, fill = SDQemo_cat)) +
   geom_jitter(size = 1.5, shape = 23) +
@@ -40,49 +50,85 @@ ggplot(covid_data_child, aes(x = totalcov_dist, y = SDQemo2, color = SDQemo_cat,
                            labels=c("Average", "High", "Slightly Raised")) +
   scale_fill_discrete(name="Baseline SDQ\nEmotional Problems",
                           breaks=c("Average", "High", "S_raised"),
-                          labels=c("Average", "High", "Slightly Raised"))
+                          labels=c("Average", "High", "Slightly Raised")) +
+  theme_apa()
 
 ggplot(covid_data_child, aes(x = covid_pos_num, y = SDQpeer2)) +
   geom_jitter(color = "#00CC99", size = 1.5, shape = 23) +
   geom_smooth(color = "#00AFBB", fill = "#00AFBB", method = lm) +
-  labs(x = "Total COVID Positive Impact", y = "Change in Peer Problems")
+  labs(x = "Total COVID Positive Impact", y = "Change in Peer Problems") +
+  theme_apa()
 
 # DASS
 
-ggplot(covid_data_child, aes(x = DASSDep, y = SDQemo2)) +
+DASSp1 <- ggplot(covid_data_child, aes(x = DASSDep, y = SDQemo2)) +
   geom_jitter(color = "#00CC99", size = 1.5, shape = 23) +
   geom_smooth(color = "#00AFBB", fill = "#00AFBB", method = lm) +
-  labs(x = "Parent Depressive Symptoms", y = "Change in Emotional Problems")
+  labs(x = "Parent Depressive Symptoms", y = "Change in Emotional Problems") +
+  theme_apa()
 
-ggplot(covid_data_child, aes(x = DASSDep, y = totalPTSD)) +
+DASSp2 <- ggplot(covid_data_child, aes(x = DASSDep, y = totalPTSD)) +
   geom_jitter(color = "#00CC99", size = 1.5, shape = 23) +
   geom_smooth(color = "#00AFBB", fill = "#00AFBB", method = lm) +
-  labs(x = "Parent Depressive Symptoms", y = "Trauma Symptoms")
+  labs(x = "Parent Depressive Symptoms", y = "Trauma Symptoms")+
+  theme_apa()
 
-ggplot(covid_data_child, aes(x = DASSAnx, y = SDQemo2)) +
+DASSp3 <- ggplot(covid_data_child, aes(x = DASSAnx, y = SDQemo2)) +
   geom_jitter(color = "#00CC99", size = 1.5, shape = 23) +
   geom_smooth(color = "#00AFBB", fill = "#00AFBB", method = lm) +
-  labs(x = "Parent Anxiety Symptoms", y = "Change in Emotional Problems")
+  labs(x = "Parent Anxiety Symptoms", y = "Change in Emotional Problems")+
+  theme_apa()
 
-ggplot(covid_data_child, aes(x = DASSDep, y = SDQpeer2)) +
+DASSp4 <- ggplot(covid_data_child, aes(x = DASSAnx, y = SDQpeer2)) +
   geom_jitter(color = "#00CC99", size = 1.5, shape = 23) +
   geom_smooth(color = "#00AFBB", fill = "#00AFBB", method = lm) +
-  labs(x = "Parent Anxiety Symptoms", y = "Change in Peer Problems")
+  labs(x = "Parent Anxiety Symptoms", y = "Change in Peer Problems")+
+  theme_apa()
 
-ggplot(covid_data_child, aes(x = DASSDep, y = totalPTSD)) +
+DASSp5 <- ggplot(covid_data_child, aes(x = DASSStress, y = SDQpeer2)) +
   geom_jitter(color = "#00CC99", size = 1.5, shape = 23) +
   geom_smooth(color = "#00AFBB", fill = "#00AFBB", method = lm) +
-  labs(x = "Parent Depressive Symptoms", y = "Trauma Symptoms")
+  labs(x = "Parent Stress", y = "Change in Peer Problems")+
+  theme_apa()
 
-ggplot(covid_data_child, aes(x = DASSStress, y = SDQpeer2)) +
+DASSp6 <- ggplot(covid_data_child, aes(x = DASSStress, y = totalPTSD)) +
   geom_jitter(color = "#00CC99", size = 1.5, shape = 23) +
   geom_smooth(color = "#00AFBB", fill = "#00AFBB", method = lm) +
-  labs(x = "Parent Stress", y = "Change in Peer Problems")
+  labs(x = "Parent Stress", y = "Trauma Symptoms") +
+  theme_apa()
 
-ggplot(covid_data_child, aes(x = DASSStress, y = totalPTSD)) +
+
+#put these 6 plots in a row in one figure
+figureDASS <- ggarrange(DASSp1, DASSp2, DASSp3, DASSp4, DASSp5, DASSp6,
+                    labels = c("A", "B", "C", "D", "E", "F"),
+                    ncol = 2, nrow = 3)
+figureDASS
+
+#Sarah I made the extra DASS plots to fit into a complete grid in case you want them
+DASSp7 <- ggplot(covid_data_child, aes(x = DASSDep, y = SDQpeer2)) +
   geom_jitter(color = "#00CC99", size = 1.5, shape = 23) +
   geom_smooth(color = "#00AFBB", fill = "#00AFBB", method = lm) +
-  labs(x = "Parent Stress", y = "Trauma Symptoms")
+  labs(x = "Parent Depressive Symptoms", y = "Change in Peer Problems")+
+  theme_apa()
+
+DASSp8 <- ggplot(covid_data_child, aes(x = DASSAnx, y = totalPTSD)) +
+  geom_jitter(color = "#00CC99", size = 1.5, shape = 23) +
+  geom_smooth(color = "#00AFBB", fill = "#00AFBB", method = lm) +
+  labs(x = "Parent Anxiety Symptoms", y = "Trauma Symptoms")+
+  theme_apa()
+
+DASSp9 <- ggplot(covid_data_child, aes(x = DASSStress, y = SDQemo2)) +
+  geom_jitter(color = "#00CC99", size = 1.5, shape = 23) +
+  geom_smooth(color = "#00AFBB", fill = "#00AFBB", method = lm) +
+  labs(x = "Parent Stress", y = "Change in Emotional Problems")+
+  theme_apa()
+
+#add in the extra plotsa to make a 3x3 grid
+figurefullDASS <- ggarrange(DASSp1, DASSp7, DASSp2, DASSp3, DASSp4, DASSp8, DASSp9, DASSp5, DASSp6,
+                    labels = c("A", "B", "C", "D", "E", "F", "G", "H", "I"),
+                    ncol = 3, nrow = 3)
+figurefullDASS
+
 
 ggplot(covid_data_child, aes(x = DASSStress, y = SDQemo2, color = SDQemo_cat, fill = SDQemo_cat)) +
   geom_jitter(size = 1.5, shape = 23) +
