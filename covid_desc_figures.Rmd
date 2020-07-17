@@ -25,10 +25,10 @@ covid_data_child <- read.csv("covid_data_child_scored.csv", header=TRUE, strings
 # SDQ - stacked bar plot
 
 childvarnames <- names(covid_data_child)
-SDQ2vars <- vars_select(childvarnames, contains("SDQ.2"))
+SDQ2vars <- vars_select(childvarnames, contains("SDQ.2"), -ends_with("_1"), -ends_with("_4"), -ends_with("_9"), -ends_with("_17"), -ends_with("_20"))
 SDQdf<- covid_data_child[, SDQ2vars]
 sdqvarnames<- names(SDQdf)
-SDQ2numvars <- vars_select(sdqvarnames, contains("num"))
+SDQ2numvars <- vars_select(sdqvarnames, contains("num"), -contains("_1_"), -contains("_4_"), -contains("_9_"), -contains("_17_"), -contains("_20_"))
 SDQ2numdf<- covid_data_child[, SDQ2numvars]
 
 # empty dataframe
@@ -43,7 +43,7 @@ for (i in 1:ncol(SDQ2numdf)) {
   SDQ.c.freq[i,3] <- as.data.frame(table(SDQ2numdf[,i]))[3,2]
 }
 
-SDQ.c.freq$varname <- c("Pr - considerate", "H - restless", "E - headaches", "Pr - share", "C - temper","Pe - solitary", "C - obedient", "E - worries", "Pr - helpful", "H - fidget", "Pe - friend", "C - fights", "E - unhappy", "Pe - liked", "H - distracted", "E - nervous", "Pr - kind", "C - lies", "Pe - bullied", "Pr - volunteers", "H - thinks", "C - steals", "Pe - adults", "E - fears", "H - attention")
+SDQ.c.freq$varname <- c("H - restless", "E - headaches", "C - temper","Pe - solitary", "C - obedient", "E - worries", "H - fidget", "Pe - friend", "C - fights", "E - unhappy", "Pe - liked", "H - distracted", "E - nervous", "C - lies", "Pe - bullied", "H - thinks", "C - steals", "Pe - adults", "E - fears", "H - attention")
 
 #calculating the percentage of things of more/less/same for each item
  SDQ.c.freq$percentmore<- (SDQ.c.freq$More/rowSums(SDQ.c.freq[,c(1:3)]))*100
@@ -52,28 +52,28 @@ SDQ.c.freq$varname <- c("Pr - considerate", "H - restless", "E - headaches", "Pr
  
 
 
-less <- SDQ.c.freq[,c("Less","varname")]
-colnames(less)[1] <- "Freq"
+less <- SDQ.c.freq[,c("percentless","varname")]
+colnames(less)[1] <- "Percent"
 less$change <- 'less'
 
-same <- SDQ.c.freq[,c("Same","varname")]
-colnames(same)[1] <- "Freq"
+same <- SDQ.c.freq[,c("percentsame","varname")]
+colnames(same)[1] <- "Percent"
 same$change <- 'same'
 
-more <- SDQ.c.freq[,c("More","varname")]
-colnames(more)[1] <- "Freq"
+more <- SDQ.c.freq[,c("percentmore","varname")]
+colnames(more)[1] <- "Percent"
 more$change <- 'more'
 
 #change the name here so  can have 2 different dataframes
-freqforplot <- rbind(less, same, more)
+percforplot <- rbind(less, same, more)
 
 #Chnage order of the factors to chnage how th bars are stacked
-freqforplot$change <- factor(freqforplot$change, levels = c('same', 'less', 'more'))
+percforplot$change <- factor(percforplot$change, levels = c('same', 'less', 'more'))
 
 
-ggplot(freqforplot, aes(fill=change, y=Freq, x= varname)) + 
+ggplot(percforplot, aes(fill=change, y= Percent, x= varname)) + 
     geom_bar(stat = "identity") +
-    theme(axis.text.x = element_text(angle = 45))
+    theme(axis.text.x = element_text(angle = 45)) + labs(x = "Child mental health (SDQ) problems")
 
 
 ```
