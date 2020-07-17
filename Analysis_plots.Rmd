@@ -59,7 +59,10 @@ p4 <- ggplot(covid_data_child, aes(x = totalcov_dist, y = SDQemo2, color = SDQem
   scale_fill_discrete(name="Baseline SDQ\nEmotional Problems",
                           breaks=c("Average", "High", "S_raised"),
                           labels=c("Average", "High", "Slightly Raised"))  +
-  apatheme
+  apatheme + 
+
+theme(legend.position = "bottom", legend.box = "horizontal") +
+  guides(color = guide_legend(nrow = 1))
 
 #put these 4 plots in a row in one figure
 figure1 <- ggarrange(p1, p2, p3, p4,
