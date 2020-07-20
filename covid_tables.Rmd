@@ -119,11 +119,25 @@ row.names(desc1) <- c("DASS - Depression", "DASS - Anxiety", "DASS - Stress", "F
 
 #Use the wrapper apa_table to make an apa table of the descriptive
 
+# Correlation table for communication variables
 apa_table(desc1,
           caption = "Means, standard deviations and range for the key measures",
           #note = "bottom part",
           align = c("l","c", "c", "c", "c"),
           col.names = c("Measure of interest", "N","Mean","SD","Range"))
+
+corrmatrix <-  dplyr::select(covid_data_child, ch_talk_about_1_num, ch_talk_about_2_num, ch_talk_about_3_num, ch_talk_about_4_num, ch_talk_about_5_num, ch_talk_about_6_num, ch_talk_about_7_num, ch_talk_about_8_num)
+
+M <- cor(corrmatrix, use = "complete.obs")
+colnames(M) <- c("facts", "information", "child emotions", "parent emotions", "others' feelings", "reassurance", "didn't know what to say", "too upset")
+rownames(M) <- c("facts", "information", "child emotions", "parent emotions", "others' feelings", "reassurance", "didn't know what to say", "too upset")
+res1 <- cor.mtest(corrmatrix, use = "complete.obs", 
+                   conf.level = .95)
+ 
+corrplot.mixed(M,  order = "hclust", lower.col = "black", number.cex = .6,
+                tl.col = "black", tl.srt = 45,tl.cex = 0.8, tl.pos= "lt",
+                p.mat = res1$p, sig.level = .05, insig = "blank") 
+
 ```
 
 # Discussion
