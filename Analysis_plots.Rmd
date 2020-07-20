@@ -34,34 +34,33 @@ apatheme=theme_bw()+
 p1<- ggplot(covid_data_child, aes(x = totalcov_dist, y = SDQhyp2)) +
 geom_jitter(color = "#00CC99", size = 1.5, shape = 23) +
 geom_smooth(color = "#00AFBB", fill = "#00AFBB", method = lm) +
-  labs(x = "Total COVID Negative Impact", y = "Change in Inattention-Hyperactivity") +
-  apatheme
+  labs(x = "Total COVID Negative Impact", y = "Change in Inattention-\nHyperactivity") +
+  apatheme + theme(aspect.ratio = 1)
 
 p2 <- ggplot(covid_data_child, aes(x = totalcov_dist, y = SDQcon2)) +
   geom_jitter(color = "#00CC99", size = 1.5, shape = 23) +
   geom_smooth(color = "#00AFBB", fill = "#00AFBB", method = lm) +
-  labs(x = "Total COVID Negative Impact", y = "Change in Conduct Problems")  +
-  apatheme
+  labs(x = "Total COVID Negative Impact", y = "Change in Conduct\nProblems")  + apatheme + theme(aspect.ratio = 1)
 
 p3 <- ggplot(covid_data_child, aes(x = totalcov_dist, y = totalPTSD)) +
   geom_jitter(color = "#00CC99", size = 1.5, shape = 23) +
   geom_smooth(color = "#00AFBB", fill = "#00AFBB", method = lm) +
   labs(x = "Total COVID Negative Impact", y = "Trauma Symptoms") +
-  apatheme
+  apatheme + theme(aspect.ratio = 1)
 
 p4 <- ggplot(covid_data_child, aes(x = totalcov_dist, y = SDQemo2, color = SDQemo_cat, fill = SDQemo_cat)) +
   geom_jitter(size = 1.5, shape = 23) +
   geom_smooth(method = lm) +
-  labs(x = "Total COVID Negative Impact", y = "Change in Emotional problems") +
-  scale_color_discrete(name="Baseline SDQ\nEmotional Problems",
+  labs(x = "Total COVID Negative Impact", y = "Change in\nEmotional Problems") +
+  scale_color_discrete(name="Baseline Problems",
                            breaks=c("Average", "High", "S_raised"),
                            labels=c("Average", "High", "Slightly Raised")) +
-  scale_fill_discrete(name="Baseline SDQ\nEmotional Problems",
+  scale_fill_discrete(name="Baseline Problems",
                           breaks=c("Average", "High", "S_raised"),
                           labels=c("Average", "High", "Slightly Raised"))  +
   apatheme + 
 
-theme(legend.position = "bottom", legend.box = "horizontal") +
+theme(legend.position = "bottom", legend.box = "horizontal", aspect.ratio = 1) +
   guides(color = guide_legend(nrow = 1))
 
 #put these 4 plots in a row in one figure
@@ -84,38 +83,38 @@ DASSp2 <- ggplot(covid_data_child, aes(x = DASSDep, y = totalPTSD)) +
   geom_jitter(color = "#00CC99", size = 1.5, shape = 23) +
   geom_smooth(color = "#00AFBB", fill = "#00AFBB", method = lm) +
   labs(x = "Parent Depressive Symptoms", y = "Trauma Symptoms") +
-  apatheme
+  apatheme + theme(aspect.ratio = 1)
 
 DASSp3 <- ggplot(covid_data_child, aes(x = DASSAnx, y = SDQemo2)) +
   geom_jitter(color = "#00CC99", size = 1.5, shape = 23) +
   geom_smooth(color = "#00AFBB", fill = "#00AFBB", method = lm) +
-  labs(x = "Parent Anxiety Symptoms", y = "Change in Emotional Problems") +
-  apatheme
+  labs(x = "Parent Anxiety Symptoms", y = "Change in\nEmotional Problems") +
+  apatheme + theme(aspect.ratio = 1)
 
 DASSp4 <- ggplot(covid_data_child, aes(x = DASSAnx, y = SDQpeer2)) +
   geom_jitter(color = "#00CC99", size = 1.5, shape = 23) +
   geom_smooth(color = "#00AFBB", fill = "#00AFBB", method = lm) +
   labs(x = "Parent Anxiety Symptoms", y = "Change in Peer Problems") +
-  apatheme
+  apatheme + theme(aspect.ratio = 1)
 
 DASSp5 <- ggplot(covid_data_child, aes(x = DASSStress, y = SDQpeer2)) +
   geom_jitter(color = "#00CC99", size = 1.5, shape = 23) +
   geom_smooth(color = "#00AFBB", fill = "#00AFBB", method = lm) +
   labs(x = "Parent Stress", y = "Change in Peer Problems") +
-  apatheme
+  apatheme + theme(aspect.ratio = 1)
 
 DASSp6 <- ggplot(covid_data_child, aes(x = DASSStress, y = totalPTSD)) +
   geom_jitter(color = "#00CC99", size = 1.5, shape = 23) +
   geom_smooth(color = "#00AFBB", fill = "#00AFBB", method = lm) +
   labs(x = "Parent Stress", y = "Trauma Symptoms")  +
-  apatheme
+  apatheme + theme(aspect.ratio = 1)
 
 
 #put these 5 plots in a row in one figure
-figureDASS <- ggarrange(DASSp3, DASSp2, DASSp4, DASSp6, DASSp5,
-                    labels = c("A", "B", "C", "D", "E", "F"),
-                    ncol = 3, nrow = 2)
-figureDASS
+#figureDASS <- ggarrange(DASSp3, DASSp2, DASSp4, DASSp6, DASSp5,
+#                    labels = c("A", "B", "C", "D", "E", "F"),
+#                    ncol = 3, nrow = 2)
+#figureDASS
 
 #Sarah I made the extra DASS plots to fit into a complete grid in case you want them
 DASSp7 <- ggplot(covid_data_child, aes(x = DASSDep, y = SDQpeer2)) +
@@ -133,7 +132,7 @@ DASSp8 <- ggplot(covid_data_child, aes(x = DASSAnx, y = totalPTSD)) +
 DASSp9 <- ggplot(covid_data_child, aes(x = DASSStress, y = SDQemo2)) +
   geom_jitter(color = "#00CC99", size = 1.5, shape = 23) +
   geom_smooth(color = "#00AFBB", fill = "#00AFBB", method = lm) +
-  labs(x = "Parent Stress", y = "Change in Emotional Problems") +
+  labs(x = "Parent Stress", y = "Change in\nEmotional Problems") +
   apatheme
 
 #add in the extra plotsa to make a 3x3 grid
@@ -147,24 +146,24 @@ stressp1<- ggplot(covid_data_child, aes(x = DASSStress, y = SDQemo2, color = SDQ
   geom_jitter(size = 1.5, shape = 23) +
   geom_smooth(method = lm) +
   labs(x = "Parent Stress", y = "Change in\nEmotional problems") +
-  scale_color_discrete(name="Baseline SDQ\nEmotional Problems",
+  scale_color_discrete(name="Baseline Problems",
                        breaks=c("Average", "High", "S_raised"),
                        labels=c("Average", "High", "Slightly Raised")) +
-  scale_fill_discrete(name="Baseline SDQ\nEmotional Problems",
+  scale_fill_discrete(name="Baseline Problems",
                       breaks=c("Average", "High", "S_raised"),
                       labels=c("Average", "High", "Slightly Raised"))  +
   apatheme +
-  theme(axis.title.x=element_blank(), panel.border=element_blank()) + theme(legend.position = "bottom", legend.box = "horizontal") +
+  theme(axis.title.x=element_blank(), panel.border=element_blank()) + theme(legend.position = "bottom", legend.box = "horizontal", aspect.ratio = 1) +
   guides(color = guide_legend(nrow = 1))
 
 stressp2<- ggplot(covid_data_child, aes(x = DASSStress, y = SDQcon2, color = SDQcon_cat, fill = SDQcon_cat)) +
   geom_jitter(size = 1.5, shape = 23) +
   geom_smooth(method = lm) +
   labs(x = "Parent Stress", y = "Change in\nConduct problems") +
-  scale_color_discrete(name="Baseline SDQ\nConduct Problems",
+  scale_color_discrete(name="Baseline Problems",
                        breaks=c("Average", "High", "S_raised"),
                        labels=c("Average", "High", "Slightly Raised")) +
-  scale_fill_discrete(name="Baseline SDQ\nConduct Problems",
+  scale_fill_discrete(name="Baseline Problems",
                       breaks=c("Average", "High", "S_raised"),
                       labels=c("Average", "High", "Slightly Raised"))  +
   apatheme +
@@ -185,22 +184,29 @@ stressp3<- ggplot(covid_data_child, aes(x = DASSStress, y = SDQhyp2, color = ch_
   scale_fill_discrete(name="Child Age",
                       breaks=c("14-17", "9-13", "5-8"),
                       labels=c("14-17", "9-13", "5-8"))  +
-  apatheme + theme(legend.position = "bottom", legend.box = "horizontal") +
+  apatheme + theme(legend.position = "bottom", legend.box = "horizontal", aspect.ratio = 1) +
   guides(color = guide_legend(nrow = 1))
 
-#put these 3 plots in a row in one figure
-figureDASSstress <- ggarrange(stressp1, stressp2, stressp3,
-                    labels = c("A", "B", "C"),
-                    ncol = 2, nrow = 2)
+#put these 3 plots in one figure
+#figureDASSstress <- ggarrange(stressp1, stressp2, stressp3,
+#                    labels = c("A", "B", "C"),
+#                    ncol = 2, nrow = 2)
 
-figureDASSstress
+#figureDASSstress
+
+#put these 3 plots in with main DASS figure
+#figureDASSall <- ggarrange(DASSp3, DASSp2, DASSp4, DASSp6, DASSp5, stressp1, stressp2, stressp3,
+#                    labels = c("A", "B", "C", "D", "E", "F", "G", "H"),
+#                    ncol = 2, nrow = 4, vjust = 1)
+
+#figureDASSall
 
 # Parenting -----------------------------------------------------------------------------
 
 PARQp1 <- ggplot(covid_data_child, aes(x = PARQhostile, y = SDQhyp2)) +
   geom_jitter(color = "#00CC99", size = 1.5, shape = 23) +
   geom_smooth(color = "#00AFBB", fill = "#00AFBB", method = lm) +
-  labs(x = "Parental Hostility", y = "Change in Inattention-Hyperactivity") + apatheme
+  labs(x = "Parental Hostility", y = "Change in Inattention\n-Hyperactivity") + apatheme + theme(aspect.ratio = 1)
 
 PARQp2 <- ggplot(covid_data_child, aes(x = PARQhostile, y = totalPTSD)) +
   geom_jitter(color = "#00CC99", size = 1.5, shape = 23) +
@@ -210,16 +216,14 @@ PARQp2 <- ggplot(covid_data_child, aes(x = PARQhostile, y = totalPTSD)) +
 PARQp3 <- ggplot(covid_data_child, aes(x = PARQhostile, y = SDQcon2, color = SDQcon_cat, fill = SDQcon_cat)) +
   geom_jitter(size = 1.5, shape = 23) +
   geom_smooth(method = lm) +
-  labs(x = "Parental Hostility", y = "Change in Conduct problems") +
-  scale_color_discrete(name="Baseline SDQ Conduct Problems",
+  labs(x = "Parental Hostility", y = "Change in\nConduct Problems") +
+  scale_color_discrete(name="Baseline Problems",
                        breaks=c("Average", "High", "S_raised"),
                        labels=c("Average", "High", "Slightly Raised")) +
-  scale_fill_discrete(name="Baseline SDQ Conduct Problems",
+  scale_fill_discrete(name="Baseline Problems",
                       breaks=c("Average", "High", "S_raised"),
                       labels=c("Average", "High", "Slightly Raised")) + apatheme + 
-
-theme(legend.position = "bottom", legend.box = "horizontal") +
-  guides(color = guide_legend(nrow = 1))
+theme(legend.position = "bottom", legend.box = "horizontal", aspect.ratio=1) + guides(color = guide_legend(nrow = 1))
 
 
 PARQp4 <- ggplot(covid_data_child, aes(x = PARQwarmth, y = totalPTSD)) +
@@ -228,29 +232,29 @@ PARQp4 <- ggplot(covid_data_child, aes(x = PARQwarmth, y = totalPTSD)) +
   labs(x = "Low Parental Warmth", y = "Trauma Symptoms") + apatheme
 
 #put these 4 plots in a row in one figure
-figurePARQ <- ggarrange(PARQp1, PARQp2, PARQp3, PARQp4,
-                    labels = c("A", "B", "C", "D"),
-                    ncol = 2, nrow = 2)
+#figurePARQ <- ggarrange(PARQp1, PARQp2, PARQp3, PARQp4,
+#                    labels = c("A", "B", "C", "D"),
+#                    ncol = 2, nrow = 2)
 
-figurePARQ
+#figurePARQ
 
 
 FESp1 <- ggplot(covid_data_child, aes(x = totalFES, y = totalPTSD)) +
   geom_jitter(color = "#00CC99", size = 1.5, shape = 23) +
   geom_smooth(color = "#00AFBB", fill = "#00AFBB", method = lm) +
-  labs(x = "Family Cohesion", y = "Trauma Symptoms") + apatheme
+  labs(x = "Family Cohesion", y = "Trauma Symptoms") + apatheme + theme(aspect.ratio = 1)
 
 FESp2 <- ggplot(covid_data_child, aes(x = totalFES, y = SDQpeer2)) +
   geom_jitter(color = "#00CC99", size = 1.5, shape = 23) +
   geom_smooth(color = "#00AFBB", fill = "#00AFBB", method = lm) +
-  labs(x = "Family Cohesion", y = "Change in Peer Problems") + apatheme
+  labs(x = "Family Cohesion", y = "Change in Peer Problems") + apatheme + theme(aspect.ratio = 1)
 
 #put these 2 plots in a row in one figure
-figureFES <- ggarrange(FESp1, FESp2,
-                    labels = c("A", "B"),
-                    ncol = 2, nrow = 1)
+#figureFES <- ggarrange(FESp1, FESp2,
+#                    labels = c("A", "B"),
+#                    ncol = 2, nrow = 1)
 
-figureFES
+#figureFES
 
 
 # Communication -----------------------------------------------------------
@@ -259,28 +263,28 @@ figureFES
 Comm3 <- ggplot(covid_data_child, aes(x = emotion_comm, y = SDQhyp2)) +
   geom_jitter(color = "#00CC99", size = 1.5, shape = 23) +
   geom_smooth(color = "#00AFBB", fill = "#00AFBB", method = lm) +
-  labs(x = "Emotion-focused Communication", y = "Change in Inattention-Hyperactivity Problems") +
-  apatheme
+  labs(x = "Emotion-focused Communication", y = "Change in Inattention-\nHyperactivity Problems") +
+  apatheme + theme(aspect.ratio = 1)
 
 Comm2 <- ggplot(covid_data_child, aes(x = emotion_comm, y = SDQemo2)) +
   geom_jitter(color = "#00CC99", size = 1.5, shape = 23) +
   geom_smooth(color = "#00AFBB", fill = "#00AFBB", method = lm) +
-  labs(x = "Emotion-focused Communication", y = "Change in Emotional Problems") +
-  apatheme
+  labs(x = "Emotion-focused Communication", y = "Change in\nEmotional Problems") +
+  apatheme + theme(aspect.ratio = 1)
 
 
 Comm8 <- ggplot(covid_data_child, aes(x = self_comm, y = SDQcon2)) +
   geom_jitter(color = "#00CC99", size = 1.5, shape = 23) +
   geom_smooth(color = "#00AFBB", fill = "#00AFBB", method = lm) +
-  labs(x = "Self-focused Communication", y = "Change in Conduct Problems") +
-  apatheme
+  labs(x = "Self-focused Communication", y = "Change in\nConduct Problems") +
+  apatheme + theme(aspect.ratio = 1)
 
 
 Comm5 <- ggplot(covid_data_child, aes(x = self_comm, y = totalPTSD)) +
   geom_jitter(color = "#00CC99", size = 1.5, shape = 23) +
   geom_smooth(color = "#00AFBB", fill = "#00AFBB", method = lm) +
   labs(x = "Self-focused Communication", y = "Trauma Symptoms") +
-  apatheme
+  apatheme + theme(aspect.ratio = 1)
 
 figurecomm <- ggarrange(Comm2, Comm3, Comm5, Comm8,
                     labels = c("A", "B", "C", "D"),
@@ -301,7 +305,9 @@ Intp1 <- ggplot(data=subset(covid_data_child, !is.na(income_famsize_cat)), aes(x
                        labels=c("High", "Low")) +
   scale_fill_discrete(name="Income-to-needs",
                       breaks=c("High", "Low"),
-                      labels=c("High", "Low")) + apatheme
+                      labels=c("High", "Low")) + apatheme + 
+theme(legend.position = "bottom", legend.box = "horizontal", aspect.ratio = 1) +
+  guides(color = guide_legend(nrow = 1))
 
 Intp2 <- ggplot(data=subset(covid_data_child, !is.na(income_famsize_cat)), aes(x = PARQwarmth, y = totalPTSD, color = income_famsize_cat, fill = income_famsize_cat)) +
   geom_jitter(size = 1.5, shape = 23) +
@@ -312,7 +318,9 @@ Intp2 <- ggplot(data=subset(covid_data_child, !is.na(income_famsize_cat)), aes(x
                        labels=c("High", "Low")) +
   scale_fill_discrete(name="Income-to-needs",
                       breaks=c("High", "Low"),
-                      labels=c("High", "Low")) + apatheme
+                      labels=c("High", "Low")) + apatheme + 
+theme(legend.position = "bottom", legend.box = "horizontal", aspect.ratio = 1) +
+  guides(color = guide_legend(nrow = 1))
 
 covid_data_child$par_ed_ord_cat <- as.factor(car::recode(covid_data_child$par_ed_ord, "NA=NA; 1:5='Low';else='High'"))
 table(covid_data_child$par_ed_ord_cat, useNA = "ifany")
@@ -321,34 +329,48 @@ table(covid_data_child$par_ed_ord_cat, useNA = "ifany")
 Intp3 <- ggplot(data=subset(covid_data_child, !is.na(other_par)), aes(x = DASSStress, y = SDQcon2, color = SDQcon_cat, fill = SDQcon_cat)) +
   geom_jitter(size = 1.5, shape = 23, na.rm = TRUE) +
   geom_smooth(method = lm) +
-  labs(x = "Parent Stress", y = "Change in Conduct problems") +
-  scale_color_discrete(name="Baseline SDQ\nConduct Problems",
+  labs(x = "Parent Stress", y = "Change in\nConduct Problems") +
+  scale_color_discrete(name="Baseline Problems",
                        breaks=c("Average", "High", "S_raised"),
                        labels=c("Average", "High", "Slightly Raised")) +
-  scale_fill_discrete(name="Baseline SDQ\nConduct Problems",
+  scale_fill_discrete(name="Baseline Problems",
                       breaks=c("Average", "High", "S_raised"),
                       labels=c("Average", "High", "Slightly Raised")) +
-  facet_wrap(~other_par) + apatheme
+  facet_wrap(~other_par) + apatheme + 
+theme(legend.position = "bottom", legend.box = "horizontal", aspect.ratio = 1) +
+  guides(color = guide_legend(nrow = 1))
 
 Intp4 <- ggplot(covid_data_child, aes(x = DASSStress, y = SDQpeer2, color = other_par, fill = other_par)) +
   geom_jitter(size = 1.5, shape = 23) +
   geom_smooth(method = lm) +
-  labs(x = "Parent Stress", y = "Change in Peer Problems") +
-  scale_color_discrete(name="Two parents/caregivers\nin the home",
+  labs(x = "Parent Stress", y = "Change in Peer\nProblems") +
+  scale_color_discrete(name="Two parents\nin home",
                        breaks=c("Yes", "No"),
                        labels=c("Yes", "No")) +
-  scale_fill_discrete(name="Two parents/caregivers\nin the home",
+  scale_fill_discrete(name="Two parents\nin home",
                       breaks=c("Yes", "No"),
-                      labels=c("Yes", "No")) + apatheme
+                      labels=c("Yes", "No")) + apatheme + 
+theme(legend.position = "bottom", legend.box = "horizontal", aspect.ratio = 1) +
+  guides(color = guide_legend(nrow = 1))
 
-figureint <- ggarrange(Intp1, Intp2,
-                    labels = c("A", "B"),
-                    ncol = 1, nrow = 2)
-figureint
+#figureint <- ggarrange(Intp1, Intp2,
+#                    labels = c("A", "B"),
+#                    ncol = 1, nrow = 2)
+#figureint
 
-figureint2 <- ggarrange(Intp3, Intp4,
-                    labels = c("A", "B"),
-                    ncol = 1, nrow = 2)
-figureint2
+#figureint2 <- ggarrange(Intp3, Intp4,
+#                    labels = c("A", "B"),
+#                    ncol = 1, nrow = 2)
+#figureint2
+
+figureFAMint <- ggarrange(PARQp1, PARQp3, Intp1, Intp2, FESp1, FESp2,
+                    labels = c("A", "B", "C", "D", "E", "F"),
+                    ncol = 2, nrow = 3)
+figureFAMint
+
+figureDASSint <- ggarrange(DASSp2, DASSp3, DASSp4, DASSp6, Intp3, Intp4, stressp1, stressp3,
+                    labels = c("A", "B", "C", "D", "E", "F", "G", "H"),
+                    ncol = 2, nrow = 4)
+figureDASSint
 
 ```
