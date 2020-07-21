@@ -39,6 +39,7 @@ draft             : no
 
 documentclass     : "apa6"
 classoption       : "man"
+\ output            : papaja::apa6_pdf
 output            : papaja::apa6_word
 ---
 
@@ -51,6 +52,7 @@ library(psych)
 library(dplyr)
 library(corrplot)
 library(corx)
+library(kableExtra)
 r_refs("r-references.bib")
 
 #read in data
@@ -133,22 +135,36 @@ apa_table(
 ```{r, corrtable, echo=FALSE, results='asis'}
 
 #correlation table
-corrmatrixch <-  dplyr::select(covid_data_child, ch_talk_about_1_num, ch_talk_about_2_num, ch_talk_about_3_num, ch_talk_about_4_num, ch_talk_about_5_num, ch_talk_about_6_num, ch_talk_about_7_num, ch_talk_about_8_num)
+#first matrix - par vars only
+corrmatrixpar <-  dplyr::select(covid_data, par_age, par_gender_num, par_ed_ord, income_famsize, DASSDep, DASSAnx, DASSStress)
+#include both par and child vars
+corrmatrixch <-  dplyr::select(covid_data_child, par_age, par_gender_num, par_ed_ord, income_famsize, DASSDep, DASSAnx, DASSStress,
+                               ch_age, ch_gender_num, SDQemo, SDQcon, SDQhyp, SDQpeer, SDQpro, SDQemo2, SDQcon2, SDQhyp2, SDQpeer2, SDQpro2,PARQwarmth, PARQhostile, PARQwarmth, PARQhostile, PARQneglect, PARQundiff, PARQcontrol)
 
-corrmatrixpar <-  dplyr::select(covid_data, ch_talk_about_1_num, ch_talk_about_2_num, ch_talk_about_3_num, ch_talk_about_4_num, ch_talk_about_5_num, ch_talk_about_6_num, ch_talk_about_7_num, ch_talk_about_8_num)
 
-colnames(corrmatrix) <- c("facts", "information", "child emotions", "parent emotions", "others' feelings", "reassurance", "didn't know what to say", "too upset")
+#colnames(corrmatrixpar) <- c("facts", "information", "child emotions", "parent emotions", "others' feelings", "reassurance", "didn't know what to say", "too upset")
 
-x <- corx(corrmatrix,
+xp <- corx(corrmatrixpar,
           triangle = "lower",
           stars = c(0.05, 0.01, 0.001))
 
-papaja::apa_table(x$apa, # apa contains the data.frame needed for apa_table
+xc <- corx(corrmatrixch,
+          triangle = "lower",
+          stars = c(0.05, 0.01, 0.001))
+
+#replace the par-par correlations from the child table with the ones from the par table so that they have the correct N.
+xc$apa[1:7,1:6] <- xp$apa
+
+papaja::apa_table(xc$apa, # apa contains the data.frame needed for apa_table
                   caption = "Bivariate correlations for key variables and covariates (Pearson’s)",
                   note = "* p < 0.05; ** p < 0.01; *** p < 0.001. Not corrected for multiple comparisons. Full variable names: .",
                   landscape = TRUE,
+                  longtable = TRUE
                   #escape = F
                   )
+
+#%>%
+ # kable_styling(full_width = T)
 
 #correlation plot
 # M <- cor(corrmatrix, use = "complete.obs")
@@ -175,7 +191,7 @@ papaja::apa_table(x$apa, # apa contains the data.frame needed for apa_table
 
 analysis_vars_par<- dplyr::select(covid_data, DASSDep, DASSAnx, DASSStress, totalFES)
 analysis_vars_child<- dplyr::select(covid_data_child, PARQhostile, PARQwarmth, 
-              SDQemo, SDQhyp, SDQcon, SDQpeer, totalPTSD)
+              SDQemo, SDQhyp, SDQcon, SDQpeer, totalPTSD, facts_comm, emotion_comm, self_comm, covid_neg_num, covid_pos_num )
 
 #provides mean, sd, kurtosis, skew etc
 desc.p <- describe(analysis_vars_par)
@@ -185,8 +201,8 @@ desc <- rbind(desc.p,desc.c)
 #Just select the columns want for table (at this point n,m,sd,range)
 desc1 <- desc[, c("n", "mean", "sd", "min", "max")]
 
-row.names(desc1) <- c("DASS - Depression", "DASS - Anxiety", "DASS - Stress", "FES", "PARQ - Hostile", "PARQ - Warmth", 
-              "SDQ - emotional problems" , "SDQ - hyperactivity", "SDQ - conduct", "SDQ - peer problems", "PTSD symptoms")
+row.names(desc1) <- c("Depression", "Anxiety", "Stress", "FES", "Hostile", "Warmth", 
+              "Emotional problems" , "Hyperactivity", "Conduct", "Peer problems", "PTSD symptoms", "Fact-focused", "Emotion-focused", "Self-focused", "Negative", "Positive")
 
 #Use the wrapper apa_table to make an apa table of the descriptive
 apa_table(desc1,
@@ -194,7 +210,9 @@ apa_table(desc1,
           #note = "bottom part",
           align = c("l","c", "c", "c", "c"),
           col.names = c("Measure of interest", "N","Mean","SD","Minimum","Maximum" ),
-          digits = c(0,0, 2,2,2,2))
+          digits = c(0,0, 2,2,2,2),
+          stub_indents = list("DASS" = c(1:3), "PARQ" = c(5,6), "SDQ" = c(7:10), "Communication" = c(12:14), "COVID Impact" = c(15,16))
+          )
 
 ```
 
