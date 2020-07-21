@@ -104,7 +104,7 @@ SDQ change since COVID - M/SD + frequencies based on number of items where more 
 
 #create matrix with the values in there
 ## to do - combine other and non-binary
-##add in country labels
+
 
 par_gender <- summarytools::freq(covid_data$par_gender, order = "freq")[c(1:5), c(1,4)]
 par_age <- cbind(mean(covid_data$par_age, na.rm =TRUE), sd(covid_data$par_age, na.rm =TRUE))
@@ -130,12 +130,44 @@ apa_table(
 
 ```
 
+```{r, corrtable, echo=FALSE, results='asis'}
+
+#correlation table
+corrmatrix <-  dplyr::select(covid_data_child, ch_talk_about_1_num, ch_talk_about_2_num, ch_talk_about_3_num, ch_talk_about_4_num, ch_talk_about_5_num, ch_talk_about_6_num, ch_talk_about_7_num, ch_talk_about_8_num)
+
+colnames(corrmatrix) <- c("facts", "information", "child emotions", "parent emotions", "others' feelings", "reassurance", "didn't know what to say", "too upset")
+
+x <- corx(corrmatrix,
+          triangle = "lower",
+          stars = c(0.05, 0.01, 0.001))
+
+papaja::apa_table(x$apa, # apa contains the data.frame needed for apa_table
+                  caption = "Bivariate correlations for key variables and covariates (Pearson’s)",
+                  note = "* p < 0.05; ** p < 0.01; *** p < 0.001. Not corrected for multiple comparisons. Full variable names: .",
+                  landscape = TRUE,
+                  #escape = F
+                  )
+
+#correlation plot
+# M <- cor(corrmatrix, use = "complete.obs")
+# colnames(M) <- c("facts", "information", "child emotions", "parent emotions", "others' feelings", "reassurance", "didn't know what to say", "too upset")
+# rownames(M) <- c("facts", "information", "child emotions", "parent emotions", "others' feelings", "reassurance", "didn't know what to say", "too upset")
+# res1 <- cor.mtest(corrmatrix, use = "complete.obs",
+#                    conf.level = .95)
+#  
+# corrplot.mixed(M,  order = "hclust", lower.col = "black", number.cex = .6,
+#                 tl.col = "black", tl.srt = 45,tl.cex = 0.8, tl.pos= "lt",
+#                 p.mat = res1$p, sig.level = .05, insig = "blank") 
+
+```
+
 ```{r, main_varstable, echo=FALSE, results='asis'}
 
 
 #Mean, SD, range for continuous vbls - DASS Dep & Anx & Stress, FES, PARQ hostile & warmth, 
 # SDQ emo, hyp, con, peer, PTSD 
 # + Ns/% in each group based on clinical cut-off's (DASS, PARQ, SDQ).
+# add in communication vars
 
 #Select the variables to go in
 
@@ -167,15 +199,15 @@ apa_table(desc1,
 ```{r, corrtablecomm, echo=FALSE, results='asis'}
 
 #correlation table
-corrmatrix <-  dplyr::select(covid_data_child, ch_talk_about_1_num, ch_talk_about_2_num, ch_talk_about_3_num, ch_talk_about_4_num, ch_talk_about_5_num, ch_talk_about_6_num, ch_talk_about_7_num, ch_talk_about_8_num)
+corrmatrixcomm <-  dplyr::select(covid_data_child, ch_talk_about_1_num, ch_talk_about_2_num, ch_talk_about_3_num, ch_talk_about_4_num, ch_talk_about_5_num, ch_talk_about_6_num, ch_talk_about_7_num, ch_talk_about_8_num)
 
-colnames(corrmatrix) <- c("facts", "information", "child emotions", "parent emotions", "others' feelings", "reassurance", "didn't know what to say", "too upset")
+colnames(corrmatrixcomm) <- c("facts", "information", "child emotions", "parent emotions", "others' feelings", "reassurance", "didn't know what to say", "too upset")
 
-x <- corx(corrmatrix,
+xcomm <- corx(corrmatrixcomm,
           triangle = "lower",
           stars = c(0.05, 0.01, 0.001))
 
-papaja::apa_table(x$apa, # apa contains the data.frame needed for apa_table
+papaja::apa_table(xcomm$apa, # apa contains the data.frame needed for apa_table
                   caption = "Bivariate correlations for key variables and covariates (Pearson’s)",
                   note = "* p < 0.05; ** p < 0.01; *** p < 0.001. Not corrected for multiple comparisons. Full variable names: .",
                   landscape = TRUE,
@@ -183,15 +215,15 @@ papaja::apa_table(x$apa, # apa contains the data.frame needed for apa_table
                   )
 
 #correlation plot
-# M <- cor(corrmatrix, use = "complete.obs")
-# colnames(M) <- c("facts", "information", "child emotions", "parent emotions", "others' feelings", "reassurance", "didn't know what to say", "too upset")
-# rownames(M) <- c("facts", "information", "child emotions", "parent emotions", "others' feelings", "reassurance", "didn't know what to say", "too upset")
-# res1 <- cor.mtest(corrmatrix, use = "complete.obs",
+# Mcomm <- cor(corrmatrixcomm, use = "complete.obs")
+# colnames(Mcomm) <- c("facts", "information", "child emotions", "parent emotions", "others' feelings", "reassurance", "didn't know what to say", "too upset")
+# rownames(Mcomm) <- c("facts", "information", "child emotions", "parent emotions", "others' feelings", "reassurance", "didn't know what to say", "too upset")
+# res1comm <- cor.mtest(corrmatrixcomm, use = "complete.obs",
 #                    conf.level = .95)
 #  
-# corrplot.mixed(M,  order = "hclust", lower.col = "black", number.cex = .6,
+# corrplot.mixed(Mcomm,  order = "hclust", lower.col = "black", number.cex = .6,
 #                 tl.col = "black", tl.srt = 45,tl.cex = 0.8, tl.pos= "lt",
-#                 p.mat = res1$p, sig.level = .05, insig = "blank") 
+#                 p.mat = res1comm$p, sig.level = .05, insig = "blank") 
 
 ```
 
