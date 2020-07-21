@@ -243,7 +243,7 @@ covid_data$par_ed_ord<- ifelse(covid_data$par_ed == "Partial primary / elementar
 
 #Frequency and percentage of people in the different groups
 summarytools::freq(as.factor(covid_data$par_ed_ord), order = "freq")
-hist(covid_data$par_ed_ord, col = "lightblue", xlab = "Parent Education (1=partial primary, 10=grad school)", main = NULL)
+hist(covid_data$par_ed_ord, col = "lightblue", xlab = "Parent education (1=partial primary, 10=grad school)", main = NULL)
 
 
 
@@ -380,7 +380,7 @@ sd(covid_data$covid_worry_3_num, na.rm =TRUE)
 sd(covid_data$covid_neg_num, na.rm =TRUE)
 sd(covid_data$covid_pos_num, na.rm =TRUE)
 hist(covid_data$totalcov_dist)
-hist(covid_data$covid_finance_num, col = "lightblue", main = NULL, xlab = "Worry abour finances (0=not at all, 5=a lot)")
+hist(covid_data$covid_finance_num, col = "lightblue", main = NULL, xlab = "Worry about finances (0=not at all, 5=a lot)")
 hist(covid_data$covid_uncertain_num)
 hist(covid_data$covid_plans_num)
 hist(covid_data$covid_worry_1_num)
@@ -464,13 +464,13 @@ ggplot(covid_data, aes(StressCat)) + geom_bar(fill = "steelblue")
 
 summary(covid_data$DASSDep)
 sd(covid_data$DASSDep, na.rm =TRUE)
-hist(covid_data$DASSDep)
+hist(covid_data$DASSDep,  col = "lightblue", main = NULL, xlab = "Parent depressive symptoms")
 summary(covid_data$DASSAnx)
 sd(covid_data$DASSAnx, na.rm =TRUE)
-hist(covid_data$DASSAnx)
+hist(covid_data$DASSAnx, col = "lightblue", main = NULL, xlab = "Parent anxiety symptoms")
 summary(covid_data$DASSStress)
 sd(covid_data$DASSStress, na.rm =TRUE)
-hist(covid_data$DASSStress)
+hist(covid_data$DASSStress,col = "lightblue", main = NULL, xlab = "Parent stress symptoms" )
 
 # FES cohesion scoring -------------------------------------------------------------------------------------------
 
@@ -512,7 +512,7 @@ summary(covid_data[,c("totalFES")])
 
 sd(covid_data$totalFES, na.rm =TRUE)
 
-hist(covid_data$totalFES)
+hist(covid_data$totalFES,col = "lightblue", main = NULL, xlab = "Family cohesion (total FES)")
 
 
 # Children ----------------------------------------------------------------------------------------------
@@ -635,7 +635,7 @@ covid_data_child<- covid_data_child[covid_data_child$ch_age>=5 , ]
 #the following displays m, median, range, sd
 summary(covid_data_child$ch_age)
 sd(covid_data_child$ch_age, na.rm =TRUE)
-hist(covid_data_child$ch_age, col = "lightblue", main = NULL, xlab = "child age")
+hist(covid_data_child$ch_age, col = "lightblue", main = NULL, xlab = "Child age")
 
 
 ## Type of parent
@@ -718,9 +718,9 @@ summary(commnumvars)
 sd(covid_data_child$facts_comm, na.rm =TRUE)
 sd(covid_data_child$emotion_comm, na.rm =TRUE)
 sd(covid_data_child$self_comm, na.rm =TRUE)
-hist(covid_data_child$facts_comm)
-hist(covid_data_child$emotion_comm)
-hist(covid_data_child$self_comm)
+hist(covid_data_child$facts_comm,col = "lightblue", main = NULL, xlab = "Fact-focused communication")
+hist(covid_data_child$emotion_comm, col = "lightblue", main = NULL, xlab = "Emotion-focused communication")
+hist(covid_data_child$self_comm, col = "lightblue", main = NULL, xlab = "Self-focused communication")
 
 
 
@@ -851,19 +851,19 @@ sd(covid_data_child$SDQhyp2, na.rm =TRUE)
 sd(covid_data_child$SDQpeer2, na.rm =TRUE)
 sd(covid_data_child$SDQpro2, na.rm =TRUE)
 
-hist(covid_data_child$totalSDQ)
-hist(covid_data_child$SDQemo)
-hist(covid_data_child$SDQcon)
-hist(covid_data_child$SDQhyp)
-hist(covid_data_child$SDQpeer)
-hist(covid_data_child$SDQpro)
+hist(covid_data_child$totalSDQ,col = "lightblue", main = NULL, xlab = "baseline SDQ mental health problems")
+hist(covid_data_child$SDQemo,col = "lightblue", main = NULL, xlab = "baseline SDQ emotional problems")
+hist(covid_data_child$SDQcon,col = "lightblue", main = NULL, xlab = "baseline SDQ conduct problems")
+hist(covid_data_child$SDQhyp,col = "lightblue", main = NULL, xlab = "baseline SDQ inattention-hyperactivity")
+hist(covid_data_child$SDQpeer,col = "lightblue", main = NULL, xlab = "baseline SDQ peer problems")
+hist(covid_data_child$SDQpro,col = "lightblue", main = NULL, xlab = "baseline SDQ prosocial problems")
 
-hist(covid_data_child$totalSDQ2)
-hist(covid_data_child$SDQemo2)
-hist(covid_data_child$SDQcon2)
-hist(covid_data_child$SDQhyp2)
-hist(covid_data_child$SDQpeer2)
-hist(covid_data_child$SDQpro2)
+hist(covid_data_child$totalSDQ2,col = "lightblue", main = NULL, xlab = "change in SDQ mental health problems")
+hist(covid_data_child$SDQemo2,col = "lightblue", main = NULL, xlab = "change in SDQ emotional problems")
+hist(covid_data_child$SDQcon2,col = "lightblue", main = NULL, xlab = "change in SDQ conduct problems")
+hist(covid_data_child$SDQhyp2,col = "lightblue", main = NULL, xlab = "change in SDQ inattention-hyperactivity problems")
+hist(covid_data_child$SDQpeer2,col = "lightblue", main = NULL, xlab = "change in SDQ peer problems")
+hist(covid_data_child$SDQpro2,col = "lightblue", main = NULL, xlab = "change in SDQ prosocial problems")
 
 
 #Create new categorical variable for each subscale putting them in categories
@@ -929,7 +929,7 @@ covid_data_child[which(rowSums(is.na(covid_data_child[, c("ch_PTSD_1_num" , "ch_
 #Means, sds, range, histogram
 summary(covid_data_child[,c("totalPTSD")])
 sd(covid_data_child$totalPTSD, na.rm =TRUE)
-hist(covid_data_child$totalPTSD)
+hist(covid_data_child$totalPTSD,col = "lightblue", main = NULL, xlab = "trauma symptoms")
 
 
 
@@ -1040,8 +1040,8 @@ sd(covid_data_child$PARQundiff, na.rm =TRUE)
 sd(covid_data_child$PARQcontrol, na.rm =TRUE)
 
 hist(covid_data_child$totalPARQ)
-hist(covid_data_child$PARQwarmth)
-hist(covid_data_child$PARQhostile)
+hist(covid_data_child$PARQwarmth,col = "lightblue", main = NULL, xlab = "Parental warmth")
+hist(covid_data_child$PARQhostile,col = "lightblue", main = NULL, xlab = "Parental hostility")
 hist(covid_data_child$PARQneglect)
 hist(covid_data_child$PARQundiff)
 hist(covid_data_child$PARQcontrol)
