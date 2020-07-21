@@ -49,7 +49,13 @@ output            : papaja::apa6_word
 library("papaja")
 library(psych)
 library(dplyr)
+library(corrplot)
+library(corx)
 r_refs("r-references.bib")
+
+#read in data
+covid_data <- read.csv("scored_data/covid_data_scored.csv", header=TRUE, stringsAsFactors = FALSE)
+covid_data_child <- read.csv("scored_data/covid_data_child_scored.csv", header=TRUE, stringsAsFactors = FALSE)
 
 ```
 
@@ -78,67 +84,151 @@ We used `r cite_r("r-references.bib")` for all our analyses.
 ## Reproducible table section
 
 
-```{r, tables, echo=FALSE, results='asis'}
+
+This script calculates descriptive statistics and makes tables. 
+It uses the same script that was the input for the analyses script.
+Question: Need to check with Sarah whether those numbers will be correct depending on listwise deletion??
 
 
-# This script calculates descriptive statistics and makes tables. 
-# It uses the same script that was the input for the analyses script.
-# Question: Need to check with Sarah whether those numbers will be correct depending on listwise deletion??
 
-#read in data
-covid_data_child <- read.csv("covid_data_child_scored.csv", header=TRUE, stringsAsFactors = FALSE)
+## Things to do:
+N's/stats for the sample used in analysis (i.e., those that completed SDQ1 or PTSD, n parents is 381):
+Frequencies,% for demographic info - gender of parent and children, country, income, edu, occupation, ethnicity, biological vs other relationship to child
+Frequencies/% for COVID - tested, hospitalized, known, known hospitalized, known died, stay at home (Y/N), stay at home length, restriction lifted?, follow rules, why?, job change
+COVID total distress and COVID positive - M/SD
+COVID communication - facts/emotion/self M/SD
+Frequencies for any past/current mental illness of parent and children
+SDQ change since COVID - M/SD + frequencies based on number of items where more is reported (something to indicate the extent of kids who had worsening problems)
 
-#Things to do:
-# N's/stats for the sample used in analysis (i.e., those that completed SDQ1 or PTSD, n parents is 381):
-# Frequencies,% for demographic info - gender of parent and children, country, income, edu, occupation, ethnicity, biological vs other relationship to child
-# Frequencies/% for COVID - tested, hospitalized, known, known hospitalized, known died, stay at home (Y/N), stay at home length, restriction lifted?, follow rules, why?, job change
-# COVID total distress and COVID positive - M/SD
-# COVID communication - facts/emotion/self M/SD
-# Frequencies for any past/current mental illness of parent and children
-# SDQ change since COVID - M/SD + frequencies based on number of items where more is reported (something to indicate the extent of kids who had worsenign problems)
+```{r, desctable, echo=FALSE, results='asis'}
 
+#create matrix with the values in there
+## to do - combine other and non-binary
+
+
+par_gender <- summarytools::freq(covid_data$par_gender, order = "freq")[c(1:5), c(1,4)]
+par_age <- cbind(mean(covid_data$par_age, na.rm =TRUE), sd(covid_data$par_age, na.rm =TRUE))
+ch_gender <- summarytools::freq(covid_data_child$ch_gender, order = "freq")[c(1:5), c(1,4)]
+ch_age <- cbind(mean(covid_data_child$ch_age, na.rm =TRUE), sd(covid_data_child$ch_age, na.rm =TRUE))
+country <- summarytools::freq(as.factor(covid_data$country_cat), order = "levels")[c(1:5), c(1,2)]
+
+desctable<- rbind( country, par_gender, ch_gender, par_age, ch_age)
+
+row.names(desctable) <- c("Australia", "U.K.", "U.S.A","New Zealand","Other", "Female","Male","Non-binary/gender-fluid","Other","Missing", "Female","Male","Non-binary/gender-fluid","Other","Missing",
+                          "Parent Age", "Child Age")
+
+
+apa_table(
+  list(`Country` = desctable[1:5,], `Age` = desctable[c(16,17),],`Parent Gender` = desctable[c(6:10),], `Child Gender` = desctable[c(11:15),] ),
+          caption = "Descriptive statistics",
+          #note = "",
+          align = c("l",rep("c", 2)),
+          col.names = c( "Demographic measure","Frequency (or Mean)","Percentage (or Stnd. Dev.)"),
+  digits = c(0,0,2)
+  )
+
+
+```
+
+```{r, corrtable, echo=FALSE, results='asis'}
+
+#correlation table
+corrmatrixch <-  dplyr::select(covid_data_child, ch_talk_about_1_num, ch_talk_about_2_num, ch_talk_about_3_num, ch_talk_about_4_num, ch_talk_about_5_num, ch_talk_about_6_num, ch_talk_about_7_num, ch_talk_about_8_num)
+
+corrmatrixpar <-  dplyr::select(covid_data, ch_talk_about_1_num, ch_talk_about_2_num, ch_talk_about_3_num, ch_talk_about_4_num, ch_talk_about_5_num, ch_talk_about_6_num, ch_talk_about_7_num, ch_talk_about_8_num)
+
+colnames(corrmatrix) <- c("facts", "information", "child emotions", "parent emotions", "others' feelings", "reassurance", "didn't know what to say", "too upset")
+
+x <- corx(corrmatrix,
+          triangle = "lower",
+          stars = c(0.05, 0.01, 0.001))
+
+papaja::apa_table(x$apa, # apa contains the data.frame needed for apa_table
+                  caption = "Bivariate correlations for key variables and covariates (Pearson’s)",
+                  note = "* p < 0.05; ** p < 0.01; *** p < 0.001. Not corrected for multiple comparisons. Full variable names: .",
+                  landscape = TRUE,
+                  #escape = F
+                  )
+
+#correlation plot
+# M <- cor(corrmatrix, use = "complete.obs")
+# colnames(M) <- c("facts", "information", "child emotions", "parent emotions", "others' feelings", "reassurance", "didn't know what to say", "too upset")
+# rownames(M) <- c("facts", "information", "child emotions", "parent emotions", "others' feelings", "reassurance", "didn't know what to say", "too upset")
+# res1 <- cor.mtest(corrmatrix, use = "complete.obs",
+#                    conf.level = .95)
+#  
+# corrplot.mixed(M,  order = "hclust", lower.col = "black", number.cex = .6,
+#                 tl.col = "black", tl.srt = 45,tl.cex = 0.8, tl.pos= "lt",
+#                 p.mat = res1$p, sig.level = .05, insig = "blank") 
+
+```
+
+```{r, main_varstable, echo=FALSE, results='asis'}
 
 
 #Mean, SD, range for continuous vbls - DASS Dep & Anx & Stress, FES, PARQ hostile & warmth, 
 # SDQ emo, hyp, con, peer, PTSD 
 # + Ns/% in each group based on clinical cut-off's (DASS, PARQ, SDQ).
+# add in communication vars
 
 #Select the variables to go in
 
-analysis_vars<- dplyr::select(covid_data_child, DASSDep, DASSAnx, DASSStress, totalFES, PARQhostile, PARQwarmth, 
+analysis_vars_par<- dplyr::select(covid_data, DASSDep, DASSAnx, DASSStress, totalFES)
+analysis_vars_child<- dplyr::select(covid_data_child, PARQhostile, PARQwarmth, 
               SDQemo, SDQhyp, SDQcon, SDQpeer, totalPTSD)
 
 #provides mean, sd, kurtosis, skew etc
-desc <- describe(analysis_vars)
+desc.p <- describe(analysis_vars_par)
+desc.c <- describe(analysis_vars_child)
+desc <- rbind(desc.p,desc.c)
 
 #Just select the columns want for table (at this point n,m,sd,range)
-desc1 <- desc[, c("n", "mean", "sd", "range")]
+desc1 <- desc[, c("n", "mean", "sd", "min", "max")]
 
 row.names(desc1) <- c("DASS - Depression", "DASS - Anxiety", "DASS - Stress", "FES", "PARQ - Hostile", "PARQ - Warmth", 
               "SDQ - emotional problems" , "SDQ - hyperactivity", "SDQ - conduct", "SDQ - peer problems", "PTSD symptoms")
 
 #Use the wrapper apa_table to make an apa table of the descriptive
-
-# Correlation table for communication variables
 apa_table(desc1,
           caption = "Means, standard deviations and range for the key measures",
           #note = "bottom part",
           align = c("l","c", "c", "c", "c"),
-          col.names = c("Measure of interest", "N","Mean","SD","Range"))
-
-corrmatrix <-  dplyr::select(covid_data_child, ch_talk_about_1_num, ch_talk_about_2_num, ch_talk_about_3_num, ch_talk_about_4_num, ch_talk_about_5_num, ch_talk_about_6_num, ch_talk_about_7_num, ch_talk_about_8_num)
-
-M <- cor(corrmatrix, use = "complete.obs")
-colnames(M) <- c("facts", "information", "child emotions", "parent emotions", "others' feelings", "reassurance", "didn't know what to say", "too upset")
-rownames(M) <- c("facts", "information", "child emotions", "parent emotions", "others' feelings", "reassurance", "didn't know what to say", "too upset")
-res1 <- cor.mtest(corrmatrix, use = "complete.obs", 
-                   conf.level = .95)
- 
-corrplot.mixed(M,  order = "hclust", lower.col = "black", number.cex = .6,
-                tl.col = "black", tl.srt = 45,tl.cex = 0.8, tl.pos= "lt",
-                p.mat = res1$p, sig.level = .05, insig = "blank") 
+          col.names = c("Measure of interest", "N","Mean","SD","Minimum","Maximum" ),
+          digits = c(0,0, 2,2,2,2))
 
 ```
+
+```{r, corrtablecomm, echo=FALSE, results='asis'}
+
+#correlation table
+corrmatrixcomm <-  dplyr::select(covid_data_child, ch_talk_about_1_num, ch_talk_about_2_num, ch_talk_about_3_num, ch_talk_about_4_num, ch_talk_about_5_num, ch_talk_about_6_num, ch_talk_about_7_num, ch_talk_about_8_num)
+
+colnames(corrmatrixcomm) <- c("facts", "information", "child emotions", "parent emotions", "others' feelings", "reassurance", "didn't know what to say", "too upset")
+
+xcomm <- corx(corrmatrixcomm,
+          triangle = "lower",
+          stars = c(0.05, 0.01, 0.001))
+
+papaja::apa_table(xcomm$apa, # apa contains the data.frame needed for apa_table
+                  caption = "Bivariate correlations for key variables and covariates (Pearson’s)",
+                  note = "* p < 0.05; ** p < 0.01; *** p < 0.001. Not corrected for multiple comparisons. Full variable names: .",
+                  landscape = TRUE,
+                  #escape = F
+                  )
+
+#correlation plot
+# Mcomm <- cor(corrmatrixcomm, use = "complete.obs")
+# colnames(Mcomm) <- c("facts", "information", "child emotions", "parent emotions", "others' feelings", "reassurance", "didn't know what to say", "too upset")
+# rownames(Mcomm) <- c("facts", "information", "child emotions", "parent emotions", "others' feelings", "reassurance", "didn't know what to say", "too upset")
+# res1comm <- cor.mtest(corrmatrixcomm, use = "complete.obs",
+#                    conf.level = .95)
+#  
+# corrplot.mixed(Mcomm,  order = "hclust", lower.col = "black", number.cex = .6,
+#                 tl.col = "black", tl.srt = 45,tl.cex = 0.8, tl.pos= "lt",
+#                 p.mat = res1comm$p, sig.level = .05, insig = "blank") 
+
+```
+
 
 # Discussion
 

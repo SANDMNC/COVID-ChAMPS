@@ -14,7 +14,7 @@ library(dplyr)
 library(tidyselect) # for starts_with and contains
 
 #read in data
-covid_data_child <- read.csv("covid_data_child_scored.csv", header=TRUE, stringsAsFactors = FALSE)
+covid_data_child <- read.csv("scored_data/covid_data_child_scored.csv", header=TRUE, stringsAsFactors = FALSE)
 
 ```
 

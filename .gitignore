@@ -5,3 +5,4 @@
 # ignores R history file
 *.Rhistory
 
+.Rproj.user

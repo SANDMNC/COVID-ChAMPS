@@ -1,8 +1,7 @@
 
 ```{r setup, include=FALSE}
 
-setwd("/Volumes/Groups/Adaptdir/COVID-CHAMPS/Data")
-covid_data_child <- read.csv("covid_data_child_scored.csv", header=TRUE, stringsAsFactors = FALSE)
+covid_data_child <- read.csv("scored_data/covid_data_child_scored.csv", header=TRUE, stringsAsFactors = FALSE)
 
 #read in packages
 library(tidyverse)

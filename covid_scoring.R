@@ -14,11 +14,6 @@
 # First csv each parent is a separate row.
 # Second csv each child is a separate row.
 
-
-# Set working directory to where the data is.
-setwd("/Volumes/Groups/Adaptdir/COVID-CHAMPS/Data")
-
-
 # Load packages (install them first if don't have them using install.packages("package_name") )
 library(car) # for recode
 library(dplyr) # for %>%
@@ -33,7 +28,7 @@ library(corrplot) #For correlation plot
 # General cleaning----------------------------------------------------------------------------------------------
 
 # Read in the csv file
-covid_data <- read.csv("covid_data.csv", header=TRUE, stringsAsFactors = FALSE)
+covid_data <- read.csv("raw_data/covid_data.csv", header=TRUE, stringsAsFactors = FALSE)
 
 
 #Make the age variables numeric rather than characters
@@ -323,7 +318,7 @@ summarytools::freq(as.factor(covid_data$covid_change), order = "freq")
 # COVID distress ------------------------------------------------------------
 
 
-# Inlcudes financial problems - covid_finance, uncertainty stress - covid_uncertain, stress related to existing plans disruption - covid_plans,
+# Includes financial problems - covid_finance, uncertainty stress - covid_uncertain, stress related to existing plans disruption - covid_plans,
 # infection worry personal, friends/family - covid_worry_1 and covid_worry_2, mental emotional health impact and life changes worry - covid_worry_3,
 # negative life impact and positive - could reverse score for a distress measure - covid_neg and covid_pos
 
@@ -1141,5 +1136,5 @@ covid_data_child$totalPTSD.c <- (covid_data_child$totalPTSD-totalPTSD.mean)
 # Writing the scored files ----------------------------------------
 # This will currently save in the working directory - you can set the path to save where you want
 
-write.csv(covid_data, file = "covid_data_scored.csv")
-write.csv(covid_data_child, file = "covid_data_child_scored.csv")
+write.csv(covid_data, file = "scored_data/covid_data_scored.csv")
+write.csv(covid_data_child, file = "scored_data/covid_data_child_scored.csv")
