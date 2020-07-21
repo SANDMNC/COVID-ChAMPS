@@ -54,8 +54,8 @@ library(corx)
 r_refs("r-references.bib")
 
 #read in data
-covid_data <- read.csv("covid_data_scored.csv", header=TRUE, stringsAsFactors = FALSE)
-covid_data_child <- read.csv("covid_data_child_scored.csv", header=TRUE, stringsAsFactors = FALSE)
+covid_data <- read.csv("scored_data/covid_data_scored.csv", header=TRUE, stringsAsFactors = FALSE)
+covid_data_child <- read.csv("scored_data/covid_data_child_scored.csv", header=TRUE, stringsAsFactors = FALSE)
 
 ```
 
@@ -133,7 +133,9 @@ apa_table(
 ```{r, corrtable, echo=FALSE, results='asis'}
 
 #correlation table
-corrmatrix <-  dplyr::select(covid_data_child, ch_talk_about_1_num, ch_talk_about_2_num, ch_talk_about_3_num, ch_talk_about_4_num, ch_talk_about_5_num, ch_talk_about_6_num, ch_talk_about_7_num, ch_talk_about_8_num)
+corrmatrixch <-  dplyr::select(covid_data_child, ch_talk_about_1_num, ch_talk_about_2_num, ch_talk_about_3_num, ch_talk_about_4_num, ch_talk_about_5_num, ch_talk_about_6_num, ch_talk_about_7_num, ch_talk_about_8_num)
+
+corrmatrixpar <-  dplyr::select(covid_data, ch_talk_about_1_num, ch_talk_about_2_num, ch_talk_about_3_num, ch_talk_about_4_num, ch_talk_about_5_num, ch_talk_about_6_num, ch_talk_about_7_num, ch_talk_about_8_num)
 
 colnames(corrmatrix) <- c("facts", "information", "child emotions", "parent emotions", "others' feelings", "reassurance", "didn't know what to say", "too upset")
 
