@@ -41,18 +41,19 @@ documentclass     : "apa6"
 classoption       : "man"
 \ output            : papaja::apa6_pdf
 output            : papaja::apa6_word
+
+
 ---
 
 ```{r setup, include = FALSE}
 
 #papaja needs to be downloaded from github - instructions here - https://github.com/crsh/papaja
 
-library("papaja")
+library(papaja)
 library(psych)
 library(dplyr)
 library(corrplot)
 library(corx)
-library(kableExtra)
 r_refs("r-references.bib")
 
 #read in data
@@ -87,12 +88,6 @@ We used `r cite_r("r-references.bib")` for all our analyses.
 
 
 
-This script calculates descriptive statistics and makes tables. 
-It uses the same script that was the input for the analyses script.
-Question: Need to check with Sarah whether those numbers will be correct depending on listwise deletion??
-
-
-
 ## Things to do:
 N's/stats for the sample used in analysis (i.e., those that completed SDQ1 or PTSD, n parents is 381):
 Frequencies,% for demographic info - gender of parent and children, country, income, edu, occupation, ethnicity, biological vs other relationship to child
@@ -106,29 +101,41 @@ SDQ change since COVID - M/SD + frequencies based on number of items where more 
 
 #create matrix with the values in there
 ## to do - combine other and non-binary
-
-
 par_gender <- summarytools::freq(covid_data$par_gender, order = "freq")[c(1:5), c(1,4)]
 par_age <- cbind(mean(covid_data$par_age, na.rm =TRUE), sd(covid_data$par_age, na.rm =TRUE))
 ch_gender <- summarytools::freq(covid_data_child$ch_gender, order = "freq")[c(1:5), c(1,4)]
 ch_age <- cbind(mean(covid_data_child$ch_age, na.rm =TRUE), sd(covid_data_child$ch_age, na.rm =TRUE))
 country <- summarytools::freq(as.factor(covid_data$country_cat), order = "levels")[c(1:5), c(1,2)]
+par_ed_fac <-summarytools::freq(as.factor(covid_data$par_ed_ord)) [c(1:11), c(1,4)]
+other_par<- summarytools::freq(as.factor(covid_data_child$other_par))[c(1:3), c(1,4)]
 
-desctable<- rbind( country, par_gender, ch_gender, par_age, ch_age)
+#rearrange the levels first so they are in order lowest wage to highest
+covid_data$income <- factor(covid_data$income, levels = c("> AU$36,400 (US$23,230) per year", "Up to AU$699 per week (AU$36,400 or US$23,230 per year)", "AU$700 to AU$999 per week (up to AU$52,000 or US$33,168 per year)", "AU$1,000 to AU$1,730 per week (up to AU$90,000 or US$57,407 per year)", "AU$1,731 to AU$2,700 per week (up to AU$140,000 or US$89,307 per year)", "Above AU$140,000 (US$89,307) per year", "Prefer not to say"))
+
+income <- summarytools::freq(as.factor(covid_data$income))[c(1:8), c(1,4)]
+
+#work in progress number of children answered for
+# child_answered_na<- summarytools::freq(as.factor(covid_data_child$id))["<NA>",1]
+# child_answered<- summarytools::freq(as.factor(covid_data_child$id))[,1]
+# summarytools::freq(as.factor(child_answered))
+
+desctable<- rbind( country, par_gender, ch_gender, par_age, ch_age, par_ed_fac, other_par, income)
+
+
 
 row.names(desctable) <- c("Australia", "U.K.", "U.S.A","New Zealand","Other", "Female","Male","Non-binary/gender-fluid","Other","Missing", "Female","Male","Non-binary/gender-fluid","Other","Missing",
-                          "Parent Age", "Child Age")
-
+                          "Parent Age", "Child Age",
+                          "Partial primary school", "Completed primary school", "Partial high school",  "Completed high school","TAFE","Partial University","Graduated Bachelor's degree","Honors degree","Partial graduate school","Completed graduate school", "Missing", "No", "Yes", "Missing", "Less than AU$36,400 per year", "Up to AU$36,400 per year", "Up to AU$52,000 per year", "Up to AU$90,000 per year", "Up to AU$140,000 per year)", "> AU$140,000 per year", "Prefer not to say", "Missing")
 
 apa_table(
-  list(`Country` = desctable[1:5,], `Age` = desctable[c(16,17),],`Parent Gender` = desctable[c(6:10),], `Child Gender` = desctable[c(11:15),] ),
+  list(`Country` = desctable[1:5,], `Age` = desctable[c(16,17),],`Parent Gender` = desctable[c(6:10),], `Child Gender` = desctable[c(11:15),], `Parent Education` = desctable[c(18:28),] , `Another parent in the home` = desctable[c(29:31),], `Household income` = desctable[c(32:39),]),
           caption = "Descriptive statistics",
           #note = "",
           align = c("l",rep("c", 2)),
           col.names = c( "Demographic measure","Frequency (or Mean)","Percentage (or Stnd. Dev.)"),
-  digits = c(0,0,2)
+  digits = c(0,0,2),
+  font_size = "small"
   )
-
 
 ```
 
@@ -159,7 +166,8 @@ papaja::apa_table(xc$apa, # apa contains the data.frame needed for apa_table
                   caption = "Bivariate correlations for key variables and covariates (Pearson’s)",
                   note = "* p < 0.05; ** p < 0.01; *** p < 0.001. Not corrected for multiple comparisons. Full variable names: .",
                   landscape = TRUE,
-                  longtable = TRUE
+                  longtable = TRUE,
+                  small = TRUE
                   #escape = F
                   )
 
