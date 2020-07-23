@@ -7,22 +7,9 @@
 # 
 # Source of code and plots: https://datascienceplus.com/imputing-missing-data-with-r-mice-package/
 
-#write in data
-covid_data_child <- read.csv("scored_data/covid_data_child_scored.csv", header=TRUE, stringsAsFactors = FALSE)
+#read in data
+covid_data_child_for_MI <- read.csv("scored_data/covid_data_child_scored_for_MI.csv", header=TRUE, stringsAsFactors = FALSE)
 
-#scoring of moderating factors, done here rather than the scoring.R file because it will drive me crazy to go back to that point!
-covid_data_child$other_par_num<- ifelse(covid_data_child$other_par == "No", 0,1)
-income_famsize.mean <- mean(covid_data_child$income_famsize, na.rm = TRUE)
-covid_data_child$income_famsize.c <- (covid_data_child$income_famsize-income_famsize.mean)
-
-# Remove first column (X)
-covid_data_child_for_MI <- covid_data_child[,c(2:537)]
-                                              
-# Select variables for MI
-covid_data_child_for_MI <- covid_data_child_for_MI[c(1:298,300:368,370:373,375:410,412:435,438:457,459:463,466:469,471,473:474,477,479,482:497),c(1,44,295:300,303,313,338,353,422:427,449,514:533,535:536)]
-
-# Write file for listwise anr robust analyses
-write.csv(scored_data/covid_data_child_for_MI, file = "covid_data_child_scored_for_MI.csv")
 
 #Load packages
 library(dplyr)
@@ -44,6 +31,7 @@ covid_child_missing<- dplyr::select(covid_data_child_for_MI, id, ch_age.c, par_a
                              facts_comm.c, emotion_comm.c, self_comm.c,
                              par_past_mh_num, other_hosp_num, other_par_num)
 
+
 #visualising overall main data
 vis_miss(covid_child_missing) + theme(axis.text.x = element_text(size=6, angle=90))
 
@@ -58,21 +46,21 @@ apply(covid_child_missing,1,pMiss)
 aggr_plot <- aggr(covid_child_missing, col=c('navyblue','red'), numbers=TRUE, sortVars=TRUE, labels=names(covid_child_missing), cex.axis=.7, gap=3, ylab=c("Histogram of missing data","Pattern"))
 
 #Can use this to look at particular relationship and how missing from one varibales impacts the spread of the other variable. Change the variables as desired - 1 example below
-marginplot(covid_child_missing[c("totalSDQ2","DASSStress")])
+# marginplot(covid_child_missing[c("totalSDQ2","DASSStress")])
 
-#compare missing and non-missing
-explanatory = c("ch_age", "par_age", "par_ed_ord", "income_famsize", "country_cat", "ch_gender_num",
-                             "PARQhostile", "PARQcontrol", "PARQwarmth",
-                             "totalSDQ", "SDQemo", "SDQhyp", "SDQcon", "SDQpeer",
-                             "DASSDep", "DASSAnx", "DASSStress",
-                             "totalFES", "totalPTSD",
-                             "totalcov_dist", "covid_pos_num", "covid_finance_num", 
-                             "facts_comm", "emotion_comm", "self_comm",
-                             "par_past_mh_num")
-dependent = "totalSDQ2"
-covid_child_missing %>% 
-  missing_compare(dependent, explanatory) %>% 
-    knitr::kable(row.names=FALSE, align = c("l", "l", "r", "r", "r")) # Omit when you run
+# #compare missing and non-missing
+# explanatory = c("ch_age", "par_age", "par_ed_ord", "income_famsize", "country_cat", "ch_gender_num",
+#                              "PARQhostile", "PARQcontrol", "PARQwarmth",
+#                              "totalSDQ", "SDQemo", "SDQhyp", "SDQcon", "SDQpeer",
+#                              "DASSDep", "DASSAnx", "DASSStress",
+#                              "totalFES", "totalPTSD",
+#                              "totalcov_dist", "covid_pos_num", "covid_finance_num", 
+#                              "facts_comm", "emotion_comm", "self_comm",
+#                              "par_past_mh_num")
+# dependent = "totalSDQ2"
+# covid_child_missing %>% 
+#   missing_compare(dependent, explanatory) %>% 
+#     knitr::kable(row.names=FALSE, align = c("l", "l", "r", "r", "r")) # Omit when you run
 
 
 
@@ -94,4 +82,8 @@ stripplot(miData, pch = 20, cex = 1.2)
 
 # Makes complete dataset based on imputed dataset (the number is the set it will use)
 completedData <- complete(miData,2)
+
+
+#export data
+save(miData, file = "scored_data/miData.rda")
 

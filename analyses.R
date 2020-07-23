@@ -1,7 +1,8 @@
 
 # covid_data_child_scored.csv for robust lmm
 covid_data_child <- read.csv("scored_data/covid_data_child_scored_for_MI.csv", header=TRUE, stringsAsFactors = FALSE)
-# miData created from covid_missing.R script for MI analyses
+# load in mi data
+miData <- load("scored_data/miData.rda")
 
 library(lmerTest)
 library(robustlmm)
