@@ -1,14 +1,8 @@
-#set to appropriate working directory
-setwd("/Users/sarah/Dropbox/2020/COVID_parenting/COVID_script/")
 
 # covid_data_child_scored.csv for robust lmm
-covid_data_child <- read.csv("covid_data_child_scored_for_MI.csv", header=TRUE, stringsAsFactors = FALSE)
+covid_data_child <- read.csv("scored_data/covid_data_child_scored_for_MI.csv", header=TRUE, stringsAsFactors = FALSE)
 # miData created from covid_missing.R script for MI analyses
 
-
-#install.packages("robustlmm")
-#install.packages("lmerTest")
-#install.packages("lmeresampler")
 library(lmerTest)
 library(robustlmm)
 library(reghelper)
@@ -19,6 +13,9 @@ library(nlme)
 library(boot)
 library(mice)
 library(mitml)
+
+#Remove the X column
+covid_data_child$X <- NULL
 
 #Create separate datasets for males and females for any post hoc tests
 data_female <- subset(covid_data_child, covid_data_child$ch_gender_num==1)
