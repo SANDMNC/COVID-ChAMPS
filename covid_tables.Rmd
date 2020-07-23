@@ -59,6 +59,7 @@ r_refs("r-references.bib")
 #read in data
 covid_data <- read.csv("scored_data/covid_data_scored.csv", header=TRUE, stringsAsFactors = FALSE)
 covid_data_child <- read.csv("scored_data/covid_data_child_scored.csv", header=TRUE, stringsAsFactors = FALSE)
+SDQ.c.freq <- read.csv("scored_data/SDQ.c.freq.csv", header=TRUE, stringsAsFactors = FALSE)
 
 ```
 
@@ -91,8 +92,6 @@ We used `r cite_r("r-references.bib")` for all our analyses.
 N's/stats for the sample used in analysis (i.e., those that completed SDQ1 or PTSD, n parents is 381):
 Frequencies,% for demographic info - gender of parent and children, country, income, edu, occupation, ethnicity, biological vs other relationship to child
  stay at home (Y/N), stay at home length,  job change
-COVID total distress and COVID positive - M/SD
-COVID communication - facts/emotion/self M/SD
 SDQ change since COVID - M/SD + frequencies based on number of items where more is reported (something to indicate the extent of kids who had worsening problems)
 
 ```{r, desctable, echo=FALSE, results='asis'}
@@ -186,6 +185,27 @@ apa_table(
   )
 
 ```
+
+```{r, changetable, echo=FALSE, results='asis'}
+
+rownames(SDQ.c.freq) <- c("Fights","Lies","Obedient","Steals","Temper", "Fears", "Headaches" ,
+                         "Nervous", "Unhappy" , "Worries", "Attention" ,"Distracted","Fidget",
+                         "Restless" ,"Thinks","Adults", "Bullied" , "Friend" , "Liked" , 
+                         "Solitary" )
+
+apa_table(
+  SDQ.c.freq[, c(6:8)],
+          caption = "Percentage change in children's symptoms",
+          #note = "",
+          align = c("l",rep("c", 3)),
+          col.names = c("Symptom", "More","Same","Less"),
+  digits = c(0,2,2,2),
+  font_size = "small",
+  stub_indents = list("Conduct" = c(1:5), "Emotional" = c(6:10), "Hyperactivity" = c(11:15), "Peer" = c(16:20))
+  )
+
+```
+
 
 ```{r, covdesctable, echo=FALSE, results='asis'}
 # participants were locked down at the time, kids in school or working from home at the time of survey
