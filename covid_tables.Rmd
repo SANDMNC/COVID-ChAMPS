@@ -39,8 +39,8 @@ draft             : no
 
 documentclass     : "apa6"
 classoption       : "man"
-\ output            : papaja::apa6_pdf
-output            : papaja::apa6_word
+output            : papaja::apa6_pdf
+\ output            : papaja::apa6_word
 
 
 ---
@@ -91,10 +91,9 @@ We used `r cite_r("r-references.bib")` for all our analyses.
 ## Things to do:
 N's/stats for the sample used in analysis (i.e., those that completed SDQ1 or PTSD, n parents is 381):
 Frequencies,% for demographic info - gender of parent and children, country, income, edu, occupation, ethnicity, biological vs other relationship to child
-Frequencies/% for COVID - tested, hospitalized, known, known hospitalized, known died, stay at home (Y/N), stay at home length, restriction lifted?, follow rules, why?, job change
+ stay at home (Y/N), stay at home length,  job change
 COVID total distress and COVID positive - M/SD
 COVID communication - facts/emotion/self M/SD
-Frequencies for any past/current mental illness of parent and children
 SDQ change since COVID - M/SD + frequencies based on number of items where more is reported (something to indicate the extent of kids who had worsening problems)
 
 ```{r, desctable, echo=FALSE, results='asis'}
@@ -137,6 +136,47 @@ apa_table(
   font_size = "small"
   )
 
+```
+
+```{r, covdesctable, echo=FALSE, results='asis'}
+# participants were locked down at the time, kids in school or working from home at the time of survey
+
+#empty dataframe
+lckdwn=data.frame(matrix(ncol=2,nrow=3))
+
+#Still in lockdown
+lckdwn[1,1] <-  summarytools::freq(as.factor(covid_data$stay_home))["Yes",1]-summarytools::freq(as.factor(covid_data$leave_home))["Yes",1]
+#Were in lockdown - now lifted
+lckdwn[2,1] <- summarytools::freq(as.factor(covid_data$stay_home))["Yes",1]-summarytools::freq(as.factor(covid_data$leave_home))["No",1]
+#no stay at home yet
+lckdwn[3,1] <- summarytools::freq(as.factor(covid_data$stay_home))["No",1]
+#make the percentages
+lckdwn[1,2]<- (lckdwn[1,1]/(lckdwn[1,1]+lckdwn[2,1]+lckdwn[3,1]))*100
+lckdwn[2,2]<- (lckdwn[2,1]/(lckdwn[1,1]+lckdwn[2,1]+lckdwn[3,1]))*100
+lckdwn[3,2]<- (lckdwn[3,1]/(lckdwn[1,1]+lckdwn[2,1]+lckdwn[3,1]))*100
+
+rownames(lckdwn) <- c("Current", "Past", "No")
+
+# Do the same for schools
+chhome=data.frame(matrix(ncol=2,nrow=4))
+
+#Child at home due to COVID current
+chhome[1,1] <-  (summarytools::freq(as.factor(covid_data$ch1_school))["Yes",1] +
+  summarytools::freq(as.factor(covid_data$ch1_school))["No, but I kept my child home from school (chose to or was encouraged to)",1])-
+  summarytools::freq(as.factor(covid_data$ch1_reopen))["Yes",1]
+#Was at home past
+chhome[2,1] <- summarytools::freq(as.factor(covid_data$ch1_reopen))["Yes",1]
+#Child home schholed
+chhome[3,1] <- summarytools::freq(as.factor(covid_data$ch1_school))["My child is home schooled",1]
+#not home
+chhome[4,1] <- summarytools::freq(as.factor(covid_data$ch1_school))["No",1]
+#make the percentages
+chhome[1,2]<- (chhome[1,1]/summarytools::freq(as.factor(covid_data$ch1_school))["Total",1])*100
+chhome[2,2]<- (chhome[2,1]/summarytools::freq(as.factor(covid_data$ch1_school))["Total",1])*100
+chhome[3,2]<- (chhome[3,1]/summarytools::freq(as.factor(covid_data$ch1_school))["Total",1])*100
+chhome[4,2]<- (chhome[4,1]/summarytools::freq(as.factor(covid_data$ch1_school))["Total",1])*100
+
+rownames(chhome) <- c("Current", "Past","Home School", "No")
 ```
 
 ```{r, corrtable, echo=FALSE, results='asis'}
