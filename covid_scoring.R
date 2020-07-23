@@ -1132,9 +1132,22 @@ covid_data_child$totalFES.c <- (covid_data_child$totalFES-totalFES.mean)
 covid_data_child$ch_age.c <- (covid_data_child$ch_age-ch_age.mean)
 covid_data_child$totalPTSD.c <- (covid_data_child$totalPTSD-totalPTSD.mean)
 
+#Get rid of the 4 rows that have come into the dataset
+covid_data_child<- covid_data_child[!is.na(covid_data_child$id),]
+
+#prepare a smaller subset of the data to use for MI
+
+covid_data_child_for_MI <- covid_data_child[,c("id", "par_age", "country_cat","par_gender_num", "income_mid" ,"income_famsize",
+                                               "par_ed_ord" , "other_hosp_num","iso", "par_past_mh_num", "DASSStress", "id2",
+                                               "SDQpro","totalSDQ2", "SDQemo2" ,"SDQcon2","SDQhyp2", "SDQpeer2" , "ch_PTSD_15_num",
+                                               "PARQcontrol","ch_talk_about_6_num.c","facts_comm.c" ,"emotion_comm.c", "self_comm.c" ,
+                                               "PARQwarmth.c", "PARQcontrol.c" , "covid_finance_num.c","totalFES.c" ,"covid_pos_num.c",
+                                               "totalcov_dist.c", "DASSStress.c", "DASSAnx.c" ,  "DASSDep.c" , "SDQpeer.c" , "SDQcon.c" ,
+                                               "SDQhyp.c" , "SDQemo.c","totalSDQ.c" ,"PARQhostile.c" ,"totalPTSD.c")]
+
 
 # Writing the scored files ----------------------------------------
-# This will currently save in the working directory - you can set the path to save where you want
 
 write.csv(covid_data, file = "scored_data/covid_data_scored.csv")
 write.csv(covid_data_child, file = "scored_data/covid_data_child_scored.csv")
+write.csv(covid_data_child_for_MI, file = "scored_data/covid_data_child_scored_for_MI.csv")
