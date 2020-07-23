@@ -87,7 +87,6 @@ We used `r cite_r("r-references.bib")` for all our analyses.
 ## Reproducible table section
 
 
-
 ## Things to do:
 N's/stats for the sample used in analysis (i.e., those that completed SDQ1 or PTSD, n parents is 381):
 Frequencies,% for demographic info - gender of parent and children, country, income, edu, occupation, ethnicity, biological vs other relationship to child
@@ -183,13 +182,14 @@ rownames(chhome) <- c("Current", "Past","Home School", "No")
 
 #correlation table
 #first matrix - par vars only
-corrmatrixpar <-  dplyr::select(covid_data, par_age, par_gender_num, par_ed_ord, income_famsize, DASSDep, DASSAnx, DASSStress)
+corrmatrixpar <-  dplyr::select(covid_data, par_age, par_gender_num, par_ed_ord, income_famsize, DASSDep, DASSAnx, DASSStress, covid_neg_num, covid_pos_num)
 #include both par and child vars
-corrmatrixch <-  dplyr::select(covid_data_child, par_age, par_gender_num, par_ed_ord, income_famsize, DASSDep, DASSAnx, DASSStress,
-                               ch_age, ch_gender_num, SDQemo, SDQcon, SDQhyp, SDQpeer, SDQpro, SDQemo2, SDQcon2, SDQhyp2, SDQpeer2, SDQpro2,PARQwarmth, PARQhostile, PARQwarmth, PARQhostile, PARQneglect, PARQundiff, PARQcontrol)
+corrmatrixch <-  dplyr::select(covid_data_child, par_age, par_gender_num, par_ed_ord, income_famsize, DASSDep, DASSAnx, DASSStress,covid_neg_num, covid_pos_num,
+                               ch_age, ch_gender_num, SDQemo, SDQcon, SDQhyp, SDQpeer, SDQpro, SDQemo2, SDQcon2, SDQhyp2, SDQpeer2, SDQpro2,PARQwarmth, PARQhostile, PARQwarmth, PARQhostile, PARQneglect, PARQundiff, PARQcontrol,facts_comm, emotion_comm, self_comm)
 
+#insert colnames here
+#colnames(corrmatrixpar) <- c()
 
-#colnames(corrmatrixpar) <- c("facts", "information", "child emotions", "parent emotions", "others' feelings", "reassurance", "didn't know what to say", "too upset")
 
 xp <- corx(corrmatrixpar,
           triangle = "lower",
@@ -200,7 +200,7 @@ xc <- corx(corrmatrixch,
           stars = c(0.05, 0.01, 0.001))
 
 #replace the par-par correlations from the child table with the ones from the par table so that they have the correct N.
-xc$apa[1:7,1:6] <- xp$apa
+xc$apa[1:9,1:8] <- xp$apa
 
 papaja::apa_table(xc$apa, # apa contains the data.frame needed for apa_table
                   caption = "Bivariate correlations for key variables and covariates (Pearson’s)",
