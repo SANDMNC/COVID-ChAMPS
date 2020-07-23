@@ -39,8 +39,8 @@ draft             : no
 
 documentclass     : "apa6"
 classoption       : "man"
-output            : papaja::apa6_pdf
-\ output            : papaja::apa6_word
+\ output            : papaja::apa6_pdf
+output            : papaja::apa6_word
 
 
 ---
@@ -131,6 +131,56 @@ apa_table(
           #note = "",
           align = c("l",rep("c", 2)),
           col.names = c( "Demographic measure","Frequency (or Mean)","Percentage (or Stnd. Dev.)"),
+  digits = c(0,0,2),
+  font_size = "small"
+  )
+
+```
+
+```{r, clindesctable, echo=FALSE, results='asis'}
+#table to diplay clinical cutt-offs
+#DASS
+## Order the levels for the freq
+DASSlevels <- c("Normal", "Mild", "Moderate", "Severe", "Ex_severe")
+
+covid_data$DepCat <- factor(covid_data$DepCat, levels = DASSlevels)
+D<- summarytools::freq(as.factor(covid_data$DepCat))[c(1:5), c(1,2)]
+covid_data$AnxCat <- factor(covid_data$AnxCat, levels = DASSlevels)
+A<- summarytools::freq(as.factor(covid_data$AnxCat))[c(1:5), c(1,2)]
+covid_data$StressCat <- factor(covid_data$StressCat, levels = DASSlevels)
+S <- summarytools::freq(as.factor(covid_data$StressCat))[c(1:5), c(1,2)]
+
+
+#SDQ
+## Order the levels for the freq
+SDQlevels <- c("Average", "S_raised", "High")
+
+covid_data_child$SDQemo_cat <- factor(covid_data_child$SDQemo_cat, levels = SDQlevels)
+emo <- summarytools::freq(as.factor(covid_data_child$SDQemo_cat))[c(1:4), c(1,4)]
+covid_data_child$SDQcon_cat <- factor(covid_data_child$SDQcon_cat, levels = SDQlevels)
+con <- summarytools::freq(as.factor(covid_data_child$SDQcon_cat))[c(1:4), c(1,4)]
+covid_data_child$SDQhyp_cat <- factor(covid_data_child$SDQhyp_cat, levels = SDQlevels)
+hyp <- summarytools::freq(as.factor(covid_data_child$SDQhyp_cat))[c(1:4), c(1,4)]
+covid_data_child$SDQpeer_cat <- factor(covid_data_child$SDQpeer_cat, levels = SDQlevels)
+peer <- summarytools::freq(as.factor(covid_data_child$SDQpeer_cat))[c(1:4), c(1,4)]
+
+clin_freq<- rbind(D,A,S, emo, con, hyp, peer)
+
+rownames(clin_freq) <- c("Normal", "Mild", "Moderate", "Severe", "Ext. Severe",
+                         "Normal", "Mild", "Moderate", "Severe", "Ext. Severe",
+                         "Normal", "Mild", "Moderate", "Severe", "Ext. Severe",
+                         "Average", "Slightly Raised", "High","Missing",
+                         "Average", "Slightly Raised", "High","Missing",
+                         "Average", "Slightly Raised", "High","Missing",
+                         "Average", "Slightly Raised", "High","Missing"
+                         )
+
+apa_table(
+  list(`Depression` = clin_freq[1:5,], `Anxiety` = clin_freq[c(6:10),],`Stress` = clin_freq[c(11:15),], `Emotional Problems` = clin_freq[c(16:19),], `Conduct Problems` = clin_freq[c(20:23),] , `Hyperactivity` = clin_freq[c(24:27),], `Peer Problems` = clin_freq[c(28:31),]),
+          caption = "Clinical scales - levels of symptoms",
+          #note = "",
+          align = c("l",rep("c", 2)),
+          col.names = c( "Clinical subscale","Frequency","Percentage"),
   digits = c(0,0,2),
   font_size = "small"
   )
