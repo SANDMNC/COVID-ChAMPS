@@ -1041,6 +1041,8 @@ hist(covid_data_child$PARQneglect)
 hist(covid_data_child$PARQundiff)
 hist(covid_data_child$PARQcontrol)
 
+#Create num code for other parent in the home
+covid_data_child$other_par_num<- ifelse(covid_data_child$other_par == "No", 0,1)
 
 
 # Correlation plot --------------------------------------------------------------------------- 
@@ -1091,7 +1093,7 @@ PARQhostile.mean <- mean(covid_data_child$PARQhostile, na.rm = TRUE)
 totalSDQ.mean <- mean(covid_data_child$totalSDQ, na.rm = TRUE)
 ch_age.mean <- mean(covid_data_child$ch_age, na.rm = TRUE)
 totalFES.mean <- mean(covid_data_child$totalFES, na.rm = TRUE)
-totalPTSD.mean <- mean(covid_data_child$totalPTSD, na.rm = TRUE)
+income_famsize.mean <- mean(covid_data_child$income_famsize, na.rm = TRUE)
 SDQemo.mean <- mean(covid_data_child$SDQemo, na.rm = TRUE)
 SDQhyp.mean <- mean(covid_data_child$SDQhyp, na.rm = TRUE)
 SDQcon.mean <- mean(covid_data_child$SDQcon, na.rm = TRUE)
@@ -1130,20 +1132,20 @@ covid_data_child$totalSDQ.c <- (covid_data_child$totalSDQ-totalSDQ.mean)
 covid_data_child$PARQhostile.c <- (covid_data_child$PARQhostile-PARQhostile.mean)
 covid_data_child$totalFES.c <- (covid_data_child$totalFES-totalFES.mean)
 covid_data_child$ch_age.c <- (covid_data_child$ch_age-ch_age.mean)
-covid_data_child$totalPTSD.c <- (covid_data_child$totalPTSD-totalPTSD.mean)
+covid_data_child$income_famsize.c <- (covid_data_child$income_famsize-income_famsize.mean)
 
 #Get rid of the 4 rows that have come into the dataset
 covid_data_child<- covid_data_child[!is.na(covid_data_child$id),]
 
 #prepare a smaller subset of the data to use for MI
 
-covid_data_child_for_MI <- covid_data_child[,c("id", "par_age", "country_cat","par_gender_num", "income_mid" ,"income_famsize",
+covid_data_child_for_MI <- covid_data_child[,c("id", "par_age", "country_cat","par_gender_num", "income_mid" ,"income_famsize.c",
                                                "par_ed_ord" , "other_hosp_num","iso", "par_past_mh_num", "DASSStress", "id2",
-                                               "SDQpro","totalSDQ2", "SDQemo2" ,"SDQcon2","SDQhyp2", "SDQpeer2" , "ch_PTSD_15_num",
-                                               "PARQcontrol","ch_talk_about_6_num.c","facts_comm.c" ,"emotion_comm.c", "self_comm.c" ,
+                                               "SDQpro","totalSDQ2", "SDQemo2" ,"SDQcon2","SDQhyp2", "SDQpeer2" , 
+                                               "PARQcontrol","facts_comm.c" ,"emotion_comm.c", "self_comm.c" ,
                                                "PARQwarmth.c", "PARQcontrol.c" , "covid_finance_num.c","totalFES.c" ,"covid_pos_num.c",
                                                "totalcov_dist.c", "DASSStress.c", "DASSAnx.c" ,  "DASSDep.c" , "SDQpeer.c" , "SDQcon.c" ,
-                                               "SDQhyp.c" , "SDQemo.c","totalSDQ.c" ,"PARQhostile.c" ,"totalPTSD.c")]
+                                               "SDQhyp.c" , "SDQemo.c","totalSDQ.c" ,"PARQhostile.c" ,"totalPTSD", "other_par_num")]
 
 
 # Writing the scored files ----------------------------------------
