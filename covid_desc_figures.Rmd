@@ -70,11 +70,11 @@ percforplot <- rbind(less, same, more)
 #Chnage order of the factors to chnage how th bars are stacked
 percforplot$change <- factor(percforplot$change, levels = c('same', 'less', 'more'))
 
-
+png("/Users/sarah/Dropbox/2020/COVID_parenting/paper/Fig1.png", width = 6.5, height = 3, res = 600, type = 'cairo', units='in') 
 ggplot(percforplot, aes(fill=change, y= Percent, x= varname)) + 
     geom_bar(stat = "identity") +
-    theme(axis.text.x = element_text(angle = 45)) + labs(x = "Child mental health (SDQ) problems")
-
+    theme(axis.text.x = element_text(angle = 45)) + labs(x = "Child mental health (SDQ) problems") + scale_color_viridis() + scale_fill_viridis(discrete = TRUE)
+dev.off()
 
 ```
 
