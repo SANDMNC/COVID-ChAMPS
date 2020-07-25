@@ -30,48 +30,61 @@ apatheme=theme_bw()+
 
 # covid distress ------------------------------------------------
 
-p1<- ggplot(covid_data_child, aes(x = totalcov_dist, y = SDQhyp2)) +
-geom_jitter(color = "#00CC99", size = 1.5, shape = 23) +
-geom_smooth(color = "#00AFBB", fill = "#00AFBB", method = lm) +
-  labs(x = "Total COVID Negative Impact", y = "Change in Inattention-\nHyperactivity") +
-  apatheme + theme(aspect.ratio = 1)
+p1 <- ggplot(covid_data_child, aes(x = totalcov_dist, y = SDQcon2)) +
+  geom_jitter(color = "blueviolet", size = 1.5, shape = 23, alpha = .5, alpha = .5) +
+  geom_smooth(color = "purple4", fill = "purple", method = lm) +
+  labs(x = "Total COVID Negative Impact", y = "Change in Inattention-\nHyperactivity")  + apatheme + theme(aspect.ratio = 1)
 
 p2 <- ggplot(covid_data_child, aes(x = totalcov_dist, y = SDQcon2)) +
-  geom_jitter(color = "#00CC99", size = 1.5, shape = 23) +
-  geom_smooth(color = "#00AFBB", fill = "#00AFBB", method = lm) +
+  geom_jitter(color = "blueviolet", size = 1.5, shape = 23, alpha = .5) +
+  geom_smooth(color = "purple4", fill = "purple", method = lm) +
   labs(x = "Total COVID Negative Impact", y = "Change in Conduct\nProblems")  + apatheme + theme(aspect.ratio = 1)
 
 p3 <- ggplot(covid_data_child, aes(x = totalcov_dist, y = totalPTSD)) +
-  geom_jitter(color = "#00CC99", size = 1.5, shape = 23) +
-  geom_smooth(color = "#00AFBB", fill = "#00AFBB", method = lm) +
+  geom_jitter(color = "blueviolet", size = 1.5, shape = 23, alpha = .5) +
+  geom_smooth(color = "purple4", fill = "purple", method = lm) +
   labs(x = "Total COVID Negative Impact", y = "Trauma Symptoms") +
   apatheme + theme(aspect.ratio = 1)
 
 p4 <- ggplot(covid_data_child, aes(x = totalcov_dist, y = SDQemo2, color = SDQemo_cat, fill = SDQemo_cat)) +
-  geom_jitter(size = 1.5, shape = 23) +
+  geom_jitter(size = 1.5, shape = 23, alpha = .5) +
   geom_smooth(method = lm) +
   labs(x = "Total COVID Negative Impact", y = "Change in\nEmotional Problems") +
-  scale_color_discrete(name="Baseline Problems",
+  scale_color_viridis(name="Baseline Problems",
                            breaks=c("Average", "High", "S_raised"),
-                           labels=c("Average", "High", "Slightly Raised")) +
-  scale_fill_discrete(name="Baseline Problems",
+                           labels=c("Average", "High", "Slightly Raised"), discrete = TRUE) +
+  scale_fill_viridis(name="Baseline Problems",
                           breaks=c("Average", "High", "S_raised"),
-                          labels=c("Average", "High", "Slightly Raised"))  +
+                          labels=c("Average", "High", "Slightly Raised"), discrete = TRUE)  +
   apatheme + 
 
 theme(legend.position = "bottom", legend.box = "horizontal", aspect.ratio = 1) +
   guides(color = guide_legend(nrow = 1))
 
 #put these 4 plots in a row in one figure
-figure1 <- ggarrange(p1, p2, p3, p4,
-                    labels = c("A", "B", "C", "D"),
-                    ncol = 2, nrow = 2)
-figure1
+#figure1 <- ggarrange(p1, p2, p3, p4,
+#                    labels = c("A", "B", "C", "D"),
+#                    ncol = 2, nrow = 2)
+#figure1
+
+# Save plots preserving resolution
+png("/Users/sarah/Dropbox/2020/COVID_parenting/paper/p1.png", width = 6.5, height = 3, res = 600, type = 'cairo', units='in') 
+p1
+dev.off()
+png("/Users/sarah/Dropbox/2020/COVID_parenting/paper/p2.png", width = 6.5, height = 3, res = 600, type = 'cairo', units='in') 
+p2
+dev.off()
+png("/Users/sarah/Dropbox/2020/COVID_parenting/paper/p3.png", width = 6.5, height = 3, res = 600, type = 'cairo', units='in') 
+p3
+dev.off()
+png("/Users/sarah/Dropbox/2020/COVID_parenting/paper/p4_2.png", width = 6.5, height = 3, res = 600, type = 'cairo', units='in') 
+p4
+dev.off()
 
 
 ggplot(covid_data_child, aes(x = covid_pos_num, y = SDQpeer2)) +
-  geom_jitter(color = "#00CC99", size = 1.5, shape = 23) +
-  geom_smooth(color = "#00AFBB", fill = "#00AFBB", method = lm) +
+  geom_jitter(color = "blueviolet", size = 1.5, shape = 23, alpha = .5) +
+  geom_smooth(color = "purple4", fill = "purple", method = lm) +
   labs(x = "Total COVID Positive Impact", y = "Change in Peer Problems")  +
   apatheme
 
@@ -79,32 +92,32 @@ ggplot(covid_data_child, aes(x = covid_pos_num, y = SDQpeer2)) +
 
 
 DASSp2 <- ggplot(covid_data_child, aes(x = DASSDep, y = totalPTSD)) +
-  geom_jitter(color = "#00CC99", size = 1.5, shape = 23) +
-  geom_smooth(color = "#00AFBB", fill = "#00AFBB", method = lm) +
+  geom_jitter(color = "blueviolet", size = 1.5, shape = 23, alpha = .5) +
+  geom_smooth(color = "purple4", fill = "purple", method = lm) +
   labs(x = "Parent Depressive Symptoms", y = "Trauma Symptoms") +
   apatheme + theme(aspect.ratio = 1)
 
 DASSp3 <- ggplot(covid_data_child, aes(x = DASSAnx, y = SDQemo2)) +
-  geom_jitter(color = "#00CC99", size = 1.5, shape = 23) +
-  geom_smooth(color = "#00AFBB", fill = "#00AFBB", method = lm) +
+  geom_jitter(color = "blueviolet", size = 1.5, shape = 23, alpha = .5) +
+  geom_smooth(color = "purple4", fill = "purple", method = lm) +
   labs(x = "Parent Anxiety Symptoms", y = "Change in\nEmotional Problems") +
   apatheme + theme(aspect.ratio = 1)
 
 DASSp4 <- ggplot(covid_data_child, aes(x = DASSAnx, y = SDQpeer2)) +
-  geom_jitter(color = "#00CC99", size = 1.5, shape = 23) +
-  geom_smooth(color = "#00AFBB", fill = "#00AFBB", method = lm) +
+  geom_jitter(color = "blueviolet", size = 1.5, shape = 23, alpha = .5) +
+  geom_smooth(color = "purple4", fill = "purple", method = lm) +
   labs(x = "Parent Anxiety Symptoms", y = "Change in Peer Problems") +
   apatheme + theme(aspect.ratio = 1)
 
 DASSp5 <- ggplot(covid_data_child, aes(x = DASSStress, y = SDQpeer2)) +
-  geom_jitter(color = "#00CC99", size = 1.5, shape = 23) +
-  geom_smooth(color = "#00AFBB", fill = "#00AFBB", method = lm) +
+  geom_jitter(color = "blueviolet", size = 1.5, shape = 23, alpha = .5) +
+  geom_smooth(color = "purple4", fill = "purple", method = lm) +
   labs(x = "Parent Stress", y = "Change in Peer Problems") +
   apatheme + theme(aspect.ratio = 1)
 
 DASSp6 <- ggplot(covid_data_child, aes(x = DASSStress, y = totalPTSD)) +
-  geom_jitter(color = "#00CC99", size = 1.5, shape = 23) +
-  geom_smooth(color = "#00AFBB", fill = "#00AFBB", method = lm) +
+  geom_jitter(color = "blueviolet", size = 1.5, shape = 23, alpha = .5) +
+  geom_smooth(color = "purple4", fill = "purple", method = lm) +
   labs(x = "Parent Stress", y = "Trauma Symptoms")  +
   apatheme + theme(aspect.ratio = 1)
 
@@ -117,20 +130,20 @@ DASSp6 <- ggplot(covid_data_child, aes(x = DASSStress, y = totalPTSD)) +
 
 #Sarah I made the extra DASS plots to fit into a complete grid in case you want them
 DASSp7 <- ggplot(covid_data_child, aes(x = DASSDep, y = SDQpeer2)) +
-  geom_jitter(color = "#00CC99", size = 1.5, shape = 23) +
-  geom_smooth(color = "#00AFBB", fill = "#00AFBB", method = lm) +
+  geom_jitter(color = "blueviolet", size = 1.5, shape = 23, alpha = .5) +
+  geom_smooth(color = "purple4", fill = "purple", method = lm) +
   labs(x = "Parent Depressive Symptoms", y = "Change in Peer Problems") +
   apatheme
 
 DASSp8 <- ggplot(covid_data_child, aes(x = DASSAnx, y = totalPTSD)) +
-  geom_jitter(color = "#00CC99", size = 1.5, shape = 23) +
-  geom_smooth(color = "#00AFBB", fill = "#00AFBB", method = lm) +
+  geom_jitter(color = "blueviolet", size = 1.5, shape = 23, alpha = .5) +
+  geom_smooth(color = "purple4", fill = "purple", method = lm) +
   labs(x = "Parent Anxiety Symptoms", y = "Trauma Symptoms") +
   apatheme
 
 DASSp9 <- ggplot(covid_data_child, aes(x = DASSStress, y = SDQemo2)) +
-  geom_jitter(color = "#00CC99", size = 1.5, shape = 23) +
-  geom_smooth(color = "#00AFBB", fill = "#00AFBB", method = lm) +
+  geom_jitter(color = "blueviolet", size = 1.5, shape = 23, alpha = .5) +
+  geom_smooth(color = "purple4", fill = "purple", method = lm) +
   labs(x = "Parent Stress", y = "Change in\nEmotional Problems") +
   apatheme
 
@@ -142,31 +155,31 @@ DASSp9 <- ggplot(covid_data_child, aes(x = DASSStress, y = SDQemo2)) +
 
 
 stressp1<- ggplot(covid_data_child, aes(x = DASSStress, y = SDQemo2, color = SDQemo_cat, fill = SDQemo_cat)) +
-  geom_jitter(size = 1.5, shape = 23) +
+  geom_jitter(size = 1.5, shape = 23, alpha = .5) +
   geom_smooth(method = lm) +
   labs(x = "Parent Stress", y = "Change in\nEmotional problems") +
-  scale_color_discrete(name="Baseline Problems",
+  scale_color_viridis(name="Baseline Problems",
                        breaks=c("Average", "High", "S_raised"),
-                       labels=c("Average", "High", "Slightly Raised")) +
-  scale_fill_discrete(name="Baseline Problems",
+                       labels=c("Average", "High", "Slightly Raised"), discrete = TRUE) +
+  scale_fill_viridis(name="Baseline Problems",
                       breaks=c("Average", "High", "S_raised"),
-                      labels=c("Average", "High", "Slightly Raised"))  +
+                      labels=c("Average", "High", "Slightly Raised"), discrete = TRUE)  +
   apatheme +
-  theme(axis.title.x=element_blank(), panel.border=element_blank()) + theme(legend.position = "bottom", legend.box = "horizontal", aspect.ratio = 1) +
+   theme(legend.position = "bottom", legend.box = "horizontal", aspect.ratio = 1) +
   guides(color = guide_legend(nrow = 1))
 
 stressp2<- ggplot(covid_data_child, aes(x = DASSStress, y = SDQcon2, color = SDQcon_cat, fill = SDQcon_cat)) +
-  geom_jitter(size = 1.5, shape = 23) +
+  geom_jitter(size = 1.5, shape = 23, alpha = .5) +
   geom_smooth(method = lm) +
   labs(x = "Parent Stress", y = "Change in\nConduct problems") +
-  scale_color_discrete(name="Baseline Problems",
+  scale_color_viridis(name="Baseline Problems",
                        breaks=c("Average", "High", "S_raised"),
-                       labels=c("Average", "High", "Slightly Raised")) +
-  scale_fill_discrete(name="Baseline Problems",
+                       labels=c("Average", "High", "Slightly Raised"), discrete = TRUE) +
+  scale_fill_viridis(name="Baseline Problems",
                       breaks=c("Average", "High", "S_raised"),
-                      labels=c("Average", "High", "Slightly Raised"))  +
+                      labels=c("Average", "High", "Slightly Raised"), discrete = TRUE)  +
   apatheme +
-  theme(axis.title.x=element_blank()) + theme(legend.position = "bottom", legend.box = "horizontal") +
+  theme(legend.position = "bottom", legend.box = "horizontal") +
   guides(color = guide_legend(nrow = 1))
 
 
@@ -174,15 +187,15 @@ covid_data_child$ch_age_cat <- as.factor(car::recode(covid_data_child$ch_age, "N
 table(covid_data_child$ch_age_cat, useNA = "ifany")
 
 stressp3<- ggplot(covid_data_child, aes(x = DASSStress, y = SDQhyp2, color = ch_age_cat, fill = ch_age_cat)) +
-  geom_jitter(size = 1.5, shape = 23) +
+  geom_jitter(size = 1.5, shape = 23, alpha = .5) +
   geom_smooth(method = lm) +
   labs(x = "Parent Stress", y = "Change in Inattention-\nHyperactivity Problems") +
-  scale_color_discrete(name="Child Age",
+  scale_color_viridis(name="Child Age",
                        breaks=c("14-17", "9-13", "5-8"),
-                       labels=c("14-17", "9-13", "5-8")) +
-  scale_fill_discrete(name="Child Age",
+                       labels=c("14-17", "9-13", "5-8"), discrete = TRUE) +
+  scale_fill_viridis(name="Child Age",
                       breaks=c("14-17", "9-13", "5-8"),
-                      labels=c("14-17", "9-13", "5-8"))  +
+                      labels=c("14-17", "9-13", "5-8"), discrete = TRUE)  +
   apatheme + theme(legend.position = "bottom", legend.box = "horizontal", aspect.ratio = 1) +
   guides(color = guide_legend(nrow = 1))
 
@@ -203,31 +216,31 @@ stressp3<- ggplot(covid_data_child, aes(x = DASSStress, y = SDQhyp2, color = ch_
 # Parenting -----------------------------------------------------------------------------
 
 PARQp1 <- ggplot(covid_data_child, aes(x = PARQhostile, y = SDQhyp2)) +
-  geom_jitter(color = "#00CC99", size = 1.5, shape = 23) +
-  geom_smooth(color = "#00AFBB", fill = "#00AFBB", method = lm) +
+  geom_jitter(color = "blueviolet", size = 1.5, shape = 23, alpha = .5) +
+  geom_smooth(color = "purple4", fill = "purple", method = lm) +
   labs(x = "Parental Hostility", y = "Change in Inattention\n-Hyperactivity") + apatheme + theme(aspect.ratio = 1)
 
 PARQp2 <- ggplot(covid_data_child, aes(x = PARQhostile, y = totalPTSD)) +
-  geom_jitter(color = "#00CC99", size = 1.5, shape = 23) +
-  geom_smooth(color = "#00AFBB", fill = "#00AFBB", method = lm) +
+  geom_jitter(color = "blueviolet", size = 1.5, shape = 23, alpha = .5) +
+  geom_smooth(color = "purple4", fill = "purple", method = lm) +
   labs(x = "Parental Hostility", y = "Trauma Symptoms") + apatheme
 
 PARQp3 <- ggplot(covid_data_child, aes(x = PARQhostile, y = SDQcon2, color = SDQcon_cat, fill = SDQcon_cat)) +
-  geom_jitter(size = 1.5, shape = 23) +
+  geom_jitter(size = 1.5, shape = 23, alpha = .5) +
   geom_smooth(method = lm) +
   labs(x = "Parental Hostility", y = "Change in\nConduct Problems") +
-  scale_color_discrete(name="Baseline Problems",
+  scale_color_viridis(name="Baseline Problems",
                        breaks=c("Average", "High", "S_raised"),
-                       labels=c("Average", "High", "Slightly Raised")) +
-  scale_fill_discrete(name="Baseline Problems",
+                       labels=c("Average", "High", "Slightly Raised"), discrete = TRUE) +
+  scale_fill_viridis(name="Baseline Problems",
                       breaks=c("Average", "High", "S_raised"),
-                      labels=c("Average", "High", "Slightly Raised")) + apatheme + 
+                      labels=c("Average", "High", "Slightly Raised"), discrete = TRUE) + apatheme + 
 theme(legend.position = "bottom", legend.box = "horizontal", aspect.ratio=1) + guides(color = guide_legend(nrow = 1))
 
 
 PARQp4 <- ggplot(covid_data_child, aes(x = PARQwarmth, y = totalPTSD)) +
-  geom_jitter(color = "#00CC99", size = 1.5, shape = 23) +
-  geom_smooth(color = "#00AFBB", fill = "#00AFBB", method = lm) +
+  geom_jitter(color = "blueviolet", size = 1.5, shape = 23, alpha = .5) +
+  geom_smooth(color = "purple4", fill = "purple", method = lm) +
   labs(x = "Low Parental Warmth", y = "Trauma Symptoms") + apatheme
 
 #put these 4 plots in a row in one figure
@@ -239,13 +252,13 @@ PARQp4 <- ggplot(covid_data_child, aes(x = PARQwarmth, y = totalPTSD)) +
 
 
 FESp1 <- ggplot(covid_data_child, aes(x = totalFES, y = totalPTSD)) +
-  geom_jitter(color = "#00CC99", size = 1.5, shape = 23) +
-  geom_smooth(color = "#00AFBB", fill = "#00AFBB", method = lm) +
+  geom_jitter(color = "blueviolet", size = 1.5, shape = 23, alpha = .5) +
+  geom_smooth(color = "purple4", fill = "purple", method = lm) +
   labs(x = "Family Cohesion", y = "Trauma Symptoms") + apatheme + theme(aspect.ratio = 1)
 
 FESp2 <- ggplot(covid_data_child, aes(x = totalFES, y = SDQpeer2)) +
-  geom_jitter(color = "#00CC99", size = 1.5, shape = 23) +
-  geom_smooth(color = "#00AFBB", fill = "#00AFBB", method = lm) +
+  geom_jitter(color = "blueviolet", size = 1.5, shape = 23, alpha = .5) +
+  geom_smooth(color = "purple4", fill = "purple", method = lm) +
   labs(x = "Family Cohesion", y = "Change in Peer Problems") + apatheme + theme(aspect.ratio = 1)
 
 #put these 2 plots in a row in one figure
@@ -260,28 +273,28 @@ FESp2 <- ggplot(covid_data_child, aes(x = totalFES, y = SDQpeer2)) +
 
 
 Comm3 <- ggplot(covid_data_child, aes(x = emotion_comm, y = SDQhyp2)) +
-  geom_jitter(color = "#00CC99", size = 1.5, shape = 23) +
-  geom_smooth(color = "#00AFBB", fill = "#00AFBB", method = lm) +
+  geom_jitter(color = "blueviolet", size = 1.5, shape = 23, alpha = .5) +
+  geom_smooth(color = "purple4", fill = "purple", method = lm) +
   labs(x = "Emotion-focused Communication", y = "Change in Inattention-\nHyperactivity Problems") +
   apatheme + theme(aspect.ratio = 1)
 
 Comm2 <- ggplot(covid_data_child, aes(x = emotion_comm, y = SDQemo2)) +
-  geom_jitter(color = "#00CC99", size = 1.5, shape = 23) +
-  geom_smooth(color = "#00AFBB", fill = "#00AFBB", method = lm) +
+  geom_jitter(color = "blueviolet", size = 1.5, shape = 23, alpha = .5) +
+  geom_smooth(color = "purple4", fill = "purple", method = lm) +
   labs(x = "Emotion-focused Communication", y = "Change in\nEmotional Problems") +
   apatheme + theme(aspect.ratio = 1)
 
 
 Comm8 <- ggplot(covid_data_child, aes(x = self_comm, y = SDQcon2)) +
-  geom_jitter(color = "#00CC99", size = 1.5, shape = 23) +
-  geom_smooth(color = "#00AFBB", fill = "#00AFBB", method = lm) +
+  geom_jitter(color = "blueviolet", size = 1.5, shape = 23, alpha = .5) +
+  geom_smooth(color = "purple4", fill = "purple", method = lm) +
   labs(x = "Self-focused Communication", y = "Change in\nConduct Problems") +
   apatheme + theme(aspect.ratio = 1)
 
 
 Comm5 <- ggplot(covid_data_child, aes(x = self_comm, y = totalPTSD)) +
-  geom_jitter(color = "#00CC99", size = 1.5, shape = 23) +
-  geom_smooth(color = "#00AFBB", fill = "#00AFBB", method = lm) +
+  geom_jitter(color = "blueviolet", size = 1.5, shape = 23, alpha = .5) +
+  geom_smooth(color = "purple4", fill = "purple", method = lm) +
   labs(x = "Self-focused Communication", y = "Trauma Symptoms") +
   apatheme + theme(aspect.ratio = 1)
 
@@ -296,28 +309,28 @@ covid_data_child$income_famsize_cat <- as.factor(car::recode(covid_data_child$in
 table(covid_data_child$income_famsize_cat, useNA = "ifany")
 
 Intp1 <- ggplot(data=subset(covid_data_child, !is.na(income_famsize_cat)), aes(x = PARQhostile, y = totalPTSD, color = income_famsize_cat, fill = income_famsize_cat)) +
-  geom_jitter(size = 1.5, shape = 23) +
+  geom_jitter(size = 1.5, shape = 23, alpha = .5) +
   geom_smooth(method = lm) +
   labs(x = "Parental Hostility", y = "Trauma Symptoms") +
-  scale_color_discrete(name="Income-to-needs",
+  scale_color_viridis(name="Income-to-needs",
                        breaks=c("High", "Low"),
-                       labels=c("High", "Low")) +
-  scale_fill_discrete(name="Income-to-needs",
+                       labels=c("High", "Low"), discrete = TRUE) +
+  scale_fill_viridis(name="Income-to-needs",
                       breaks=c("High", "Low"),
-                      labels=c("High", "Low")) + apatheme + 
+                      labels=c("High", "Low"), discrete = TRUE) + apatheme + 
 theme(legend.position = "bottom", legend.box = "horizontal", aspect.ratio = 1) +
   guides(color = guide_legend(nrow = 1))
 
 Intp2 <- ggplot(data=subset(covid_data_child, !is.na(income_famsize_cat)), aes(x = PARQwarmth, y = totalPTSD, color = income_famsize_cat, fill = income_famsize_cat)) +
-  geom_jitter(size = 1.5, shape = 23) +
+  geom_jitter(size = 1.5, shape = 23, alpha = .5) +
   geom_smooth(method = lm) +
   labs(x = "Low Parental Warmth", y = "Trauma Symptoms") +
-  scale_color_discrete(name="Income-to-needs",
+  scale_color_viridis(name="Income-to-needs",
                        breaks=c("High", "Low"),
-                       labels=c("High", "Low")) +
-  scale_fill_discrete(name="Income-to-needs",
+                       labels=c("High", "Low"), discrete = TRUE) +
+  scale_fill_viridis(name="Income-to-needs",
                       breaks=c("High", "Low"),
-                      labels=c("High", "Low")) + apatheme + 
+                      labels=c("High", "Low"), discrete = TRUE) + apatheme + 
 theme(legend.position = "bottom", legend.box = "horizontal", aspect.ratio = 1) +
   guides(color = guide_legend(nrow = 1))
 
@@ -326,29 +339,29 @@ table(covid_data_child$par_ed_ord_cat, useNA = "ifany")
 
 
 Intp3 <- ggplot(data=subset(covid_data_child, !is.na(other_par)), aes(x = DASSStress, y = SDQcon2, color = SDQcon_cat, fill = SDQcon_cat)) +
-  geom_jitter(size = 1.5, shape = 23, na.rm = TRUE) +
+  geom_jitter(size = 1.5, shape = 23, alpha = .5, na.rm = TRUE) +
   geom_smooth(method = lm) +
   labs(x = "Parent Stress", y = "Change in\nConduct Problems") +
-  scale_color_discrete(name="Baseline Problems",
+  scale_color_viridis(name="Baseline Problems",
                        breaks=c("Average", "High", "S_raised"),
-                       labels=c("Average", "High", "Slightly Raised")) +
-  scale_fill_discrete(name="Baseline Problems",
+                       labels=c("Average", "High", "Slightly Raised"), discrete = TRUE) +
+  scale_fill_viridis(name="Baseline Problems",
                       breaks=c("Average", "High", "S_raised"),
-                      labels=c("Average", "High", "Slightly Raised")) +
+                      labels=c("Average", "High", "Slightly Raised"), discrete = TRUE) +
   facet_wrap(~other_par) + apatheme + 
 theme(legend.position = "bottom", legend.box = "horizontal", aspect.ratio = 1) +
   guides(color = guide_legend(nrow = 1))
 
 Intp4 <- ggplot(covid_data_child, aes(x = DASSStress, y = SDQpeer2, color = other_par, fill = other_par)) +
-  geom_jitter(size = 1.5, shape = 23) +
+  geom_jitter(size = 1.5, shape = 23, alpha = .5) +
   geom_smooth(method = lm) +
   labs(x = "Parent Stress", y = "Change in Peer\nProblems") +
-  scale_color_discrete(name="Two parents\nin home",
+  scale_color_viridis(name="Two parents\nin home",
                        breaks=c("Yes", "No"),
-                       labels=c("Yes", "No")) +
-  scale_fill_discrete(name="Two parents\nin home",
+                       labels=c("Yes", "No"), discrete = TRUE) +
+  scale_fill_viridis(name="Two parents\nin home",
                       breaks=c("Yes", "No"),
-                      labels=c("Yes", "No")) + apatheme + 
+                      labels=c("Yes", "No"), discrete = TRUE) + apatheme + 
 theme(legend.position = "bottom", legend.box = "horizontal", aspect.ratio = 1) +
   guides(color = guide_legend(nrow = 1))
 
@@ -362,14 +375,63 @@ theme(legend.position = "bottom", legend.box = "horizontal", aspect.ratio = 1) +
 #                    ncol = 1, nrow = 2)
 #figureint2
 
-figureFAMint <- ggarrange(PARQp1, PARQp3, Intp1, Intp2, FESp1, FESp2,
-                    labels = c("A", "B", "C", "D", "E", "F"),
-                    ncol = 2, nrow = 3)
-figureFAMint
+# Combined figures for DASS and parenting/family
+# Save individual
 
-figureDASSint <- ggarrange(DASSp2, DASSp3, DASSp4, DASSp6, Intp3, Intp4, stressp1, stressp3,
-                    labels = c("A", "B", "C", "D", "E", "F", "G", "H"),
-                    ncol = 2, nrow = 4)
-figureDASSint
+#figureFAMint <- ggarrange(PARQp1, PARQp3, Intp1, Intp2, FESp1, FESp2,
+#                    labels = c("A", "B", "C", "D", "E", "F"),
+#                    ncol = 2, nrow = 3)
+#figureFAMint
+
+# Save plots preserving resolution
+png("/Users/sarah/Dropbox/2020/COVID_parenting/paper/PARQp1.png", width = 6.5, height = 3, res = 600, type = 'cairo', units='in') 
+PARQp1
+dev.off()
+png("/Users/sarah/Dropbox/2020/COVID_parenting/paper/PARQp3.png", width = 6.5, height = 3, res = 600, type = 'cairo', units='in') 
+PARQp3
+dev.off()
+png("/Users/sarah/Dropbox/2020/COVID_parenting/paper/Intp1.png", width = 6.5, height = 3, res = 600, type = 'cairo', units='in') 
+Intp1
+dev.off()
+png("/Users/sarah/Dropbox/2020/COVID_parenting/paper/Intp2.png", width = 6.5, height = 3, res = 600, type = 'cairo', units='in') 
+Intp2
+dev.off()
+png("/Users/sarah/Dropbox/2020/COVID_parenting/paper/FESp1.png", width = 6.5, height = 3, res = 600, type = 'cairo', units='in') 
+FESp1
+dev.off()
+png("/Users/sarah/Dropbox/2020/COVID_parenting/paper/FESp2.png", width = 6.5, height = 3, res = 600, type = 'cairo', units='in') 
+FESp2
+dev.off()
+
+#figureDASSint <- ggarrange(DASSp2, DASSp3, DASSp4, DASSp6, Intp3, Intp4, #stressp1, stressp3,
+#                    labels = c("A", "B", "C", "D", "E", "F", "G", "H"),
+#                    ncol = 2, nrow = 4)
+#figureDASSint
+
+# Save plots preserving resolution
+png("/Users/sarah/Dropbox/2020/COVID_parenting/paper/DASSp2.png", width = 6.5, height = 3, res = 600, type = 'cairo', units='in') 
+DASSp2
+dev.off()
+png("/Users/sarah/Dropbox/2020/COVID_parenting/paper/DASSp3.png", width = 6.5, height = 3, res = 600, type = 'cairo', units='in') 
+DASSp3
+dev.off()
+png("/Users/sarah/Dropbox/2020/COVID_parenting/paper/DASSp4.png", width = 6.5, height = 3, res = 600, type = 'cairo', units='in') 
+DASSp4
+dev.off()
+png("/Users/sarah/Dropbox/2020/COVID_parenting/paper/DASSp6.png", width = 6.5, height = 3, res = 600, type = 'cairo', units='in') 
+DASSp6
+dev.off()
+png("/Users/sarah/Dropbox/2020/COVID_parenting/paper/Intp3.png", width = 6.5, height = 3, res = 600, type = 'cairo', units='in') 
+Intp3
+dev.off()
+png("/Users/sarah/Dropbox/2020/COVID_parenting/paper/Intp4.png", width = 6.5, height = 3, res = 600, type = 'cairo', units='in') 
+Intp4
+dev.off()
+png("/Users/sarah/Dropbox/2020/COVID_parenting/paper/stressp1.png", width = 6.5, height = 3, res = 600, type = 'cairo', units='in') 
+stressp1
+dev.off()
+png("/Users/sarah/Dropbox/2020/COVID_parenting/paper/stressp3.png", width = 6.5, height = 3, res = 600, type = 'cairo', units='in') 
+stressp3
+dev.off()
 
 ```
