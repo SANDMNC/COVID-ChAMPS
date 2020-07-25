@@ -18,163 +18,26 @@ library(mitml)
 #Remove the X column
 covid_data_child$X <- NULL
 
-#Create separate datasets for males and females for any post hoc tests
-data_female <- subset(covid_data_child, covid_data_child$ch_gender_num==1)
-data_male <- subset(covid_data_child, covid_data_child$ch_gender_num==2)
+# e.g. code to test normality of resisuals
+r<-residuals(model1, type = c("response", "pearson", "normalized"))
+shapiro.test(r)
+# Note that I have checked a number of models and residuals are not normally distributed. As such, procede with robust lmm,
+# as a supplement to results from multiple imputation (MI)
 
-#Create num code for other parent in the home
-covid_data_child$other_par_num<- ifelse(covid_data_child$other_par == "No", 0,1)
-    
-#check parent past disorder association with key variables
-model <- lme(totalSDQ2 ~ par_past_mh_num , random=~1 | id, method="ML", data = covid_data_child, na.action = na.exclude)
-summary(model)
-model <- lmer(totalSDQ ~ par_past_mh_num , random=~1 | id, method="ML", data = covid_data_child, na.action = na.exclude)
-summary(model)
-model <- lmer(totalPARQ ~ par_past_mh_num , random=~1 | id, method="ML", data = covid_data_child, na.action = na.exclude)
-summary(model)
-model <- lme(PARQhostile ~ par_past_mh_num , random=~1 | id, method="ML", data = covid_data_child, na.action = na.exclude)
-summary(model)
-model <- lme(PARQwarmth ~ par_past_mh_num , random=~1 | id, method="ML", data = covid_data_child, na.action = na.exclude)
-summary(model)
-model <- lme(totalcov_dist ~ par_past_mh_num , random=~1 | id, method="ML", data = covid_data_child, na.action = na.exclude)
-summary(model)
-model <- lme(totalPTSD ~ par_past_mh_num , random=~1 | id, method="ML", data = covid_data_child, na.action = na.exclude)
-summary(model)
-model <- lme(DASSDep ~ par_past_mh_num , random=~1 | id, method="ML", data = covid_data_child, na.action = na.exclude)
-summary(model)
-model <- lme(DASSAnx ~ par_past_mh_num , random=~1 | id, method="ML", data = covid_data_child, na.action = na.exclude)
-summary(model)
-model <- lme(DASSStress ~ par_past_mh_num , random=~1 | id, method="ML", data = covid_data_child, na.action = na.exclude)
-summary(model)
-model <- lme(facts_comm ~ par_past_mh_num , random=~1 | id, method="ML", data = covid_data_child, na.action = na.exclude)
-summary(model)
-model <- lme(emotion_comm ~ par_past_mh_num , random=~1 | id, method="ML", data = covid_data_child, na.action = na.exclude)
-summary(model)
-model <- lme(self_comm ~ par_past_mh_num , random=~1 | id, method="ML", data = covid_data_child, na.action = na.exclude)
-summary(model)
-model <- lme(SDQemo2 ~ par_past_mh_num , random=~1 | id, method="ML", data = covid_data_child, na.action = na.exclude)
-summary(model)
-model <- lme(SDQhyp2 ~ par_past_mh_num , random=~1 | id, method="ML", data = covid_data_child, na.action = na.exclude)
-summary(model)
-model <- lme(SDQcon2 ~ par_past_mh_num , random=~1 | id, method="ML", data = covid_data_child, na.action = na.exclude)
-summary(model)
-model <- lme(SDQpeer2 ~ par_past_mh_num , random=~1 | id, method="ML", data = covid_data_child, na.action = na.exclude)
-summary(model)
-model <- lme(totalPTSD ~ par_past_mh_num , random=~1 | id, method="ML", data = covid_data_child, na.action = na.exclude)
-summary(model)
-#parent past disorder is associated with SDQ, PTSD, DASS and covid distress, but not PARQ, comm or SDQ2 vbls
-#consider adding as a covariate in models
-
-
-#check if knowing someone hospitalised from COVID is related to key vbls
-model <- lme(totalSDQ2 ~ other_hosp_num , random=~1 | id, method="ML", data = covid_data_child, na.action = na.exclude)
-summary(model)
-model <- lme(totalSDQ ~ other_hosp_num , random=~1 | id, method="ML", data = covid_data_child, na.action = na.exclude)
-summary(model)
-model <- lme(totalPARQ ~ other_hosp_num , random=~1 | id, method="ML", data = covid_data_child, na.action = na.exclude)
-summary(model)
-model <- lme(PARQhostile ~ other_hosp_num , random=~1 | id, method="ML", data = covid_data_child, na.action = na.exclude)
-summary(model)
-model <- lme(PARQwarmth ~ other_hosp_num , random=~1 | id, method="ML", data = covid_data_child, na.action = na.exclude)
-summary(model)
-model <- lme(totalcov_dist ~ other_hosp_num , random=~1 | id, method="ML", data = covid_data_child, na.action = na.exclude)
-summary(model)
-model <- lme(covid_pos_num ~ other_hosp_num , random=~1 | id, method="ML", data = covid_data_child, na.action = na.exclude)
-summary(model)
-model <- lme(DASSDep ~ other_hosp_num , random=~1 | id, method="ML", data = covid_data_child, na.action = na.exclude)
-summary(model)
-model <- lme(DASSAnx ~ other_hosp_num , random=~1 | id, method="ML", data = covid_data_child, na.action = na.exclude)
-summary(model)
-model <- lme(DASSStress ~ other_hosp_num , random=~1 | id, method="ML", data = covid_data_child, na.action = na.exclude)
-summary(model)
-model <- lme(facts_comm ~ other_hosp_num , random=~1 | id, method="ML", data = covid_data_child, na.action = na.exclude)
-summary(model)
-model <- lme(emotion_comm ~ other_hosp_num , random=~1 | id, method="ML", data = covid_data_child, na.action = na.exclude)
-summary(model)
-model <- lme(self_comm ~ other_hosp_num , random=~1 | id, method="ML", data = covid_data_child, na.action = na.exclude)
-summary(model)
-model <- lme(SDQemo2 ~ other_hosp_num , random=~1 | id, method="ML", data = covid_data_child, na.action = na.exclude)
-summary(model)
-model <- lme(SDQhyp2 ~ other_hosp_num , random=~1 | id, method="ML", data = covid_data_child, na.action = na.exclude)
-summary(model)
-model <- lme(SDQcon2 ~ other_hosp_num , random=~1 | id, method="ML", data = covid_data_child, na.action = na.exclude)
-summary(model)
-model <- lme(SDQpeer2 ~ other_hosp_num , random=~1 | id, method="ML", data = covid_data_child, na.action = na.exclude)
-summary(model)
-model <- lme(totalPTSD ~ other_hosp_num , random=~1 | id, method="ML", data = covid_data_child, na.action = na.exclude)
-summary(model)
-#knowing someone hospitalised (n=57) associated with DASSDep, DASSAnx and total_cov_distress
-
-
-model1 <- lme(SDQemo2 ~ as.factor(as.factor(country_cat)), random=~1 | id, method="ML", data = covid_data_child, na.action = na.exclude)
-summary(model1)
-model1 <- lme(SDQhyp2 ~ as.factor(as.factor(country_cat)), random=~1 | id, method="ML", data = covid_data_child, na.action = na.exclude)
-summary(model1)
-model1 <- lme(SDQcon2 ~ as.factor(as.factor(country_cat)), random=~1 | id, method="ML", data = covid_data_child, na.action = na.exclude)
-summary(model1)
-model1 <- lme(SDQpeer2 ~ as.factor(as.factor(country_cat)), random=~1 | id, method="ML", data = covid_data_child, na.action = na.exclude)
-summary(model1)
-model1 <- lme(totalPTSD ~ as.factor(as.factor(country_cat)), random=~1 | id, method="ML", data = covid_data_child, na.action = na.exclude)
-summary(model1)
-model1 <- lme(PARQhostile ~ as.factor(as.factor(country_cat)), random=~1 | id, method="ML", data = covid_data_child, na.action = na.exclude)
-summary(model1)
-model1 <- lme(PARQwarmth ~ as.factor(as.factor(country_cat)), random=~1 | id, method="ML", data = covid_data_child, na.action = na.exclude)
-summary(model1)
-model1 <- lme(totalFES ~ as.factor(as.factor(country_cat)), random=~1 | id, method="ML", data = covid_data_child, na.action = na.exclude)
-summary(model1)
-model1 <- lme(facts_comm ~ as.factor(as.factor(country_cat)), random=~1 | id, method="ML", data = covid_data_child, na.action = na.exclude)
-summary(model1)
-model1 <- lme(emotion_comm ~ as.factor(as.factor(country_cat)), random=~1 | id, method="ML", data = covid_data_child, na.action = na.exclude)
-summary(model1)
-model1 <- lme(self_comm ~ as.factor(as.factor(country_cat)), random=~1 | id, method="ML", data = covid_data_child, na.action = na.exclude)
-summary(model1)
-model1 <- lme(totalcov_dist ~ as.factor(as.factor(country_cat)), random=~1 | id, method="ML", data = covid_data_child, na.action = na.exclude)
-summary(model1)
-model1 <- lme(covid_pos_num ~ as.factor(as.factor(country_cat)), random=~1 | id, method="ML", data = covid_data_child, na.action = na.exclude)
-summary(model1)
-model1 <- lme(DASSDep ~ as.factor(as.factor(country_cat)), random=~1 | id, method="ML", data = covid_data_child, na.action = na.exclude)
-summary(model1)
-model1 <- lme(DASSAnx ~ as.factor(as.factor(country_cat)), random=~1 | id, method="ML", data = covid_data_child, na.action = na.exclude)
-summary(model1)
-model1 <- lme(DASSStress ~ as.factor(as.factor(country_cat)), random=~1 | id, method="ML", data = covid_data_child, na.action = na.exclude)
-summary(model1)
-
-
-#Series of mixed models below - a number of predictors & 5 outcome variables for each (SDQchange total, emo, con, hyp, peer subscales; PTSD)
+#Series of mixed models below - a number of predictors & 5 outcome variables for each (SDQchange emo, con, hyp, peer subscales; PTSD)
 #Models 1-3 test main effects (#1), 2-way cinteractions (#2), 3-way interactions (#3)
 #Model 4 tests 4 way interaction only for SDQchange outcomes 
 
+#Primary models run with MI data. Sig models followed up with robust estimator. Model 
+#only reported as significant if significant in both MI and robust lmm analyses. 
+#Following, all tests are corrected for multiple comparisons using FDR correction
+#(done with FDR correction excel file)
+
+#Exploratory moderator analyses for sig models
+
 #PARQ hostile as predictor of SDQ emo change since COVID
-model1 <- lme(SDQemo2 ~ PARQhostile.c+SDQemo.c+par_age+ch_age.c+par_ed_ord+income_famsize.c+as.factor(country_cat)+ch_gender_num+par_gender_num, random=~1 | id, method="ML", data = covid_data_child, na.action = na.omit)
-summary(model1)
-
-# test normality of resisuals
-r<-residuals(model1, type = c("response", "pearson", "normalized"))
-shapiro.test(r)
-# Note that residuals are not normally distributed. I have checked a number of others and same deal. As such, procede with robust lmm,
-# as a supplement to results from multiple imputation
-
-#ROBUST ESTIMATOR
-model1.robust <- rlmer(SDQemo2 ~ PARQhostile.c+SDQemo.c+par_age+ch_age.c+par_ed_ord+income_famsize.c+as.factor(country_cat)+ch_gender_num+par_gender_num + (1 | id), REML = FALSE, data = covid_data_child, na.action = na.omit)
-summary(model1.robust)
-
-# p values as described here: https://stats.stackexchange.com/questions/430490/obtaining-p-values-in-a-robustlmm-mixed-model-via-satterthwaite-approximated-dfs
-# get coefficients from non-robust model to extract Satterthwaite approximated DFs
-coefs <- data.frame(coef(summary(model1)))
-coefs.robust <- coef(summary(model1.robust))
-p.values <- 2*pt(abs(coefs.robust[,3]), coefs$DF, lower=FALSE)
-p.values
-
-# MI
 model1 <- with(miData,lme4::lmer(SDQemo2 ~ PARQhostile.c+SDQemo.c+par_age+ch_age.c+par_ed_ord+income_famsize.c+as.factor(country_cat)+ch_gender_num+par_gender_num + (1|id), REML = FALSE))
 summary(pool(model1))
-
-#bootstrap function for lmer (boot)
-#model1 <- lmer(SDQemo2 ~ PARQhostile.c+SDQemo.c+par_age+ch_age.c+par_ed_ord+income_famsize.c+as.factor(country_cat)+ch_gender_num + (1|id), data = covid_data_child, REML = FALSE, na.action = na.exclude)
-#summary(pool(model1)
-#model1boot <- bootMer(model1, FUN = fixef, nsim = 100, verbose = T)
-#boot.ci(model1boot, index = 2, type=c("norm", "basic", "perc"), conf = c(0.95, 0.99, 0.999))
-
 model2 <- with(miData,lme4::lmer(SDQemo2 ~ PARQhostile.c*SDQemo.c+PARQhostile.c*ch_age.c+PARQhostile.c*ch_gender_num+SDQemo.c+par_age+par_ed_ord+income_famsize.c+as.factor(country_cat)+ch_gender_num+par_gender_num + (1 | id), REML = FALSE))
 summary(pool(model2))
 model3 <- with(miData,lme4::lmer(SDQemo2 ~ PARQhostile.c*ch_age.c*ch_gender_num+PARQhostile.c*ch_age.c*SDQemo.c+PARQhostile.c*ch_gender_num*SDQemo.c+par_age+par_ed_ord+income_famsize.c+as.factor(country_cat)+ch_gender_num+par_gender_num + (1 | id), REML = FALSE))
@@ -188,18 +51,21 @@ anova(model3,model4)
 
 #Model 1, PARQhostile p .056
 
-#PARQ hostile as predictor of SDQ hyp change since COVID
-model1 <- with(miData,lme4::lmer(SDQhyp2 ~ PARQhostile.c+SDQhyp.c+par_age+ch_age.c+par_ed_ord+income_famsize.c+as.factor(country_cat)+ch_gender_num+par_gender_num + (1 | id), REML = FALSE))
-summary(pool(model1))
-#rlmer
-model1.1 <- lme(SDQhyp2 ~ PARQhostile.c+SDQhyp.c+par_age+ch_age.c+par_ed_ord+income_famsize.c+as.factor(country_cat)+ch_gender_num, random=~1 | id, method="ML", data = covid_data_child, na.action = na.omit)
-model1.robust <- rlmer(SDQhyp2 ~ PARQhostile.c+SDQhyp.c+par_age+ch_age.c+par_ed_ord+income_famsize.c+as.factor(country_cat)+ch_gender_num + (1 | id), REML = FALSE, data = covid_data_child, na.action = na.omit)
-coefs <- data.frame(coef(summary(model1.1)))
+#ROBUST ESTIMATOR not needed here as model1 is ns. Providing for reference to methods
+# p values as described here: https://stats.stackexchange.com/questions/430490/obtaining-p-values-in-a-robustlmm-mixed-model-via-satterthwaite-approximated-dfs
+# get coefficients from non-robust model to extract Satterthwaite approximated DFs
+model1.robust <- rlmer(SDQemo2 ~ PARQhostile.c+SDQemo.c+par_age+ch_age.c+par_ed_ord+income_famsize.c+as.factor(country_cat)+ch_gender_num+par_gender_num + (1 | id), REML = FALSE, data = covid_data_child, na.action = na.omit)
+summary(model1.robust)
+model1 <- lme(SDQemo2 ~ PARQhostile.c+SDQemo.c+par_age+ch_age.c+par_ed_ord+income_famsize.c+as.factor(country_cat)+ch_gender_num+par_gender_num, random=~1 | id, method="ML", data = covid_data_child, na.action = na.omit)
+summary(model1)
+coefs <- data.frame(coef(summary(model1)))
 coefs.robust <- coef(summary(model1.robust))
 p.values <- 2*pt(abs(coefs.robust[,3]), coefs$DF, lower=FALSE)
 p.values
 
-
+#PARQ hostile as predictor of SDQ hyp change since COVID
+model1 <- with(miData,lme4::lmer(SDQhyp2 ~ PARQhostile.c+SDQhyp.c+par_age+ch_age.c+par_ed_ord+income_famsize.c+as.factor(country_cat)+ch_gender_num+par_gender_num + (1 | id), REML = FALSE))
+summary(pool(model1))
 model2 <- with(miData,lme4::lmer(SDQhyp2 ~ PARQhostile.c*ch_age.c+PARQhostile.c*ch_gender_num+PARQhostile.c*SDQhyp.c+par_age+par_ed_ord+income_famsize.c+as.factor(country_cat)+ch_gender_num+par_gender_num + (1 | id), REML = FALSE))
 summary(pool(model2))
 model3 <- with(miData,lme4::lmer(SDQhyp2 ~ PARQhostile.c*ch_age.c*SDQhyp.c+PARQhostile.c*ch_gender_num*SDQhyp.c+PARQhostile.c*ch_gender_num*ch_age.c+par_age+par_ed_ord+income_famsize.c+as.factor(country_cat)+ch_gender_num+par_gender_num + (1 | id), REML = FALSE))
@@ -213,17 +79,21 @@ anova(model3,model4)
 
 # Model1 best fit - PARQhostile significant main effect 2.749229e-02
 
-# Control par mental health
+#rlmer
+model1.1 <- lme(SDQhyp2 ~ PARQhostile.c+SDQhyp.c+par_age+ch_age.c+par_ed_ord+income_famsize.c+as.factor(country_cat)+ch_gender_num, random=~1 | id, method="ML", data = covid_data_child, na.action = na.omit)
+model1.robust <- rlmer(SDQhyp2 ~ PARQhostile.c+SDQhyp.c+par_age+ch_age.c+par_ed_ord+income_famsize.c+as.factor(country_cat)+ch_gender_num + (1 | id), REML = FALSE, data = covid_data_child, na.action = na.omit)
+coefs <- data.frame(coef(summary(model1.1)))
+coefs.robust <- coef(summary(model1.robust))
+p.values <- 2*pt(abs(coefs.robust[,3]), coefs$DF, lower=FALSE)
+p.values
 
-model1 <- with(miData,lme4::lmer(SDQhyp2 ~ PARQhostile.c+SDQhyp.c+par_past_mh_num+par_age+ch_age.c+par_ed_ord+income_famsize.c+as.factor(country_cat)+ch_gender_num+par_gender_num + (1 | id), REML = FALSE))
-summary(pool(model1))
-
-# Moderating role of SES
+# Moderating role of SES, et.
 model1 <- with(miData,lme4::lmer(SDQhyp2 ~ PARQhostile.c*income_famsize.c+SDQhyp.c+par_age+ch_age.c+par_ed_ord+as.factor(country_cat)+ch_gender_num+par_gender_num + (1 | id), REML = FALSE))
 summary(pool(model1))
 model1 <- with(miData,lme4::lmer(SDQhyp2 ~ PARQhostile.c*as.factor(country_cat)+SDQhyp.c+par_age+ch_age.c+income_famsize.c+as.factor(country_cat)+ch_gender_num+par_gender_num + (1 | id), REML = FALSE))
 summary(pool(model1))
-
+model1 <- with(miData,lme4::lmer(SDQhyp2 ~ PARQhostile.c*other_par_num+SDQhyp.c+par_age+ch_age.c+income_famsize.c+as.factor(country_cat)+ch_gender_num+par_gender_num + (1 | id), REML = FALSE))
+summary(pool(model1))
 
 #PARQ hostile as predictor of SDQ con change since COVID
 model1 <- with(miData,lme4::lmer(SDQcon2 ~ PARQhostile.c+SDQcon.c+par_age+ch_age.c+par_ed_ord+income_famsize.c+as.factor(country_cat)+ch_gender_num+par_gender_num + (1 | id), REML = FALSE))
@@ -241,11 +111,6 @@ anova(model3,model4)
 
 # Model 2 best fit MI p 0.001928347
 
-#Moderating role of pare MH, SES, country
-model2 <- with(miData,lme4::lmer(SDQcon2 ~ income_famsize.c*PARQhostile.c*SDQcon.c+PARQhostile.c*ch_age.c+PARQhostile.c*ch_gender_num+SDQcon.c+par_age+par_ed_ord+income_famsize.c+as.factor(country_cat)+ch_gender_num+par_gender_num + (1 | id), REML = FALSE))
-summary(pool(model2))
-model2 <- with(miData,lme4::lmer(SDQcon2 ~ as.factor(country_cat)*PARQhostile.c*SDQcon.c+PARQhostile.c*ch_age.c+PARQhostile.c*ch_gender_num+SDQcon.c+par_age+par_ed_ord+income_famsize.c+as.factor(country_cat)+ch_gender_num+par_gender_num + (1 | id), REML = FALSE))
-summary(pool(model2))
 
 # Robust lmm for model 2
 model2.1 <- lme(SDQcon2 ~ PARQhostile.c*SDQcon.c+PARQhostile.c*ch_age.c+PARQhostile.c*ch_gender_num+SDQcon.c+par_age+par_ed_ord+income_famsize.c+as.factor(country_cat)+ch_gender_num+par_gender_num, random=~1 | id, method="ML", data = covid_data_child, na.action = na.omit)
@@ -254,6 +119,15 @@ coefs <- data.frame(coef(summary(model2.1)))
 coefs.robust <- coef(summary(model2.robust))
 p.values <- 2*pt(abs(coefs.robust[,3]), coefs$DF, lower=FALSE)
 p.values
+
+#Moderating role of SES, etc.
+model2 <- with(miData,lme4::lmer(SDQcon2 ~ income_famsize.c*PARQhostile.c*SDQcon.c+PARQhostile.c*ch_age.c+PARQhostile.c*ch_gender_num+SDQcon.c+par_age+par_ed_ord+income_famsize.c+as.factor(country_cat)+ch_gender_num+par_gender_num + (1 | id), REML = FALSE))
+summary(pool(model2))
+model2 <- with(miData,lme4::lmer(SDQcon2 ~ as.factor(country_cat)*PARQhostile.c*SDQcon.c+PARQhostile.c*ch_age.c+PARQhostile.c*ch_gender_num+SDQcon.c+par_age+par_ed_ord+income_famsize.c+as.factor(country_cat)+ch_gender_num+par_gender_num + (1 | id), REML = FALSE))
+summary(pool(model2))
+model2 <- with(miData,lme4::lmer(SDQcon2 ~ other_par_num*PARQhostile.c*SDQcon.c+PARQhostile.c*ch_age.c+PARQhostile.c*ch_gender_num+SDQcon.c+par_age+par_ed_ord+income_famsize.c+as.factor(country_cat)+ch_gender_num+par_gender_num + (1 | id), REML = FALSE))
+summary(pool(model2))
+
 
 #PARQ hostile as predictor of SDQ peer change since COVID
 model1 <- with(miData,lme4::lmer(SDQpeer2 ~ PARQhostile.c+SDQpeer.c+par_age+ch_age.c+par_ed_ord+income_famsize.c+as.factor(country_cat)+ch_gender_num+as.factor(country_cat)+par_gender_num + (1 | id), REML = FALSE))
@@ -284,14 +158,6 @@ anova(model2,model3)
 
 #model 1 best fit p 9.79E-12
 
-# Moderating role of SES, country
-model1 <- with(miData,lme4::lmer(totalPTSD ~ income_famsize.c*PARQhostile.c+par_age+ch_age.c+par_ed_ord+income_famsize.c+as.factor(country_cat)+ch_gender_num+par_gender_num + (1 | id), REML = FALSE))
-summary(pool(model1))
-model1 <- with(miData,lme4::lmer(totalPTSD ~ as.factor(country_cat)*PARQhostile.c+par_age+ch_age.c+par_ed_ord+income_famsize.c+as.factor(country_cat)+ch_gender_num+par_gender_num + (1 | id), REML = FALSE))
-summary(pool(model1))
-model1 <- with(miData,lme4::lmer(totalPTSD ~ other_par_num*PARQhostile.c+par_age+ch_age.c+par_ed_ord+income_famsize.c+as.factor(country_cat)+ch_gender_num+par_gender_num + (1 | id), REML = FALSE))
-summary(pool(model1))
-
 # Robust lmm for model 1
 model1.1 <- lme(totalPTSD.c ~ PARQhostile.c+par_age+ch_age.c+par_ed_ord+income_famsize.c+as.factor(country_cat)+ch_gender_num+par_gender_num, random=~1 | id, method="ML", data = covid_data_child, na.action = na.omit)
 model1.robust <- rlmer(totalPTSD.c ~ PARQhostile.c+par_age+ch_age.c+par_ed_ord+income_famsize.c+as.factor(country_cat)+ch_gender_num+par_gender_num + (1 | id), REML = FALSE, data = covid_data_child, na.action = na.omit)
@@ -300,7 +166,14 @@ coefs.robust <- coef(summary(model1.robust))
 p.values <- 2*pt(abs(coefs.robust[,3]), coefs$DF, lower=FALSE)
 p.values
 
-lme.dscore(model1.1,data = covid_data_child, type = "nlme")
+# Moderating role of SES, country
+model1 <- with(miData,lme4::lmer(totalPTSD ~ income_famsize.c*PARQhostile.c+par_age+ch_age.c+par_ed_ord+income_famsize.c+as.factor(country_cat)+ch_gender_num+par_gender_num + (1 | id), REML = FALSE))
+summary(pool(model1))
+model1 <- with(miData,lme4::lmer(totalPTSD ~ as.factor(country_cat)*PARQhostile.c+par_age+ch_age.c+par_ed_ord+income_famsize.c+as.factor(country_cat)+ch_gender_num+par_gender_num + (1 | id), REML = FALSE))
+summary(pool(model1))
+model1 <- with(miData,lme4::lmer(totalPTSD ~ other_par_num*PARQhostile.c+par_age+ch_age.c+par_ed_ord+income_famsize.c+as.factor(country_cat)+ch_gender_num+par_gender_num + (1 | id), REML = FALSE))
+summary(pool(model1))
+
 
 #DASS DASSDep as predictor of SDQ emo change since COVID
 model1 <- with(miData,lme4::lmer(SDQemo2 ~ DASSDep.c+SDQemo.c+par_age+ch_age.c+par_ed_ord+income_famsize.c+as.factor(country_cat)+ch_gender_num+par_gender_num + (1 | id), REML = FALSE))
@@ -323,8 +196,10 @@ model1 <- with(miData,lme4::lmer(SDQemo2 ~ income_famsize.c*DASSDep.c+SDQemo.c+p
 summary(pool(model1))
 model1 <- with(miData,lme4::lmer(SDQemo2 ~ as.factor(country_cat)*DASSDep.c+SDQemo.c+par_age+ch_age.c+par_ed_ord+income_famsize.c+as.factor(country_cat)+ch_gender_num+par_gender_num + (1 | id), REML = FALSE))
 summary(pool(model1))
+model1 <- with(miData,lme4::lmer(SDQemo2 ~ other_par_num*DASSDep.c+SDQemo.c+par_age+ch_age.c+par_ed_ord+income_famsize.c+as.factor(country_cat)+ch_gender_num+par_gender_num + (1 | id), REML = FALSE))
+summary(pool(model1))
 
-
+#Robust
 model1.1 <- lme(SDQemo2 ~ DASSDep.c+SDQemo.c+par_age+ch_age.c+par_ed_ord+income_famsize.c+as.factor(country_cat)+ch_gender_num+par_gender_num, random=~1 | id, method="ML", data = covid_data_child, na.action = na.omit)
 model1.robust <- rlmer(SDQemo2 ~ DASSDep.c+SDQemo.c+par_age+ch_age.c+par_ed_ord+income_famsize.c+as.factor(country_cat)+ch_gender_num+par_gender_num + (1 | id), REML = FALSE, data = covid_data_child, na.action = na.omit)
 coefs <- data.frame(coef(summary(model1.1)))
@@ -399,7 +274,7 @@ anova(model2,model3)
 #Moderating effect of SES, country
 model1 <- with(miData,lme4::lmer(totalPTSD ~ income_famsize.c*DASSDep.c+par_age+ch_age.c+par_ed_ord+income_famsize.c+as.factor(country_cat)+ch_gender_num+par_gender_num + (1 | id), REML = FALSE))
 summary(pool(model1))
-model1 <- with(miData,lme4::lmer(totalPTSD ~ par_ed_ord*DASSDep.c+par_age+ch_age.c+par_ed_ord+income_famsize.c+as.factor(country_cat)+ch_gender_num+par_gender_num + (1 | id), REML = FALSE))
+model1 <- with(miData,lme4::lmer(totalPTSD ~ other_par_num*DASSDep.c+par_age+ch_age.c+par_ed_ord+income_famsize.c+as.factor(country_cat)+ch_gender_num+par_gender_num + (1 | id), REML = FALSE))
 summary(pool(model1))
 model1 <- with(miData,lme4::lmer(totalPTSD ~ as.factor(country_cat)*DASSDep.c+par_age+ch_age.c+par_ed_ord+income_famsize.c+as.factor(country_cat)+ch_gender_num+par_gender_num + (1 | id), REML = FALSE))
 summary(pool(model1))
@@ -432,7 +307,7 @@ anova(model3,model4)
 #Moderating role of SES, country
 model1 <- with(miData,lme4::lmer(SDQemo2 ~ income_famsize.c*DASSAnx.c+SDQemo.c+par_age+ch_age.c+par_ed_ord+income_famsize.c+as.factor(country_cat)+ch_gender_num+par_gender_num + (1 | id), REML = FALSE))
 summary(pool(model1))
-model1 <- with(miData,lme4::lmer(SDQemo2 ~ par_ed_ord*DASSAnx.c+SDQemo.c+par_age+ch_age.c+par_ed_ord+income_famsize.c+as.factor(country_cat)+ch_gender_num+par_gender_num + (1 | id), REML = FALSE))
+model1 <- with(miData,lme4::lmer(SDQemo2 ~ other_par_num*DASSAnx.c+SDQemo.c+par_age+ch_age.c+par_ed_ord+income_famsize.c+as.factor(country_cat)+ch_gender_num+par_gender_num + (1 | id), REML = FALSE))
 summary(pool(model1))
 model1 <- with(miData,lme4::lmer(SDQemo2 ~ as.factor(country_cat)*DASSAnx.c+SDQemo.c+par_age+ch_age.c+par_ed_ord+income_famsize.c+as.factor(country_cat)+ch_gender_num+par_gender_num + (1 | id), REML = FALSE))
 summary(pool(model1))
@@ -684,14 +559,6 @@ summary(pool(model3))
 anova(model1,model2)
 anova(model2,model3)
 
-# Robust lmm
-model1.1 <- lme(totalPTSD ~ DASSStress.c+ch_age.c+par_age+par_ed_ord+income_famsize.c+as.factor(country_cat)+ch_gender_num+par_gender_num, random=~1 | id, method="ML", data = covid_data_child, na.action = na.omit)
-model1.robust <- rlmer(totalPTSD ~ DASSStress.c+ch_age.c+par_age+par_ed_ord+income_famsize.c+as.factor(country_cat)+ch_gender_num+par_gender_num + (1 | id), REML = FALSE, data = covid_data_child, na.action = na.omit)
-coefs <- data.frame(coef(summary(model1.1)))
-coefs.robust <- coef(summary(model1.robust))
-p.values <- 2*pt(abs(coefs.robust[,3]), coefs$DF, lower=FALSE)
-p.values
-
 # Model 1 best fit, p 1.09E-07
 
 #Moderating effect of SES, country
@@ -702,6 +569,13 @@ summary(pool(model1))
 model1 <- with(miData,lme4::lmer(totalPTSD ~ as.factor(country_cat)*DASSStress.c+par_age+ch_age.c+par_ed_ord+income_famsize.c+as.factor(country_cat)+ch_gender_num+par_gender_num + (1 | id), REML = FALSE))
 summary(pool(model1))
 
+# Robust lmm
+model1.1 <- lme(totalPTSD ~ DASSStress.c+ch_age.c+par_age+par_ed_ord+income_famsize.c+as.factor(country_cat)+ch_gender_num+par_gender_num, random=~1 | id, method="ML", data = covid_data_child, na.action = na.omit)
+model1.robust <- rlmer(totalPTSD ~ DASSStress.c+ch_age.c+par_age+par_ed_ord+income_famsize.c+as.factor(country_cat)+ch_gender_num+par_gender_num + (1 | id), REML = FALSE, data = covid_data_child, na.action = na.omit)
+coefs <- data.frame(coef(summary(model1.1)))
+coefs.robust <- coef(summary(model1.robust))
+p.values <- 2*pt(abs(coefs.robust[,3]), coefs$DF, lower=FALSE)
+p.values
 
 #totalcov_dist as predictor of SDQ emo change since COVID
 model1 <- with(miData,lme4::lmer(SDQemo2 ~ totalcov_dist.c+SDQemo.c+par_age+ch_age.c+par_ed_ord+income_famsize.c+as.factor(country_cat)+ch_gender_num+par_gender_num + (1 | id), REML = FALSE))
@@ -722,7 +596,7 @@ anova(model3,model4)
 # Moderating effect of SES, country
 model2 <- with(miData,lme4::lmer(SDQemo2 ~ income_famsize.c*totalcov_dist.c*SDQemo.c+totalcov_dist.c*ch_age.c+totalcov_dist.c*ch_gender_num+SDQemo.c+par_age+par_ed_ord+income_famsize.c+as.factor(country_cat)+ch_gender_num+par_gender_num + (1 | id), REML = FALSE))
 summary(pool(model2))
-model2 <- with(miData,lme4::lmer(SDQemo2 ~ par_ed_ord*totalcov_dist.c*SDQemo.c+totalcov_dist.c*ch_age.c+totalcov_dist.c*ch_gender_num+SDQemo.c+par_age+par_ed_ord+income_famsize.c+as.factor(country_cat)+ch_gender_num+par_gender_num + (1 | id), REML = FALSE))
+model2 <- with(miData,lme4::lmer(SDQemo2 ~ other_par_num*totalcov_dist.c*SDQemo.c+totalcov_dist.c*ch_age.c+totalcov_dist.c*ch_gender_num+SDQemo.c+par_age+par_ed_ord+income_famsize.c+as.factor(country_cat)+ch_gender_num+par_gender_num + (1 | id), REML = FALSE))
 summary(pool(model2))
 model2 <- with(miData,lme4::lmer(SDQemo2 ~ as.factor(country_cat)*totalcov_dist.c*SDQemo.c+totalcov_dist.c*ch_age.c+totalcov_dist.c*ch_gender_num+SDQemo.c+par_age+par_ed_ord+income_famsize.c+as.factor(country_cat)+ch_gender_num+par_gender_num + (1 | id), REML = FALSE))
 summary(pool(model2))
@@ -758,7 +632,7 @@ anova(model3,model4)
 #Moderating effect of SES, country
 model1 <- with(miData,lme4::lmer(SDQhyp2 ~ income_famsize.c*totalcov_dist.c+SDQhyp.c+par_age+ch_age.c+par_ed_ord+income_famsize.c+as.factor(country_cat)+ch_gender_num+par_gender_num + (1 | id), REML = FALSE))
 summary(pool(model1))
-model1 <- with(miData,lme4::lmer(SDQhyp2 ~ par_ed_ord*totalcov_dist.c+SDQhyp.c+par_age+ch_age.c+par_ed_ord+income_famsize.c+as.factor(country_cat)+ch_gender_num+par_gender_num + (1 | id), REML = FALSE))
+model1 <- with(miData,lme4::lmer(SDQhyp2 ~ other_par_num*totalcov_dist.c+SDQhyp.c+par_age+ch_age.c+par_ed_ord+income_famsize.c+as.factor(country_cat)+ch_gender_num+par_gender_num + (1 | id), REML = FALSE))
 summary(pool(model1))
 model1 <- with(miData,lme4::lmer(SDQhyp2 ~ as.factor(country_cat)*totalcov_dist.c+SDQhyp.c+par_age+ch_age.c+par_ed_ord+income_famsize.c+as.factor(country_cat)+ch_gender_num+par_gender_num + (1 | id), REML = FALSE))
 summary(pool(model1))
@@ -795,7 +669,7 @@ anova(model3,model4)
 #Moderating role of SES, country
 model1 <- with(miData,lme4::lmer(SDQcon2 ~ income_famsize.c*totalcov_dist.c+SDQcon.c+par_age+ch_age.c+par_ed_ord+income_famsize.c+as.factor(country_cat)+ch_gender_num+par_gender_num + (1 | id), REML = FALSE))
 summary(pool(model1))
-model1 <- with(miData,lme4::lmer(SDQcon2 ~ par_ed_ord*totalcov_dist.c+SDQcon.c+par_age+ch_age.c+par_ed_ord+income_famsize.c+as.factor(country_cat)+ch_gender_num+par_gender_num + (1 | id), REML = FALSE))
+model1 <- with(miData,lme4::lmer(SDQcon2 ~ other_par_num*totalcov_dist.c+SDQcon.c+par_age+ch_age.c+par_ed_ord+income_famsize.c+as.factor(country_cat)+ch_gender_num+par_gender_num + (1 | id), REML = FALSE))
 summary(pool(model1))
 model1 <- with(miData,lme4::lmer(SDQcon2 ~ as.factor(country_cat)*totalcov_dist.c+SDQcon.c+par_age+ch_age.c+par_ed_ord+income_famsize.c+as.factor(country_cat)+ch_gender_num+par_gender_num + (1 | id), REML = FALSE))
 summary(pool(model1))
@@ -1093,7 +967,7 @@ anova(model2,model3)
 #Moderating effect of SES, country
 model1 <- with(miData,lme4::lmer(totalPTSD ~ income_famsize.c*PARQwarmth.c+par_age+ch_age.c+par_ed_ord+income_famsize.c+as.factor(country_cat)+ch_gender_num+par_gender_num + (1 | id), REML = FALSE))
 summary(pool(model1))
-model1 <- with(miData,lme4::lmer(totalPTSD ~ par_ed_ord*PARQwarmth.c+par_age+ch_age.c+par_ed_ord+income_famsize.c+as.factor(country_cat)+ch_gender_num+par_gender_num + (1 | id), REML = FALSE))
+model1 <- with(miData,lme4::lmer(totalPTSD ~ other_par_num*PARQwarmth.c+par_age+ch_age.c+par_ed_ord+income_famsize.c+as.factor(country_cat)+ch_gender_num+par_gender_num + (1 | id), REML = FALSE))
 summary(pool(model1))
 model1 <- with(miData,lme4::lmer(totalPTSD ~ as.factor(country_cat)*PARQwarmth.c+par_age+ch_age.c+par_ed_ord+income_famsize.c+as.factor(country_cat)+ch_gender_num+par_gender_num + (1 | id), REML = FALSE))
 summary(pool(model1))
@@ -1105,10 +979,6 @@ coefs <- data.frame(coef(summary(model1.1)))
 coefs.robust <- coef(summary(model1.robust))
 p.values <- 2*pt(abs(coefs.robust[,3]), coefs$DF, lower=FALSE)
 p.values
-
-ggplot(covid_data_child, aes(x = PARQwarmth.c, y = totalPTSD) ) +
-  geom_point() +
-  geom_smooth(method = "lm", se = FALSE)
 
 
 #totalFES as predictor of SDQ emo change since COVID
@@ -1342,17 +1212,8 @@ coefs.robust <- coef(summary(model1.robust))
 p.values <- 2*pt(abs(coefs.robust[,3]), coefs$DF, lower=FALSE)
 p.values
 
-model1.hos <- with(miData,lme4::lmer(SDQemo2 ~ emotion_comm.c*PARQhostile.c+SDQemo.c+par_age+ch_age.c+par_ed_ord+income_famsize.c+as.factor(country_cat)+ch_gender_num+par_gender_num + (1 | id), REML = FALSE))
-summary(pool(model1.hos))
-model1.war <- with(miData,lme4::lmer(SDQemo2 ~ emotion_comm.c*PARQwarmth.c+SDQemo.c+par_age+ch_age.c+par_ed_ord+income_famsize.c+as.factor(country_cat)+ch_gender_num+par_gender_num + (1 | id), REML = FALSE))
-summary(pool(model1.war))
-model1.fes <- with(miData,lme4::lmer(SDQemo2 ~ emotion_comm.c*totalFES.c+SDQemo.c+par_age+ch_age.c+par_ed_ord+income_famsize.c+as.factor(country_cat)+ch_gender_num+par_gender_num + (1 | id), REML = FALSE))
-summary(pool(model1.fes))
+# Check if better explained by other factors
 model1.Stress <- with(miData,lme4::lmer(SDQemo2 ~ emotion_comm.c*DASSStress.c+SDQemo.c+par_age+ch_age.c+par_ed_ord+income_famsize.c+as.factor(country_cat)+ch_gender_num+par_gender_num + (1 | id), REML = FALSE))
-summary(pool(model1.Stress))
-model1.Stress <- with(miData,lme4::lmer(SDQemo2 ~ emotion_comm.c*DASSDep.c+SDQemo.c+par_age+ch_age.c+par_ed_ord+income_famsize.c+as.factor(country_cat)+ch_gender_num+par_gender_num + (1 | id), REML = FALSE))
-summary(pool(model1.Stress))
-model1.Stress <- with(miData,lme4::lmer(SDQemo2 ~ emotion_comm.c*DASSAnx.c+SDQemo.c+par_age+ch_age.c+par_ed_ord+income_famsize.c+as.factor(country_cat)+ch_gender_num+par_gender_num + (1 | id), REML = FALSE))
 summary(pool(model1.Stress))
 model1.Distress <- with(miData,lme4::lmer(SDQemo2 ~ emotion_comm.c*totalcov_dist.c+SDQemo.c+par_age+ch_age.c+par_ed_ord+income_famsize.c+as.factor(country_cat)+ch_gender_num+par_gender_num + (1 | id), REML = FALSE))
 summary(pool(model1.Distress))
@@ -1389,18 +1250,8 @@ coefs.robust <- coef(summary(model1.robust))
 p.values <- 2*pt(abs(coefs.robust[,3]), coefs$DF, lower=FALSE)
 p.values
 
-# Check moderating influence of family enviro
-model1.hos <- with(miData,lme4::lmer(SDQhyp2 ~ emotion_comm.c*PARQhostile.c+SDQhyp.c+par_age+ch_age.c+par_ed_ord+income_famsize.c+as.factor(country_cat)+ch_gender_num+par_gender_num + (1 | id), REML = FALSE))
-summary(pool(model1.hos))
-model1.war <- with(miData,lme4::lmer(SDQhyp2 ~ emotion_comm.c*PARQwarmth.c+SDQhyp.c+par_age+ch_age.c+par_ed_ord+income_famsize.c+as.factor(country_cat)+ch_gender_num+par_gender_num + (1 | id), REML = FALSE))
-summary(pool(model1.war))
-model1.fes <- with(miData,lme4::lmer(SDQhyp2 ~ emotion_comm.c*totalFES.c+SDQhyp.c+par_age+ch_age.c+par_ed_ord+income_famsize.c+as.factor(country_cat)+ch_gender_num+par_gender_num + (1 | id), REML = FALSE))
-summary(pool(model1.fes))
+# Check if better explained by other factors
 model1.Stress <- with(miData,lme4::lmer(SDQhyp2 ~ emotion_comm.c*DASSStress.c+SDQhyp.c+par_age+ch_age.c+par_ed_ord+income_famsize.c+as.factor(country_cat)+ch_gender_num+par_gender_num + (1 | id), REML = FALSE))
-summary(pool(model1.Stress))
-model1.Stress <- with(miData,lme4::lmer(SDQhyp2 ~ emotion_comm.c*DASSDep.c+SDQhyp.c+par_age+ch_age.c+par_ed_ord+income_famsize.c+as.factor(country_cat)+ch_gender_num+par_gender_num + (1 | id), REML = FALSE))
-summary(pool(model1.Stress))
-model1.Stress <- with(miData,lme4::lmer(SDQhyp2 ~ emotion_comm.c*DASSAnx.c+SDQhyp.c+par_age+ch_age.c+par_ed_ord+income_famsize.c+as.factor(country_cat)+ch_gender_num+par_gender_num + (1 | id), REML = FALSE))
 summary(pool(model1.Stress))
 model1.Distress <- with(miData,lme4::lmer(SDQhyp2 ~ emotion_comm.c*totalcov_dist.c+SDQhyp.c+par_age+ch_age.c+par_ed_ord+income_famsize.c+as.factor(country_cat)+ch_gender_num+par_gender_num + (1 | id), REML = FALSE))
 summary(pool(model1.Distress))
@@ -1453,22 +1304,14 @@ coefs.robust <- coef(summary(model1.robust))
 p.values <- 2*pt(abs(coefs.robust[,3]), coefs$DF, lower=FALSE)
 p.values
 
-# Check moderating influence of family enviro, SES, country
-model1.hos <- with(miData,lme4::lmer(SDQpeer2 ~ emotion_comm.c*PARQhostile.c+SDQpeer.c+par_age+ch_age.c+par_ed_ord+income_famsize.c+as.factor(country_cat)+ch_gender_num+par_gender_num + (1 | id), REML = FALSE))
-summary(pool(model1.hos))
-model1.war <- with(miData,lme4::lmer(SDQpeer2 ~ emotion_comm.c*PARQwarmth.c+SDQpeer.c+par_age+ch_age.c+par_ed_ord+income_famsize.c+as.factor(country_cat)+ch_gender_num+par_gender_num + (1 | id), REML = FALSE))
-summary(pool(model1.war))
-model1.fes <- with(miData,lme4::lmer(SDQpeer2 ~ emotion_comm.c*totalFES.c+SDQpeer.c+par_age+ch_age.c+par_ed_ord+income_famsize.c+as.factor(country_cat)+ch_gender_num+par_gender_num + (1 | id), REML = FALSE))
-summary(pool(model1.fes))
+# Check moderating influence of SES, country, etc. and not better explained by other factors
 model1.Stress <- with(miData,lme4::lmer(SDQpeer2 ~ emotion_comm.c*DASSStress.c+SDQpeer.c+par_age+ch_age.c+par_ed_ord+income_famsize.c+as.factor(country_cat)+ch_gender_num+par_gender_num + (1 | id), REML = FALSE))
 summary(pool(model1.Stress))
-model1.Stress <- with(miData,lme4::lmer(SDQpeer2 ~ emotion_comm.c*DASSAnx.c+SDQpeer.c+par_age+ch_age.c+par_ed_ord+income_famsize.c+as.factor(country_cat)+ch_gender_num+par_gender_num + (1 | id), REML = FALSE))
-summary(pool(model1.Stress))
-model1.Stress <- with(miData,lme4::lmer(SDQpeer2 ~ emotion_comm.c*DASSDep.c+SDQpeer.c+par_age+ch_age.c+par_ed_ord+income_famsize.c+as.factor(country_cat)+ch_gender_num+par_gender_num + (1 | id), REML = FALSE))
+model1.Stress <- with(miData,lme4::lmer(SDQpeer2 ~ emotion_comm.c*totalcov_dist.c+SDQpeer.c+par_age+ch_age.c+par_ed_ord+income_famsize.c+as.factor(country_cat)+ch_gender_num+par_gender_num + (1 | id), REML = FALSE))
 summary(pool(model1.Stress))
 model1.Stress <- with(miData,lme4::lmer(SDQpeer2 ~ emotion_comm.c*income_famsize.c+SDQpeer.c+par_age+ch_age.c+par_ed_ord+income_famsize.c+as.factor(country_cat)+ch_gender_num+par_gender_num + (1 | id), REML = FALSE))
 summary(pool(model1.Stress))
-model1.Stress <- with(miData,lme4::lmer(SDQpeer2 ~ emotion_comm.c*par_ed_ord+SDQpeer.c+par_age+ch_age.c+par_ed_ord+income_famsize.c+as.factor(country_cat)+ch_gender_num+par_gender_num + (1 | id), REML = FALSE))
+model1.Stress <- with(miData,lme4::lmer(SDQpeer2 ~ emotion_comm.c*other_par_num+SDQpeer.c+par_age+ch_age.c+par_ed_ord+income_famsize.c+as.factor(country_cat)+ch_gender_num+par_gender_num + (1 | id), REML = FALSE))
 summary(pool(model1.Stress))
 model1.Stress <- with(miData,lme4::lmer(SDQpeer2 ~ emotion_comm.c*as.factor(country_cat)+SDQpeer.c+par_age+ch_age.c+par_ed_ord+income_famsize.c+as.factor(country_cat)+ch_gender_num+par_gender_num + (1 | id), REML = FALSE))
 summary(pool(model1.Stress))
@@ -1494,22 +1337,14 @@ coefs.robust <- coef(summary(model1.robust))
 p.values <- 2*pt(abs(coefs.robust[,3]), coefs$DF, lower=FALSE)
 p.values
 
-# Check moderating influence of family enviro, SES, country
-model1.hos <- with(miData,lme4::lmer(totalPTSD ~ emotion_comm.c*PARQhostile.c*+par_age+ch_age.c+par_ed_ord+income_famsize.c+as.factor(country_cat)+par_gender_num + (1 | id), REML = FALSE))
-summary(pool(model1.hos))
-model1.war <- with(miData,lme4::lmer(totalPTSD ~ emotion_comm.c*PARQwarmth.c+par_age+ch_age.c+par_ed_ord+income_famsize.c+as.factor(country_cat)+ch_gender_num+par_gender_num + (1 | id), REML = FALSE))
-summary(pool(model1.war))
-model1.fes <- with(miData,lme4::lmer(totalPTSD ~ emotion_comm.c*totalFES.c+par_age+ch_age.c+par_ed_ord+income_famsize.c+as.factor(country_cat)+ch_gender_num+par_gender_num + (1 | id), REML = FALSE))
-summary(pool(model1.fes))
-model1.Stress <- with(miData,lme4::lmer(totalPTSD ~ emotion_comm.c*DASSAnx.c+par_age+ch_age.c+par_ed_ord+income_famsize.c+as.factor(country_cat)+ch_gender_num+par_gender_num + (1 | id), REML = FALSE))
-summary(pool(model1.Stress))
-model1.Stress <- with(miData,lme4::lmer(totalPTSD ~ emotion_comm.c*DASSDep.c+par_age+ch_age.c+par_ed_ord+income_famsize.c+as.factor(country_cat)+ch_gender_num+par_gender_num + (1 | id), REML = FALSE))
-summary(pool(model1.Stress))
+# Check moderating influence of SES, country, and not explained by other factors
 model1.Stress <- with(miData,lme4::lmer(totalPTSD ~ emotion_comm.c*DASSStress.c+par_age+ch_age.c+par_ed_ord+income_famsize.c+as.factor(country_cat)+ch_gender_num+par_gender_num + (1 | id), REML = FALSE))
+summary(pool(model1.Stress))
+model1.Stress <- with(miData,lme4::lmer(totalPTSD ~ emotion_comm.c*totalcov_dist.c+par_age+ch_age.c+par_ed_ord+income_famsize.c+as.factor(country_cat)+ch_gender_num+par_gender_num + (1 | id), REML = FALSE))
 summary(pool(model1.Stress))
 model1.Stress <- with(miData,lme4::lmer(totalPTSD ~ emotion_comm.c*income_famsize.c+par_age+ch_age.c+par_ed_ord+income_famsize.c+as.factor(country_cat)+ch_gender_num+par_gender_num + (1 | id), REML = FALSE))
 summary(pool(model1.Stress))
-model1.Stress <- with(miData,lme4::lmer(totalPTSD ~ emotion_comm.c*par_ed_ord+par_age+ch_age.c+par_ed_ord+income_famsize.c+as.factor(country_cat)+ch_gender_num+par_gender_num + (1 | id), REML = FALSE))
+model1.Stress <- with(miData,lme4::lmer(totalPTSD ~ emotion_comm.c*other_par_num+par_age+ch_age.c+par_ed_ord+income_famsize.c+as.factor(country_cat)+ch_gender_num+par_gender_num + (1 | id), REML = FALSE))
 summary(pool(model1.Stress))
 model1.Stress <- with(miData,lme4::lmer(totalPTSD ~ emotion_comm.c*as.factor(country_cat)+par_age+ch_age.c+par_ed_ord+income_famsize.c+as.factor(country_cat)+ch_gender_num+par_gender_num + (1 | id), REML = FALSE))
 summary(pool(model1.Stress))
@@ -1530,19 +1365,14 @@ anova(model3,model4)
 
 # Model 1 best, p 2.05E-04
 
-model1.hos <- with(miData,lme4::lmer(SDQemo2 ~ self_comm.c*PARQhostile.c+SDQemo.c+par_age+ch_age.c+par_ed_ord+income_famsize.c+as.factor(country_cat)+ch_gender_num+par_gender_num + (1 | id), REML = FALSE))
-summary(pool(model1.hos))
-model1.war <- with(miData,lme4::lmer(SDQemo2 ~ self_comm.c*PARQwarmth.c+SDQemo.c+par_age+ch_age.c+par_ed_ord+income_famsize.c+as.factor(country_cat)+ch_gender_num+par_gender_num + (1 | id), REML = FALSE))
-summary(pool(model1.war))
-model1.fes <- with(miData,lme4::lmer(SDQemo2 ~ self_comm.c*totalFES.c+SDQemo.c+par_age+ch_age.c+par_ed_ord+income_famsize.c+as.factor(country_cat)+ch_gender_num+par_gender_num + (1 | id), REML = FALSE))
-summary(pool(model1.fes))
+# Check moderating influence of SES, country, and not explained by other factors
 model1.Stress <- with(miData,lme4::lmer(SDQemo2 ~ self_comm.c*DASSStress.c+SDQemo.c+par_age+ch_age.c+par_ed_ord+income_famsize.c+as.factor(country_cat)+ch_gender_num+par_gender_num + (1 | id), REML = FALSE))
 summary(pool(model1.Stress))
 model1.Distress <- with(miData,lme4::lmer(SDQemo2 ~ self_comm.c*totalcov_dist.c+SDQemo.c+par_age+ch_age.c+par_ed_ord+income_famsize.c+as.factor(country_cat)+ch_gender_num+par_gender_num + (1 | id), REML = FALSE))
 summary(pool(model1.Distress))
 model1.Distress <- with(miData,lme4::lmer(SDQemo2 ~ self_comm.c*income_famsize.c+SDQemo.c+par_age+ch_age.c+par_ed_ord+income_famsize.c+as.factor(country_cat)+ch_gender_num+par_gender_num + (1 | id), REML = FALSE))
 summary(pool(model1.Distress))
-model1.Distress <- with(miData,lme4::lmer(SDQemo2 ~ self_comm.c*par_ed_ord+SDQemo.c+par_age+ch_age.c+par_ed_ord+income_famsize.c+as.factor(country_cat)+ch_gender_num+par_gender_num + (1 | id), REML = FALSE))
+model1.Distress <- with(miData,lme4::lmer(SDQemo2 ~ self_comm.c*other_par_num+SDQemo.c+par_age+ch_age.c+par_ed_ord+income_famsize.c+as.factor(country_cat)+ch_gender_num+par_gender_num + (1 | id), REML = FALSE))
 summary(pool(model1.Distress))
 model1.Distress <- with(miData,lme4::lmer(SDQemo2 ~ self_comm.c*as.factor(country_cat)+SDQemo.c+par_age+ch_age.c+par_ed_ord+income_famsize.c+as.factor(country_cat)+ch_gender_num+par_gender_num + (1 | id), REML = FALSE))
 summary(pool(model1.Distress))
@@ -1574,16 +1404,10 @@ anova(model3,model4)
 #Moderating role of SES, country
 model1 <- with(miData,lme4::lmer(SDQhyp2 ~ income_famsize.c*self_comm.c+SDQhyp.c+par_age+ch_age.c+par_ed_ord+income_famsize.c+as.factor(country_cat)+ch_gender_num+par_gender_num + (1 | id), REML = FALSE))
 summary(pool(model1))
-model1 <- with(miData,lme4::lmer(SDQhyp2 ~ par_ed_ord*self_comm.c+SDQhyp.c+par_age+ch_age.c+par_ed_ord+income_famsize.c+as.factor(country_cat)+ch_gender_num+par_gender_num + (1 | id), REML = FALSE))
+model1 <- with(miData,lme4::lmer(SDQhyp2 ~ other_par_num*self_comm.c+SDQhyp.c+par_age+ch_age.c+par_ed_ord+income_famsize.c+as.factor(country_cat)+ch_gender_num+par_gender_num + (1 | id), REML = FALSE))
 summary(pool(model1))
 model1 <- with(miData,lme4::lmer(SDQhyp2 ~ as.factor(country_cat)*self_comm.c+SDQhyp.c+par_age+ch_age.c+par_ed_ord+income_famsize.c+as.factor(country_cat)+ch_gender_num+par_gender_num + (1 | id), REML = FALSE))
 summary(pool(model1))
-model1.hos <- with(miData,lme4::lmer(SDQhyp2 ~ self_comm.c*PARQhostile.c+SDQhyp.c+par_age+ch_age.c+par_ed_ord+income_famsize.c+as.factor(country_cat)+ch_gender_num+par_gender_num + (1 | id), REML = FALSE))
-summary(pool(model1.hos))
-model1.war <- with(miData,lme4::lmer(SDQhyp2 ~ self_comm.c*PARQwarmth.c+SDQhyp.c+par_age+ch_age.c+par_ed_ord+income_famsize.c+as.factor(country_cat)+ch_gender_num+par_gender_num + (1 | id), REML = FALSE))
-summary(pool(model1.war))
-model1.fes <- with(miData,lme4::lmer(SDQhyp2 ~ self_comm.c*totalFES.c+SDQhyp.c+par_age+ch_age.c+par_ed_ord+income_famsize.c+as.factor(country_cat)+ch_gender_num+par_gender_num + (1 | id), REML = FALSE))
-summary(pool(model1.fes))
 model1.Stress <- with(miData,lme4::lmer(SDQhyp2 ~ self_comm.c*DASSStress.c+SDQhyp.c+par_age+ch_age.c+par_ed_ord+income_famsize.c+as.factor(country_cat)+ch_gender_num+par_gender_num + (1 | id), REML = FALSE))
 summary(pool(model1.Stress))
 model1.Distress <- with(miData,lme4::lmer(SDQhyp2 ~ self_comm.c*totalcov_dist.c+SDQhyp.c+par_age+ch_age.c+par_ed_ord+income_famsize.c+as.factor(country_cat)+ch_gender_num+par_gender_num + (1 | id), REML = FALSE))
@@ -1616,16 +1440,10 @@ anova(model3,model4)
 #Moderating effect of SES, country
 model1 <- with(miData,lme4::lmer(SDQcon2 ~ income_famsize.c*self_comm.c+SDQcon.c+par_age+ch_age.c+par_ed_ord+income_famsize.c+as.factor(country_cat)+ch_gender_num+par_gender_num + (1 | id), REML = FALSE))
 summary(pool(model1))
-model1 <- with(miData,lme4::lmer(SDQcon2 ~ par_ed_ord*self_comm.c+SDQcon.c+par_age+ch_age.c+par_ed_ord+income_famsize.c+as.factor(country_cat)+ch_gender_num+par_gender_num + (1 | id), REML = FALSE))
+model1 <- with(miData,lme4::lmer(SDQcon2 ~ other_par_num*self_comm.c+SDQcon.c+par_age+ch_age.c+par_ed_ord+income_famsize.c+as.factor(country_cat)+ch_gender_num+par_gender_num + (1 | id), REML = FALSE))
 summary(pool(model1))
 model1 <- with(miData,lme4::lmer(SDQcon2 ~ as.factor(country_cat)*self_comm.c+SDQcon.c+par_age+ch_age.c+par_ed_ord+income_famsize.c+as.factor(country_cat)+ch_gender_num+par_gender_num + (1 | id), REML = FALSE))
 summary(pool(model1))
-model1.hos <- with(miData,lme4::lmer(SDQcon2 ~ self_comm.c*PARQhostile.c+SDQcon.c+par_age+ch_age.c+par_ed_ord+income_famsize.c+as.factor(country_cat)+ch_gender_num+par_gender_num + (1 | id), REML = FALSE))
-summary(pool(model1.hos))
-model1.war <- with(miData,lme4::lmer(SDQcon2 ~ self_comm.c*PARQwarmth.c+SDQcon.c+par_age+ch_age.c+par_ed_ord+income_famsize.c+as.factor(country_cat)+ch_gender_num+par_gender_num + (1 | id), REML = FALSE))
-summary(pool(model1.war))
-model1.fes <- with(miData,lme4::lmer(SDQcon2 ~ self_comm.c*totalFES.c+SDQcon.c+par_age+ch_age.c+par_ed_ord+income_famsize.c+as.factor(country_cat)+ch_gender_num+par_gender_num + (1 | id), REML = FALSE))
-summary(pool(model1.fes))
 model1.Stress <- with(miData,lme4::lmer(SDQcon2 ~ self_comm.c*DASSStress.c+SDQcon.c+par_age+ch_age.c+par_ed_ord+income_famsize.c+as.factor(country_cat)+ch_gender_num+par_gender_num + (1 | id), REML = FALSE))
 summary(pool(model1.Stress))
 model1.Distress <- with(miData,lme4::lmer(SDQcon2 ~ self_comm.c*totalcov_dist.c+SDQcon.c+par_age+ch_age.c+par_ed_ord+income_famsize.c+as.factor(country_cat)+ch_gender_num+par_gender_num + (1 | id), REML = FALSE))
@@ -1673,16 +1491,10 @@ anova(model2,model3)
 #Moderating role of SES, country
 model1 <- with(miData,lme4::lmer(totalPTSD ~ income_famsize.c*self_comm.c+par_age+ch_age.c+par_ed_ord+income_famsize.c+as.factor(country_cat)+ch_gender_num+par_gender_num + (1 | id), REML = FALSE))
 summary(pool(model1))
-model1 <- with(miData,lme4::lmer(totalPTSD ~ par_ed_ord*self_comm.c+par_age+ch_age.c+par_ed_ord+income_famsize.c+as.factor(country_cat)+ch_gender_num+par_gender_num + (1 | id), REML = FALSE))
+model1 <- with(miData,lme4::lmer(totalPTSD ~ other_par_num*self_comm.c+par_age+ch_age.c+par_ed_ord+income_famsize.c+as.factor(country_cat)+ch_gender_num+par_gender_num + (1 | id), REML = FALSE))
 summary(pool(model1))
 model1 <- with(miData,lme4::lmer(totalPTSD ~ as.factor(country_cat)*self_comm.c+par_age+ch_age.c+par_ed_ord+income_famsize.c+as.factor(country_cat)+ch_gender_num+par_gender_num + (1 | id), REML = FALSE))
 summary(pool(model1))
-model1.hos <- with(miData,lme4::lmer(totalPTSD ~ self_comm.c*PARQhostile.c+par_age+ch_age.c+par_ed_ord+income_famsize.c+as.factor(country_cat)+ch_gender_num+par_gender_num + (1 | id), REML = FALSE))
-summary(pool(model1.hos))
-model1.war <- with(miData,lme4::lmer(totalPTSD ~ self_comm.c*PARQwarmth.c+par_age+ch_age.c+par_ed_ord+income_famsize.c+as.factor(country_cat)+ch_gender_num+par_gender_num + (1 | id), REML = FALSE))
-summary(pool(model1.war))
-model1.fes <- with(miData,lme4::lmer(totalPTSD ~ self_comm.c*totalFES.c+par_age+ch_age.c+par_ed_ord+income_famsize.c+as.factor(country_cat)+ch_gender_num+par_gender_num + (1 | id), REML = FALSE))
-summary(pool(model1.fes))
 model1.Stress <- with(miData,lme4::lmer(totalPTSD ~ self_comm.c*DASSStress.c+par_age+ch_age.c+par_ed_ord+income_famsize.c+as.factor(country_cat)+ch_gender_num+par_gender_num + (1 | id), REML = FALSE))
 summary(pool(model1.Stress))
 model1.Distress <- with(miData,lme4::lmer(totalPTSD ~ self_comm.c*totalcov_dist.c+par_age+ch_age.c+par_ed_ord+income_famsize.c+as.factor(country_cat)+ch_gender_num+par_gender_num + (1 | id), REML = FALSE))
