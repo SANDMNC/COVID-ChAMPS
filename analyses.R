@@ -8,12 +8,8 @@ library(lmerTest)
 library(robustlmm)
 library(reghelper)
 library(ggplot2)
-library(lmeresampler)
 library(lme4)
 library(nlme)
-library(boot)
-library(mice)
-library(mitml)
 
 #Remove the X column
 covid_data_child$X <- NULL
