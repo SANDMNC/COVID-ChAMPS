@@ -4,12 +4,12 @@ covid_data_child <- read.csv("scored_data/covid_data_child_scored_for_MI.csv", h
 # load in mi data
 miData <- load("scored_data/miData.rda")
 
-library(lmerTest)
-library(robustlmm)
-library(reghelper)
-library(ggplot2)
-library(lme4)
-library(nlme)
+library(lmerTest) #v3.1-2
+library(robustlmm) #v2.3
+library(reghelper) #v0.3.6
+library(ggplot2) #v3.3.1
+library(lme4) #v1.1-23
+library(nlme) #v3.1-147
 
 #Remove the X column
 covid_data_child$X <- NULL
