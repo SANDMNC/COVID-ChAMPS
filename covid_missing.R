@@ -12,12 +12,12 @@ covid_data_child_for_MI <- read.csv("scored_data/covid_data_child_scored_for_MI.
 
 
 #Load packages
-library(dplyr)
-library(naniar) #for examining missing
-library(ggplot2)
-library(mice) #missing data imputation 
-library(VIM)
-library(finalfit) #another package which has functions to examine missing
+library(dplyr) #v1.0.0
+library(naniar) #for examining missing #v0.5.1
+library(ggplot2) #v3.3.1
+library(mice) #missing data imputation #v3.9.0
+library(VIM) #v6.0.0
+library(finalfit) #another package which has functions to examine missing #v1.0.1
 
 
 #Selecting the variables used in analysis
