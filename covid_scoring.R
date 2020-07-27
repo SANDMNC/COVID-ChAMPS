@@ -1,7 +1,4 @@
 
-
-# This script currently takes a csv file exported from Qualtrics. In future may need to adapt to take a file exported from ACCESS database.
-
 #Script made with R version 3.5.2 (2018-12-20)
 
 # Inputs:
@@ -10,19 +7,15 @@
 # Manually deleted the email column to deidentify, and the 2nd and 3rd rows with additional qualtrics headings.
 
 # Outputs:
-# Two csv files with combination of raw and scored data.
+# Csv files with combination of raw and scored data, for use in the missing and analyses scripts.
 # First csv each parent is a separate row.
 # Second csv each child is a separate row.
 
-# Load packages (install them first if don't have them using install.packages("package_name") )
+# Load packages --------------------------------------------------------------------
 library(car) # for recode
 library(dplyr) # for %>%
 library(tidyselect) # for starts_with and contains
 library(psych) #for scoreItems etc.
-library(naniar) #for examining missing
-library(ggplot2)
-library(summarytools) #for freq - frequency tables
-library(corrplot) #For correlation plot
 
 
 # General cleaning----------------------------------------------------------------------------------------------
@@ -30,25 +23,22 @@ library(corrplot) #For correlation plot
 # Read in the csv file
 covid_data <- read.csv("raw_data/covid_data.csv", header=TRUE, stringsAsFactors = FALSE)
 
-
-#Make the age variables numeric rather than characters
-#Change this from "9y" to just "9" otherwise it gets cut
-covid_data[covid_data$ch2_age=="9y", "ch2_age"] <- "9"
-
-covid_data$ch2_age <- as.numeric(covid_data$ch2_age) 
-covid_data$ch3_age <- as.numeric(covid_data$ch3_age)
-covid_data$ch4_age <- as.numeric(covid_data$ch4_age)
-covid_data$ch5_age <- as.numeric(covid_data$ch5_age)
-covid_data$ch6_age <- as.numeric(covid_data$ch6_age)
-
-#Add unique ID on
+#Add unique ID for each participant
 id <- rownames(covid_data)
 covid_data <- cbind(id=id, covid_data)
 
 #Missing values - change them from "" to NA to make easier to work with
 covid_data[(covid_data=="")] <- NA
 
-
+#Age variable
+#Change one participant answer from "9y" to just "9" otherwise it gets cut
+covid_data[covid_data$ch2_age=="9y", "ch2_age"] <- "9"
+#Make the age variables numeric rather than characters
+covid_data$ch2_age <- as.numeric(covid_data$ch2_age) 
+covid_data$ch3_age <- as.numeric(covid_data$ch3_age)
+covid_data$ch4_age <- as.numeric(covid_data$ch4_age)
+covid_data$ch5_age <- as.numeric(covid_data$ch5_age)
+covid_data$ch6_age <- as.numeric(covid_data$ch6_age)
 
 
 # Inclusion criteria ---------------------------------------------------------------------------------
@@ -64,7 +54,7 @@ nrow(covid_data[!is.na(covid_data[covid_data$Q260=="15-20 minutes for one child"
 ##Consent q 3.
 nrow(covid_data[!is.na(covid_data[covid_data$Q261=="On a secure, password-protected server","Q261"]), ])
 
-#Cut those who didn't consent out of the dataframe
+#Cut those who didn't consent
 covid_data <- covid_data[(covid_data$Q259=="Both" & covid_data$Q260=="15-20 minutes for one child" & 
                             covid_data$Q261=="On a secure, password-protected server") ,]
 
@@ -72,68 +62,29 @@ covid_data <- covid_data[!is.na(covid_data$Q259) & !is.na(covid_data$Q260) &!is.
 
 #Examine the PTSD and SDQ items
 varnames <- names(covid_data)
-#How many entries have at least 70% of the SDQ or PTSD answers
+#How many entries have at least 70% of the SDQ baseline or PTSD answers
 ## Must have greater than or equal to 18/25 for SDQ1 and 11/15 for PTSD
 nrow(covid_data[which(rowSums(!is.na(covid_data[, grep("ch1_SDQ.1", varnames)]))>=18), ])
 #nrow(covid_data[which(rowSums(!is.na(covid_data[, grep("ch1_SDQ.2", varnames)]))>=18), ])
 nrow(covid_data[which(rowSums(!is.na(covid_data[, grep("ch1_PTSD", varnames)]))>=11), ])
 
-#How mnay have either the SDQ or the PTSD criteria
-nrow(covid_data[which(rowSums(!is.na(covid_data[, grep("ch1_SDQ.1", varnames)]))>=18
-                      #| rowSums(!is.na(covid_data[, grep("ch1_SDQ.2", varnames)]))>=18
-                      | rowSums(!is.na(covid_data[, grep("ch1_PTSD", varnames)]))>=11), ])
+#How many have either the SDQ or the PTSD criteria
+nrow(covid_data[which(rowSums(!is.na(covid_data[, grep("ch1_SDQ.1", varnames)]))>=18 | rowSums(!is.na(covid_data[, grep("ch1_PTSD", varnames)]))>=11), ])
 
-
-#cutting inelgible people based on SDQ and PSD out of larger sample
-covid_data <- covid_data[which(rowSums(!is.na(covid_data[, grep("ch1_SDQ.1", varnames)]))>=18
-                               # | rowSums(!is.na(covid_data[, grep("ch1_SDQ.2", varnames)]))>=18
-                               | rowSums(!is.na(covid_data[, grep("ch1_PTSD", varnames)]))>=11), ]
-
-
+#cutting ineligible people based on SDQ and PSD out of larger sample
+covid_data <- covid_data[which(rowSums(!is.na(covid_data[, grep("ch1_SDQ.1", varnames)]))>=18 | rowSums(!is.na(covid_data[, grep("ch1_PTSD", varnames)]))>=11), ]
 
 #Have a look at validity items
-#Any person who answers top 2 for both
+#Any person who answers top 2 positive categories for both questions will be removed
 summarytools::freq(as.factor(covid_data$validity_1), order = "freq")
 summarytools::freq(as.factor(covid_data$validity_2), order = "freq")
 
 which(covid_data$validity_1=="Agree a lot" | covid_data$validity_1=="Agree")
 which(covid_data$validity_2=="Yes")
 
-#These participants are not the same so neither gets excluded
+#No participants met this requirement so neither gets excluded
 
 
-
-# Missing data display ---------------------------------------------------------
-
-#Of those remaining display how much of the dataset is missing 
-#This is just for first half of dataset  - split up into readable section. 
-#Not very meaningful to get overall missing as many of the questions would be coded -3, NA - can look into this for future if required.
-#please see child section of script for child missing data
-
-#Broken up into 2 halfs for better visualisation - please note the 'TEXT' items make it appear that a lot is missing
-#Perhaps cut the TEXT variables out for this visualisation?
-
-#Uncomment to visualise the missing
-# vis_miss(covid_data[,which(colnames(covid_data)=="country"):which(colnames(covid_data)=="child_details.3_6")]) +
-#   theme(axis.text.x = element_text(size=6, angle=90))
-# 
-# vis_miss(covid_data[,which(colnames(covid_data)=="par_age"):which(colnames(covid_data)=="ethnicity_15_TEXT")]) +
-#   theme(axis.text.x = element_text(size=6, angle=90))
-# 
-# #COVID-related
-# vis_miss(covid_data[,which(colnames(covid_data)=="par_tested"):which(colnames(covid_data)=="covid_pos_why_6_TEXT")]) +
-#   theme(axis.text.x = element_text(size=6, angle=90))
-# 
-# #family variables etc.
-# vis_miss(covid_data[,which(colnames(covid_data)=="cohesion_1"):which(colnames(covid_data)=="validity_2")]) +
-#   theme(axis.text.x = element_text(size=6, angle=90))
-# 
-# #DASS missing
-# vis_miss(covid_data[,which(colnames(covid_data)=="DASS_1"):which(colnames(covid_data)=="DASS_21")]) +
-#   theme(axis.text.x = element_text(size=6, angle=90))
-
-#"Progres" through the survey
-hist(covid_data$Progress)
 
 
 
@@ -143,17 +94,8 @@ hist(covid_data$Progress)
 # Turns the text data to a factor
 covid_data$country <- as.factor(covid_data$country)
 
-# Country frequency and percentage (% Valid is excluding NAs, % Total includes NAs)
-summarytools::freq(covid_data$country, order = "freq")
 
-countrypiedata<- summarytools::freq(covid_data$country, order = "freq", rows = 1:5, totals=FALSE)
-
-#Plot frequencies
-pie(countrypiedata[1:6,1], labels = countrypiedata[1:6], col = rainbow(length(countrypiedata[1:6,1])))
-legend("topright", c("Australia","UK","Canada","US","NZ","other"), cex = 0.8,
-       fill = rainbow(length(countrypiedata[1:6,1])))
-
-#Make a number variable just in case want to use it analysis. Just first 5 countries all others are other
+#Make a number variable. Just first 5 countries all others are other
 covid_data$country_cat<- ifelse(covid_data$country == "Australia ",1,
                                 ifelse(covid_data$country == "United Kingdom ",2,
                                        ifelse(covid_data$country == "Canada ",3,
@@ -161,48 +103,26 @@ covid_data$country_cat<- ifelse(covid_data$country == "Australia ",1,
 
 
 #Ethnicity
-# Some of the other could be placed in a group (a lot of White British identifying as other rather than choosing western european)
-#Look at the large "other" group reassign 'English', 'British', 'british' and 'Welsh'
+# Move some of the 'other' into a group - 'English', 'British', 'british' and 'Welsh'
 
 a <- grep("English|British|british|Welsh", covid_data$ethnicity_15_TEXT)
 b <- which(covid_data$ethnicity=="Other (describe):")
 covid_data[intersect(a,b), "ethnicity"] <-  "European - Western"
 
 
-summarytools::freq(as.factor(covid_data$ethnicity), order = "freq")
-
-ethpiedata<- summarytools::freq(as.factor(covid_data$ethnicity), order = "freq", totals=FALSE)
-pie(ethpiedata[1:27,1])
-
 ## Gender of parent
 covid_data$par_gender <- as.factor(covid_data$par_gender)
-# frequency and percentage (% Valid is excluding NAs, % Total includes NAs)
-genderpiedata<-summarytools::freq(covid_data$par_gender, rows=1:2, order = "freq")
-
-pie(genderpiedata[1:3,1], labels = genderpiedata[1:3], col = rainbow(length(genderpiedata[1:3,1])))
-legend("topright", c("Female","Male","Other"), cex = 0.8, fill = rainbow(length(genderpiedata[1:3,1])))
-
 covid_data$par_gender_num<- ifelse(covid_data$par_gender == "Female", 1, 2)       
        
        
-## Age of parent
-#the following displays m, median, range, sd
-summary(covid_data$par_age)
-sd(covid_data$par_age, na.rm =TRUE)
-hist(covid_data$par_age, col = "lightblue", xlab = "Parent age", main = NULL)
-
-## Occupation
-#This is a bit messy as people could choose more than 1  category - maybe for descriptives place the small numbers of multiple options into larger categories?
-#I should be able to make totals if required
-summarytools::freq(covid_data$par_occ_status, order = "freq")
-
-
 ## Relative Family Income
-# Gross weekly family income was made equivalent to household size by taking the midpoint of each of the 15 income brackets in the LSAC data set and dividing by the square root of the number of people residing in the house. - ref: Bradbury. Family size equivalence scales and survey evaluation of income and well-being. J Soc Policy, 18 (1989), pp. 383-408
+# Gross weekly family income was made equivalent to household size by taking the midpoint of each of the 15 income brackets in the LSAC data set 
+# and dividing by the square root of the number of people residing in the house. 
+# ref: Bradbury. Family size equivalence scales and survey evaluation of income and well-being. J Soc Policy, 18 (1989), pp. 383-408
 
-# First step is recode the 6 or more to the number in the text
+# First step is recode the '6 or more' to the number in the text
 
-#When I looked at the '6 or more' variable - 2 cases were NA. I filled these in with 6, as I thought the most likely answer they didn't fill it was that they had 6 - let me know if I shoudld change this.
+#When I looked at the '6 or more' variable - 2 cases were NA. I filled these in with 6, as I thought the most likely answer they didn't fill it was that they had 6.
 #This selects the 2 NAs and puts a 6 in them
 covid_data[which(covid_data$home_num == "6 or more: please indicate number in text box" & is.na(covid_data$home_num_6_TEXT)),"home_num_6_TEXT"] <- 6
 #Now replace the number from TEXT variable into the 6 or more option in home number variable
@@ -219,12 +139,8 @@ covid_data$income_mid<- ifelse(covid_data$income == "Less than AU$36,400 (US$23,
 #Midpoint of bracket divided by the sqrt of people in the house
 covid_data$income_famsize<-covid_data$income_mid/sqrt(as.numeric(covid_data$home_num))
 
-summary(covid_data$income_famsize)
-sd(covid_data$income_famsize, na.rm =TRUE)
-hist(covid_data$income_mid, col = "lightblue", xlab = "Annual Income", main = NULL)
-hist(covid_data$income_famsize, col = "lightblue", xlab = "Income relative to family size", main = NULL)
 
-#Education - at the moment this is ordinal
+#Education
 #recoding as ordinal data
 covid_data$par_ed_ord<- ifelse(covid_data$par_ed == "Partial primary / elementary school", 1, 
                                ifelse(covid_data$par_ed == "Completed primary / elementary school (Grade 6, typically age ~11)", 2,
@@ -236,54 +152,29 @@ covid_data$par_ed_ord<- ifelse(covid_data$par_ed == "Partial primary / elementar
                                                                          ifelse(covid_data$par_ed == "Honours (four year University / College degree)", 8,
                                                                                 ifelse(covid_data$par_ed == "Partial graduate school (Master's, PhD / doctorate, etc.)", 9, 10 )))))))))
 
-#Frequency and percentage of people in the different groups
-summarytools::freq(as.factor(covid_data$par_ed_ord), order = "freq")
-hist(covid_data$par_ed_ord, col = "lightblue", xlab = "Parent education (1=partial primary, 10=grad school)", main = NULL)
 
+#Create num code for other parent in the home
+covid_data$other_par_num<- ifelse(covid_data$other_par == "No", 0,1)
 
-
-#Other demographics - contained in child section
-##Parent-type (biol versus other)
-
+#Other demographics relating to each child - contained in child section
 
 
 # COVID impact ------------------------------------------------------------------------------------------
-# Frequencies/% for COVID 
-## tested, 
-summarytools::freq(as.factor(covid_data$par_tested), order = "freq")
-##hospitalized, 
-summarytools::freq(as.factor(covid_data$par_hosp), order = "freq")
 
-##known, 
-summarytools::freq(as.factor(covid_data$other_covid), order = "freq")
+##known 
 covid_data$other_covid <- as.factor(covid_data$other_covid)
-# frequency and percentage (% Valid is excluding NAs, % Total includes NAs)
-otherpiedata<-summarytools::freq(covid_data$other_covid, order = "freq")
-pie(otherpiedata[1:2,1], labels = otherpiedata[1:2,1], main = "Known someone with COVID19", col = rainbow(length(otherpiedata[1:2,1])))
-legend("topright", c("No","Yes"), cex = 0.8, fill = rainbow(length(otherpiedata[1:2,1])))
 
 ##known hospitalized, 
-summarytools::freq(as.factor(covid_data$other_hosp), order = "freq")
 covid_data$other_hosp <- as.factor(covid_data$other_hosp)
-# frequency and percentage (% Valid is excluding NAs, % Total includes NAs)
-hosppiedata<-summarytools::freq(covid_data$other_hosp, order = "freq")
-pie(hosppiedata[1:2,1], labels = hosppiedata[1:2,1], main = "Known someone hospitalised with COVID19", col = rainbow(length(hosppiedata[1:2,1])))
-legend("topright", c("No","Yes"), cex = 0.8, fill = rainbow(length(hosppiedata[1:2,1])))
 covid_data$other_hosp_num<- ifelse(covid_data$other_hosp == "No", 0,1)
 
 ##known died, 
-summarytools::freq(as.factor(covid_data$other_died), order = "freq")
 covid_data$other_died <- as.factor(covid_data$other_died)
-# frequency and percentage (% Valid is excluding NAs, % Total includes NAs)
-diedpiedata<-summarytools::freq(covid_data$other_died, order = "freq")
-pie(diedpiedata[1:2,1], labels = diedpiedata[1:2,1], main = "Known someone who died from COVID19", col = rainbow(length(diedpiedata[1:2,1])))
-legend("topright", c("No","Yes"), cex = 0.8, fill = rainbow(length(diedpiedata[1:2,1])))
 
-##stay at home (Y/N), 
-summarytools::freq(as.factor(covid_data$stay_home), order = "freq")
+
 ##stay at home length, 
-#to calulate this would do date implemented to date done survey if "no", or date lifted if "yes"
-# There may be discepancies in formatting of dates - if want to use - check
+#to calculate this would do date implemented to date done survey if "no", or date lifted if "yes"
+# There may be discrepancies in formatting of dates - if want to use - check
 #Found that the year is wrong - manually correct it
 covid_data[covid_data$stay_home_date == "7/04/2021" & !is.na(covid_data$stay_home_date), "stay_home_date"] <- "7/04/2020"
 #Also found this date presumably around the wrong way
@@ -299,20 +190,6 @@ covid_data$datdiff_stillhome <- as.vector(as.Date(as.character(covid_data$StartD
 #Create new variable time_iso which is mostly the date for those still at home, but for those who restrictions have been relaxed add that number in there
 covid_data$iso <- covid_data$datdiff_stillhome
 covid_data[covid_data$leave_home=="Yes" & !is.na(covid_data$leave_home),"iso"] <- covid_data[covid_data$leave_home=="Yes" & !is.na(covid_data$leave_home),"datdiff_lifted"]
-
-summary(covid_data$iso)
-hist(covid_data$iso, col = "lightblue", xlab = "Days in isolation ('stay-at-home' orders)", main = NULL)
-
-
-##restriction lifted?, 
-summarytools::freq(as.factor(covid_data$leave_home), order = "freq")
-##follow rules, 
-summarytools::freq(as.factor(covid_data$soc_dist), order = "freq")
-##why?, people pick multiples
-summarytools::freq(as.factor(covid_data$soc_dist_why), order = "freq")
-##job change, this has a lot of chnages there refer to job related ones
-summarytools::freq(as.factor(covid_data$covid_change), order = "freq")
-
 
 
 # COVID distress ------------------------------------------------------------
@@ -362,44 +239,17 @@ nrow(covid_data[rowSums(is.na(covid_data[, colnames(covidnumvars)]))>2 & rowSums
 #This line should replace all missing more than 2 with NA to the total 
 covid_data[which(rowSums(is.na(covid_data[, colnames(covidnumvars)]))>2),"totalcov_dist"] <- NA
 
-#Means, sds, range, histogram
-summary(covid_data[,c("totalcov_dist")])
-summary(covidnumvars)
-sd(covid_data$totalcov_dist, na.rm =TRUE)
-sd(covid_data$covid_finance_num, na.rm =TRUE)
-sd(covid_data$covid_uncertain_num, na.rm =TRUE)
-sd(covid_data$covid_plans_num, na.rm =TRUE)
-sd(covid_data$covid_worry_1_num, na.rm =TRUE)
-sd(covid_data$covid_worry_2_num, na.rm =TRUE)
-sd(covid_data$covid_worry_3_num, na.rm =TRUE)
-sd(covid_data$covid_neg_num, na.rm =TRUE)
-sd(covid_data$covid_pos_num, na.rm =TRUE)
-hist(covid_data$totalcov_dist)
-hist(covid_data$covid_finance_num, col = "lightblue", main = NULL, xlab = "Worry about finances (0=not at all, 5=a lot)")
-hist(covid_data$covid_uncertain_num)
-hist(covid_data$covid_plans_num)
-hist(covid_data$covid_worry_1_num)
-hist(covid_data$covid_worry_2_num)
-hist(covid_data$covid_worry_3_num)
-hist(covid_data$covid_neg_num, col = "lightblue", main = NULL, xlab = "negative impact (0=not at all, 5=a lot)")
-hist(covid_data$covid_pos_num, col = "lightblue", main = NULL, xlab = "positive impact (0=not at all, 5=a lot)")
-
-
 
 # Parent mental health-------------------------------------------------------------------------------------------
 
 covid_data$par_past_mh_num<- ifelse(covid_data$par_past_mh == "Yes (describe:)", 1,2)
-summarytools::freq(as.factor(covid_data$par_past_mh_num), order = "freq")
-
 
 
 # DASS scoring -------------------------------------------------------------------------------------------
 
 
-#This section is for checking the scoring of individual items
 
 DASSvars <- vars_select(varnames, starts_with("DASS"))
-
 
 #Creates a blank dataframe to put the scores into 
 DASSnumvars=data.frame(matrix(ncol=21,nrow=nrow(covid_data[,DASSvars])))
@@ -444,35 +294,18 @@ covid_data[which(rowSums(is.na(covid_data[, keys.listDASS$DASSStress]))>2),"DASS
 #Create new categorical variable for each subscale putting them in categories
 covid_data$DepCat <- as.factor(car::recode(covid_data$DASSDep, "NA=NA; 0:4='Normal';5:6='Mild';7:10='Moderate'; 11:13='Severe'; 
                                            else='Ex_severe'"))
-table(covid_data$DepCat, useNA = "ifany")
-ggplot(covid_data, aes(DepCat)) + geom_bar(fill = "steelblue")
 
 covid_data$AnxCat <- as.factor(car::recode(covid_data$DASSAnx, "NA=NA; 0:3='Normal';4:5='Mild';6:7='Moderate'; 8:9='Severe'; 
                                            else='Ex_severe'"))
-table(covid_data$AnxCat, useNA = "ifany")
-ggplot(covid_data, aes(AnxCat)) + geom_bar(fill = "steelblue")
 
 covid_data$StressCat <- as.factor(car::recode(covid_data$DASSStress, "NA=NA; 0:7='Normal';8:9='Mild';10:12='Moderate'; 13:16='Severe'; 
                                               else='Ex_severe'"))
-table(covid_data$StressCat, useNA = "ifany")
-ggplot(covid_data, aes(StressCat)) + geom_bar(fill = "steelblue")
 
-summary(covid_data$DASSDep)
-sd(covid_data$DASSDep, na.rm =TRUE)
-hist(covid_data$DASSDep,  col = "lightblue", main = NULL, xlab = "Parent depressive symptoms")
-summary(covid_data$DASSAnx)
-sd(covid_data$DASSAnx, na.rm =TRUE)
-hist(covid_data$DASSAnx, col = "lightblue", main = NULL, xlab = "Parent anxiety symptoms")
-summary(covid_data$DASSStress)
-sd(covid_data$DASSStress, na.rm =TRUE)
-hist(covid_data$DASSStress,col = "lightblue", main = NULL, xlab = "Parent stress symptoms" )
 
 # FES cohesion scoring -------------------------------------------------------------------------------------------
 
-#Don't need this twice
-#varnames <- names(covid_data)
-FESvars <- vars_select(varnames, starts_with("cohesion"))
 
+FESvars <- vars_select(varnames, starts_with("cohesion"))
 
 #Creates a blank dataframe to put the scores into
 FESnumvars=data.frame(matrix(ncol=9,nrow=nrow(covid_data[,FESvars])))
@@ -502,16 +335,9 @@ nrow(covid_data[rowSums(is.na(covid_data[, colnames(FESnumvars)]))>2 & rowSums(i
 #This line should replace all missing more than 2 with NA to the total 
 covid_data[which(rowSums(is.na(covid_data[, colnames(FESnumvars)]))>2),"totalFES"] <- NA
 
-#Means, sds, range, histogram
-summary(covid_data[,c("totalFES")])
-
-sd(covid_data$totalFES, na.rm =TRUE)
-
-hist(covid_data$totalFES,col = "lightblue", main = NULL, xlab = "Family cohesion (total FES)")
-
 
 # Children ----------------------------------------------------------------------------------------------
-#Create seperate dataframe for children (stack all of the children on top of each other)
+#Create separate dataframe for children (stack all of the children on top of each other)
 
 
 #Collect all the variables relevant for each child
@@ -583,23 +409,13 @@ covid_data_child<- rbind(covid_data_ch1, covid_data_ch2, covid_data_ch3, covid_d
 #Add on a second ID - to give each child a unique identifier
 covid_data_child$id2<- 1:nrow(covid_data_child)
 
-#Missing data for children - split up more for better viewing
-#Uncomment to visualise
-# vis_miss(covid_data_child[,which(colnames(covid_data_child)=="ch_age"):which(colnames(covid_data_child)=="ch_concern")])  +
-#   theme(axis.text.x = element_text(size=6, angle=90))
-# vis_miss(covid_data_child[,which(colnames(covid_data_child)=="ch_SDQ.1_1"):which(colnames(covid_data_child)=="ch_SDQ.2_25")])  +
-#   theme(axis.text.x = element_text(size=6, angle=90))
-# vis_miss(covid_data_child[,which(colnames(covid_data_child)=="ch_PTSD_1"):which(colnames(covid_data_child)=="ch_parenting.1_29")])  +
-#   theme(axis.text.x = element_text(size=6, angle=90))
-
-
 
 # Demographics for children -------------------------------------------------------------------------------------------------
 
 ## Gender of child
   # Note that 1 transgender child, but not male or female described, one child Other - 'X' - put into NA
 covid_data_child$ch_gender <- as.factor(covid_data_child$ch_gender)
-summarytools::freq(covid_data_child$ch_gender, order = "freq")
+
 # There are 2 children labeled as both males and female - on further investigation, using the earlier child table 
 # found that one of them was initially labeled male [row 195] and one female [457]
 #Check the row numbers for the children
@@ -613,13 +429,6 @@ covid_data_child$ch_gender_num<- ifelse(covid_data_child$ch_gender == "Female", 
                                                ifelse(covid_data_child$ch_gender == "Male,Prefer not to say", 2,
                                                       NA)))
 
-summarytools::freq(as.factor(covid_data_child$ch_gender), row=1:2, order = "freq")
-covid_data_child$ch_gender <- as.factor(covid_data$other_died)
-# frequency and percentage (% Valid is excluding NAs, % Total includes NAs)
-chgenderpiedata<-summarytools::freq(covid_data_child$ch_gender, order = "freq")
-pie(chgenderpiedata[1:3,1], labels = chgenderpiedata[1:3,1], main = "Child Gender", col = rainbow(length(chgenderpiedata[1:3,1])))
-legend("topright", c("Female","Male","Other"), cex = 0.8, fill = rainbow(length(chgenderpiedata[1:3,1])))
-
 
 ## Age of child
 #Note: this indicates some children yonger than 5 - need to remove them
@@ -627,22 +436,9 @@ covid_data_child[covid_data_child$ch_age<5 & !is.na(covid_data_child$ch_age), "c
 #Remove these children from dataset
 covid_data_child<- covid_data_child[covid_data_child$ch_age>=5 , ]
 
-#the following displays m, median, range, sd
-summary(covid_data_child$ch_age)
-sd(covid_data_child$ch_age, na.rm =TRUE)
-hist(covid_data_child$ch_age, col = "lightblue", main = NULL, xlab = "Child age")
 
 
-## Type of parent
-#This line tries to isolate the parent-type for each child (up to 6), and also exclude those that didn't answer on the first child
-##Just to examine the data - most seem the same for each child with a few exceptions
-parent_type <- covid_data[which(!is.na(covid_data_child$child_details.3_1)),which(colnames(covid_data)=="child_details.3_1"):which(colnames(covid_data)=="child_details.3_6")]
-#Doing this so I can stack all the columns togethert
-parent_type <- stack(parent_type)
-##Show frequency
-summarytools::freq(as.factor(parent_type$values), order = "freq")
-
-#COVID communication
+# COVID communication -----------------------------------------------------------------------------------------------------
 
 childvarnames <- names(covid_data_child)
 #Grab the relevant variable names
@@ -663,20 +459,6 @@ colnames(commnumvars)<- c("ch_talk_num", "ch_talk_about_1_num", "ch_talk_about_2
 
 #join this dataframe to the main one
 covid_data_child<- cbind(covid_data_child, commnumvars)
-
-#check correlations between different communication vbls
-corrmatrix <-  dplyr::select(covid_data_child, ch_talk_num, ch_talk_about_1_num, ch_talk_about_2_num, ch_talk_about_3_num, 
-                             ch_talk_about_4_num, ch_talk_about_5_num, ch_talk_about_6_num, ch_talk_about_7_num,
-                             ch_talk_about_8_num)
-
-
-M <- cor(corrmatrix, use = "complete.obs")
-res1 <- cor.mtest(corrmatrix, use = "complete.obs", 
-                  conf.level = .95)
-
-corrplot.mixed(M,  order = "hclust", lower.col = "black", number.cex = .6,
-               tl.col = "black", tl.srt = 45,tl.cex = 0.8, tl.pos= "lt",
-               p.mat = res1$p, sig.level = .05, insig = "blank") 
 
 
 
@@ -704,19 +486,6 @@ nrow(covid_data_child[rowSums(is.na(covid_data_child[, c( "ch_talk_about_7_num",
 covid_data_child[which(rowSums(is.na(covid_data_child[, c("ch_talk_about_1_num", "ch_talk_about_2_num")]))>0),"facts_comm"] <- NA
 covid_data_child[which(rowSums(is.na(covid_data_child[, c("ch_talk_about_3_num", "ch_talk_about_4_num", "ch_talk_about_5_num", "ch_talk_about_6_num")]))>1),"emotion_comm"] <- NA
 covid_data_child[which(rowSums(is.na(covid_data_child[, c("ch_talk_about_7_num", "ch_talk_about_8_num")]))>0),"self_comm"] <- NA
-
-#Means, sds, range, histogram
-summary(covid_data_child[,c("facts_comm")])
-summary(covid_data_child[,c("emotion_comm")])
-summary(covid_data_child[,c("self_comm")])
-summary(commnumvars)
-sd(covid_data_child$facts_comm, na.rm =TRUE)
-sd(covid_data_child$emotion_comm, na.rm =TRUE)
-sd(covid_data_child$self_comm, na.rm =TRUE)
-hist(covid_data_child$facts_comm,col = "lightblue", main = NULL, xlab = "Fact-focused communication")
-hist(covid_data_child$emotion_comm, col = "lightblue", main = NULL, xlab = "Emotion-focused communication")
-hist(covid_data_child$self_comm, col = "lightblue", main = NULL, xlab = "Self-focused communication")
-
 
 
 # SDQ scoring --------------------------------------------------------------------------------------------
@@ -827,54 +596,13 @@ covid_data_child[which(rowSums(is.na(covid_data_child[, c("ch_SDQ.2_1_num" ,"ch_
 
 
 
-
-#Means, sds, range, histogram
-summary(covid_data_child[,c("totalSDQ", "SDQemo" ,  "SDQcon", "SDQhyp", "SDQpeer", "SDQpro")])
-summary(covid_data_child[,c("totalSDQ2", "SDQemo2" ,  "SDQcon2", "SDQhyp2", "SDQpeer2", "SDQpro2")])
-
-sd(covid_data_child$totalSDQ, na.rm =TRUE)
-sd(covid_data_child$SDQemo, na.rm =TRUE)
-sd(covid_data_child$SDQcon, na.rm =TRUE)
-sd(covid_data_child$SDQhyp, na.rm =TRUE)
-sd(covid_data_child$SDQpeer, na.rm =TRUE)
-sd(covid_data_child$SDQpro, na.rm =TRUE)
-
-sd(covid_data_child$totalSDQ2, na.rm =TRUE)
-sd(covid_data_child$SDQemo2, na.rm =TRUE)
-sd(covid_data_child$SDQcon2, na.rm =TRUE)
-sd(covid_data_child$SDQhyp2, na.rm =TRUE)
-sd(covid_data_child$SDQpeer2, na.rm =TRUE)
-sd(covid_data_child$SDQpro2, na.rm =TRUE)
-
-hist(covid_data_child$totalSDQ,col = "lightblue", main = NULL, xlab = "baseline SDQ mental health problems")
-hist(covid_data_child$SDQemo,col = "lightblue", main = NULL, xlab = "baseline SDQ emotional problems")
-hist(covid_data_child$SDQcon,col = "lightblue", main = NULL, xlab = "baseline SDQ conduct problems")
-hist(covid_data_child$SDQhyp,col = "lightblue", main = NULL, xlab = "baseline SDQ inattention-hyperactivity")
-hist(covid_data_child$SDQpeer,col = "lightblue", main = NULL, xlab = "baseline SDQ peer problems")
-hist(covid_data_child$SDQpro,col = "lightblue", main = NULL, xlab = "baseline SDQ prosocial problems")
-
-hist(covid_data_child$totalSDQ2,col = "lightblue", main = NULL, xlab = "change in SDQ mental health problems")
-hist(covid_data_child$SDQemo2,col = "lightblue", main = NULL, xlab = "change in SDQ emotional problems")
-hist(covid_data_child$SDQcon2,col = "lightblue", main = NULL, xlab = "change in SDQ conduct problems")
-hist(covid_data_child$SDQhyp2,col = "lightblue", main = NULL, xlab = "change in SDQ inattention-hyperactivity problems")
-hist(covid_data_child$SDQpeer2,col = "lightblue", main = NULL, xlab = "change in SDQ peer problems")
-hist(covid_data_child$SDQpro2,col = "lightblue", main = NULL, xlab = "change in SDQ prosocial problems")
-
-
 #Create new categorical variable for each subscale putting them in categories
 covid_data_child$totalSDQ_cat <- as.factor(car::recode(covid_data_child$totalSDQ, "NA=NA; 0:13='Average';14:16='S_raised'; else='High'"))
-table(covid_data_child$totalSDQ_cat, useNA = "ifany")
 covid_data_child$SDQemo_cat <- as.factor(car::recode(covid_data_child$SDQemo, "NA=NA; 0:3='Average';4='S_raised'; else='High'"))
-table(covid_data_child$SDQemo_cat, useNA = "ifany")
 covid_data_child$SDQcon_cat <- as.factor(car::recode(covid_data_child$SDQcon, "NA=NA; 0:2='Average';3='S_raised';else='High'"))
-table(covid_data_child$SDQcon_cat, useNA = "ifany")
 covid_data_child$SDQhyp_cat <- as.factor(car::recode(covid_data_child$SDQhyp, "NA=NA; 0:5='Average';6='S_raised';else='High'"))
-table(covid_data_child$SDQhyp_cat, useNA = "ifany")
 covid_data_child$SDQpeer_cat <- as.factor(car::recode(covid_data_child$SDQpeer, "NA=NA; 0:2='Average';3='S_raised';else='High'"))
-table(covid_data_child$SDQpeer_cat, useNA = "ifany")
 covid_data_child$SDQpro_cat <- as.factor(car::recode(covid_data_child$SDQpro, "NA=NA; 6:10='Average';5='S_low';else='Low'"))
-table(covid_data_child$SDQpro_cat, useNA = "ifany")
-
 
 
 # PTSD scoring --------------------------------------------------------------------------------------------
@@ -920,11 +648,6 @@ nrow(covid_data_child[rowSums(is.na(covid_data_child[, c( "ch_PTSD_1_num" , "ch_
 covid_data_child[which(rowSums(is.na(covid_data_child[, c("ch_PTSD_1_num" , "ch_PTSD_2_num" , "ch_PTSD_3_num" , "ch_PTSD_4_num" , "ch_PTSD_5_num" , "ch_PTSD_6_num" , "ch_PTSD_7_num" ,
                                                           "ch_PTSD_8_num" , "ch_PTSD_9_num" , "ch_PTSD_10_num" , "ch_PTSD_11_num" , "ch_PTSD_12_num" , "ch_PTSD_13_num" , "ch_PTSD_14_num" ,
                                                           "ch_PTSD_15_num")]))>4),"totalPTSD"] <- NA
-
-#Means, sds, range, histogram
-summary(covid_data_child[,c("totalPTSD")])
-sd(covid_data_child$totalPTSD, na.rm =TRUE)
-hist(covid_data_child$totalPTSD,col = "lightblue", main = NULL, xlab = "trauma symptoms")
 
 
 
@@ -1024,69 +747,8 @@ covid_data_child[which(rowSums(is.na(covid_data_child[, PARQcontrolvars]))>1),"P
 
 
 
-#Means, sds, range, histogram
-summary(covid_data_child[,c("totalPARQ", "PARQwarmth" ,  "PARQhostile", "PARQneglect", "PARQundiff", "PARQcontrol")])
 
-sd(covid_data_child$totalPARQ, na.rm =TRUE)
-sd(covid_data_child$PARQwarmth, na.rm =TRUE)
-sd(covid_data_child$PARQhostile, na.rm =TRUE)
-sd(covid_data_child$PARQneglect, na.rm =TRUE)
-sd(covid_data_child$PARQundiff, na.rm =TRUE)
-sd(covid_data_child$PARQcontrol, na.rm =TRUE)
-
-hist(covid_data_child$totalPARQ)
-hist(covid_data_child$PARQwarmth,col = "lightblue", main = NULL, xlab = "Parental warmth")
-hist(covid_data_child$PARQhostile,col = "lightblue", main = NULL, xlab = "Parental hostility")
-hist(covid_data_child$PARQneglect)
-hist(covid_data_child$PARQundiff)
-hist(covid_data_child$PARQcontrol)
-
-#Create num code for other parent in the home
-covid_data_child$other_par_num<- ifelse(covid_data_child$other_par == "No", 0,1)
-
-
-# Correlation plot --------------------------------------------------------------------------- 
-##Make the matrix
-
-corrmatrix <-  dplyr::select(covid_data_child, par_age, par_ed_ord, par_gender_num, ch_age, ch_gender_num, income_famsize,
-                             totalFES, Dep, Anx, Stress,
-                             totalPARQ, PARQwarmth, PARQhostile, PARQneglect, PARQundiff, PARQcontrol, 
-                             totalSDQ, SDQemo, SDQcon, SDQhyp, SDQpeer, SDQpro,
-                             totalSDQ2, SDQemo2, SDQcon2, SDQhyp2, SDQpeer2, SDQpro2)
-
-
-M <- cor(corrmatrix, use = "complete.obs")
-res1 <- cor.mtest(corrmatrix, use = "complete.obs", 
-                  conf.level = .95)
-
-corrplot.mixed(M,  order = "hclust", lower.col = "black", number.cex = .6,
-               tl.col = "black", tl.srt = 45,tl.cex = 0.8, tl.pos= "lt",
-               p.mat = res1$p, sig.level = .05, insig = "blank") 
-
-
-
-
-# Followups -----------------------------------------------------------------------------------------------------
-# how many people interested in followup survey?
-
-summarytools::freq(as.factor(covid_data$fllwup), order = "freq")
-
-cov_ffllup <- covid_data[(covid_data$fllwup =="I am interested in being sent a follow-up survey in the future" | covid_data$fllwup == "Both please!") & !is.na(covid_data$fllwup),]
-#How many people for a followup survey?
-nrow(cov_ffllup)
-#What country are they from?
-summarytools::freq(as.factor(cov_ffllup$country), order = "freq")
-#Check that DASS means aren't too different between the groups
-summary(cov_ffllup$DASSAnx)
-summary(covid_data$DASSAnx)
-
-summary(cov_ffllup$DASSDep)
-summary(covid_data$DASSDep)
-
-summary(cov_ffllup$DASSStress)
-summary(covid_data$DASSStress)
-
-# Create centered variables
+# Create centered variables --------------------------------------------------------------------------------
 
 #Create centred variables for analysis
 PARQhostile.mean <- mean(covid_data_child$PARQhostile, na.rm = TRUE)

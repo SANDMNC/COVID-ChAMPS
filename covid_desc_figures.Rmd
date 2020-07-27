@@ -5,22 +5,298 @@ output: html_document
 
 ```{r setup, include=FALSE}
 
-#We can move all the plots to make figures to this script
 
 knitr::opts_chunk$set(echo = TRUE)
 
 library(ggplot2)
 library(dplyr)
 library(tidyselect) # for starts_with and contains
+library(corrplot) #For correlation plot
+library(ggplot2)
+library(summarytools) #for freq - frequency tables
+library(viridis) #colour palette
 
 #read in data
 covid_data_child <- read.csv("scored_data/covid_data_child_scored.csv", header=TRUE, stringsAsFactors = FALSE)
+covid_data <- read.csv("scored_data/covid_data_scored.csv", header=TRUE, stringsAsFactors = FALSE)
+
+```
+
+# COVID Descriptives and Figures
+
+Displays means, sds of variables. Histograms, piecharts and correlation tables.
+Contains code for figure 1 in paper - see SDQ_fig1 chunk.
+
+
+```{r, progress}
+
+#"Progress" through the survey
+hist(covid_data$Progress)
 
 ```
 
 
+```{r, demograh}
 
-```{r, echo=FALSE}
+# Country frequency and percentage (% Valid is excluding NAs, % Total includes NAs)
+summarytools::freq(covid_data$country, order = "freq")
+
+countrypiedata<- summarytools::freq(covid_data$country, order = "freq", rows = 1:5, totals=FALSE)
+
+#Plot frequencies
+pie(countrypiedata[1:6,1], labels = countrypiedata[1:6], col = rainbow(length(countrypiedata[1:6,1])))
+legend("topright", c("Australia","UK","Canada","US","NZ","other"), cex = 0.8,
+       fill = rainbow(length(countrypiedata[1:6,1])))
+
+
+#Ethnicity
+summarytools::freq(as.factor(covid_data$ethnicity), order = "freq")
+ethpiedata<- summarytools::freq(as.factor(covid_data$ethnicity), order = "freq", totals=FALSE)
+pie(ethpiedata[1:27,1])
+
+## Age of parent
+#the following displays m, median, range, sd
+summary(covid_data$par_age)
+sd(covid_data$par_age, na.rm =TRUE)
+hist(covid_data$par_age, col = "lightblue", xlab = "Parent age", main = NULL)
+
+#Other parent
+# frequency and percentage (% Valid is excluding NAs, % Total includes NAs)
+genderpiedata<-summarytools::freq(covid_data$par_gender, rows=1:2, order = "freq")
+pie(genderpiedata[1:3,1], labels = genderpiedata[1:3], col = rainbow(length(genderpiedata[1:3,1])))
+legend("topright", c("Female","Male","Other"), cex = 0.8, fill = rainbow(length(genderpiedata[1:3,1])))
+
+## Occupation
+#This is a bit messy as people could choose more than 1  category 
+summarytools::freq(covid_data$par_occ_status, order = "freq")
+
+#Income to needs
+summary(covid_data$income_famsize)
+sd(covid_data$income_famsize, na.rm =TRUE)
+hist(covid_data$income_mid, col = "lightblue", xlab = "Annual Income", main = NULL)
+hist(covid_data$income_famsize, col = "lightblue", xlab = "Income relative to family size", main = NULL)
+
+#Parent education - frequency and percentage
+summarytools::freq(as.factor(covid_data$par_ed_ord), order = "freq")
+hist(covid_data$par_ed_ord, col = "lightblue", xlab = "Parent education (1=partial primary, 10=grad school)", main = NULL)
+
+```
+
+```{r, cov_impact}
+
+# COVID impact ------------------------------------------------------------------------------------------
+# Frequencies/% for COVID 
+## tested, 
+summarytools::freq(as.factor(covid_data$par_tested), order = "freq")
+##hospitalized, 
+summarytools::freq(as.factor(covid_data$par_hosp), order = "freq")
+
+##known, 
+summarytools::freq(as.factor(covid_data$other_covid), order = "freq")
+# frequency and percentage (% Valid is excluding NAs, % Total includes NAs)
+otherpiedata<-summarytools::freq(covid_data$other_covid, order = "freq")
+pie(otherpiedata[1:2,1], labels = otherpiedata[1:2,1], main = "Known someone with COVID19", col = rainbow(length(otherpiedata[1:2,1])))
+legend("topright", c("No","Yes"), cex = 0.8, fill = rainbow(length(otherpiedata[1:2,1])))
+
+##known hospitalized, 
+summarytools::freq(as.factor(covid_data$other_hosp), order = "freq")
+# frequency and percentage (% Valid is excluding NAs, % Total includes NAs)
+hosppiedata<-summarytools::freq(covid_data$other_hosp, order = "freq")
+pie(hosppiedata[1:2,1], labels = hosppiedata[1:2,1], main = "Known someone hospitalised with COVID19", col = rainbow(length(hosppiedata[1:2,1])))
+legend("topright", c("No","Yes"), cex = 0.8, fill = rainbow(length(hosppiedata[1:2,1])))
+
+##known died, 
+summarytools::freq(as.factor(covid_data$other_died), order = "freq")
+# frequency and percentage (% Valid is excluding NAs, % Total includes NAs)
+diedpiedata<-summarytools::freq(covid_data$other_died, order = "freq")
+pie(diedpiedata[1:2,1], labels = diedpiedata[1:2,1], main = "Known someone who died from COVID19", col = rainbow(length(diedpiedata[1:2,1])))
+legend("topright", c("No","Yes"), cex = 0.8, fill = rainbow(length(diedpiedata[1:2,1])))
+
+##stay at home (Y/N), 
+summarytools::freq(as.factor(covid_data$stay_home), order = "freq")
+
+summary(covid_data$iso)
+hist(covid_data$iso, col = "lightblue", xlab = "Days in isolation ('stay-at-home' orders)", main = NULL)
+
+
+##restriction lifted?, 
+summarytools::freq(as.factor(covid_data$leave_home), order = "freq")
+##follow rules, 
+summarytools::freq(as.factor(covid_data$soc_dist), order = "freq")
+##why?, people pick multiples
+summarytools::freq(as.factor(covid_data$soc_dist_why), order = "freq")
+##job change, this has a lot of chnages there refer to job related ones
+summarytools::freq(as.factor(covid_data$covid_change), order = "freq")
+
+#COVID Distress
+#Means, sds, range, histogram
+summary(covid_data[,c("totalcov_dist")])
+summary(covid_data[,c("covid_finance_num", "covid_uncertain_num", "covid_plans_num", "covid_worry_1_num", 
+             "covid_worry_2_num", "covid_worry_3_num", "covid_neg_num", "covid_pos_num")])
+sd(covid_data$totalcov_dist, na.rm =TRUE)
+sd(covid_data$covid_finance_num, na.rm =TRUE)
+sd(covid_data$covid_uncertain_num, na.rm =TRUE)
+sd(covid_data$covid_plans_num, na.rm =TRUE)
+sd(covid_data$covid_worry_1_num, na.rm =TRUE)
+sd(covid_data$covid_worry_2_num, na.rm =TRUE)
+sd(covid_data$covid_worry_3_num, na.rm =TRUE)
+sd(covid_data$covid_neg_num, na.rm =TRUE)
+sd(covid_data$covid_pos_num, na.rm =TRUE)
+hist(covid_data$totalcov_dist)
+hist(covid_data$covid_finance_num, col = "lightblue", main = NULL, xlab = "Worry about finances (0=not at all, 5=a lot)")
+hist(covid_data$covid_uncertain_num)
+hist(covid_data$covid_plans_num)
+hist(covid_data$covid_worry_1_num)
+hist(covid_data$covid_worry_2_num)
+hist(covid_data$covid_worry_3_num)
+hist(covid_data$covid_neg_num, col = "lightblue", main = NULL, xlab = "negative impact (0=not at all, 5=a lot)")
+hist(covid_data$covid_pos_num, col = "lightblue", main = NULL, xlab = "positive impact (0=not at all, 5=a lot)")
+
+
+```
+
+```{r, Par_mentalhealth}
+
+summarytools::freq(as.factor(covid_data$par_past_mh_num), order = "freq")
+
+# DASS
+table(covid_data$DepCat, useNA = "ifany")
+ggplot(covid_data, aes(DepCat)) + geom_bar(fill = "steelblue")
+
+table(covid_data$AnxCat, useNA = "ifany")
+ggplot(covid_data, aes(AnxCat)) + geom_bar(fill = "steelblue")
+
+table(covid_data$StressCat, useNA = "ifany")
+ggplot(covid_data, aes(StressCat)) + geom_bar(fill = "steelblue")
+
+summary(covid_data$DASSDep)
+sd(covid_data$DASSDep, na.rm =TRUE)
+hist(covid_data$DASSDep,  col = "lightblue", main = NULL, xlab = "Parent depressive symptoms")
+summary(covid_data$DASSAnx)
+sd(covid_data$DASSAnx, na.rm =TRUE)
+hist(covid_data$DASSAnx, col = "lightblue", main = NULL, xlab = "Parent anxiety symptoms")
+summary(covid_data$DASSStress)
+sd(covid_data$DASSStress, na.rm =TRUE)
+hist(covid_data$DASSStress,col = "lightblue", main = NULL, xlab = "Parent stress symptoms" )
+
+#Cohesion - FES
+
+#Means, sds, range, histogram
+summary(covid_data[,c("totalFES")])
+sd(covid_data$totalFES, na.rm =TRUE)
+hist(covid_data$totalFES,col = "lightblue", main = NULL, xlab = "Family cohesion (total FES)")
+
+```
+
+```{r, child_demograp}
+
+summarytools::freq(covid_data_child$ch_gender, order = "freq")
+
+# frequency and percentage (% Valid is excluding NAs, % Total includes NAs)
+chgenderpiedata<-summarytools::freq(covid_data_child$ch_gender, order = "freq")
+pie(chgenderpiedata[1:3,1], labels = chgenderpiedata[1:3,1], main = "Child Gender", col = rainbow(length(chgenderpiedata[1:3,1])))
+legend("topright", c("Female","Male","Other"), cex = 0.8, fill = rainbow(length(chgenderpiedata[1:3,1])))
+
+#the following displays m, median, range, sd
+summary(covid_data_child$ch_age)
+sd(covid_data_child$ch_age, na.rm =TRUE)
+hist(covid_data_child$ch_age, col = "lightblue", main = NULL, xlab = "Child age")
+
+#Type of parent
+## Type of parent
+#This line tries to isolate the parent-type for each child (up to 6), and also exclude those that didn't answer on the first child
+##Just to examine the data - most seem the same for each child with a few exceptions
+parent_type <- covid_data[which(!is.na(covid_data_child$child_details.3_1)),which(colnames(covid_data)=="child_details.3_1"):which(colnames(covid_data)=="child_details.3_6")]
+#Doing this so I can stack all the columns together
+parent_type <- stack(parent_type)
+##Show frequency
+summarytools::freq(as.factor(parent_type$values), order = "freq")
+```
+
+```{r, covid_com}
+
+#check correlations between different communication vbls
+corrmatrix <-  dplyr::select(covid_data_child, ch_talk_num, ch_talk_about_1_num, ch_talk_about_2_num, ch_talk_about_3_num, 
+                             ch_talk_about_4_num, ch_talk_about_5_num, ch_talk_about_6_num, ch_talk_about_7_num,
+                             ch_talk_about_8_num)
+
+
+M <- cor(corrmatrix, use = "complete.obs")
+res1 <- cor.mtest(corrmatrix, use = "complete.obs", 
+                  conf.level = .95)
+
+corrplot.mixed(M,  order = "hclust", lower.col = "black", number.cex = .6,
+               tl.col = "black", tl.srt = 45,tl.cex = 0.8, tl.pos= "lt",
+               p.mat = res1$p, sig.level = .05, insig = "blank") 
+
+#Means, sds, range, histogram
+summary(covid_data_child[,c("facts_comm")])
+summary(covid_data_child[,c("emotion_comm")])
+summary(covid_data_child[,c("self_comm")])
+summary(covid_data_child[, c("ch_talk_num", "ch_talk_about_1_num", "ch_talk_about_2_num", "ch_talk_about_3_num", 
+                             "ch_talk_about_4_num", "ch_talk_about_5_num", "ch_talk_about_6_num", "ch_talk_about_7_num",
+                             "ch_talk_about_8_num")])
+sd(covid_data_child$facts_comm, na.rm =TRUE)
+sd(covid_data_child$emotion_comm, na.rm =TRUE)
+sd(covid_data_child$self_comm, na.rm =TRUE)
+hist(covid_data_child$facts_comm,col = "lightblue", main = NULL, xlab = "Fact-focused communication")
+hist(covid_data_child$emotion_comm, col = "lightblue", main = NULL, xlab = "Emotion-focused communication")
+hist(covid_data_child$self_comm, col = "lightblue", main = NULL, xlab = "Self-focused communication")
+
+```
+
+```{r, SDQ_PTSD}
+
+#Means, sds, range, histogram
+summary(covid_data_child[,c("totalSDQ", "SDQemo" ,  "SDQcon", "SDQhyp", "SDQpeer", "SDQpro")])
+summary(covid_data_child[,c("totalSDQ2", "SDQemo2" ,  "SDQcon2", "SDQhyp2", "SDQpeer2", "SDQpro2")])
+
+sd(covid_data_child$totalSDQ, na.rm =TRUE)
+sd(covid_data_child$SDQemo, na.rm =TRUE)
+sd(covid_data_child$SDQcon, na.rm =TRUE)
+sd(covid_data_child$SDQhyp, na.rm =TRUE)
+sd(covid_data_child$SDQpeer, na.rm =TRUE)
+sd(covid_data_child$SDQpro, na.rm =TRUE)
+
+sd(covid_data_child$totalSDQ2, na.rm =TRUE)
+sd(covid_data_child$SDQemo2, na.rm =TRUE)
+sd(covid_data_child$SDQcon2, na.rm =TRUE)
+sd(covid_data_child$SDQhyp2, na.rm =TRUE)
+sd(covid_data_child$SDQpeer2, na.rm =TRUE)
+sd(covid_data_child$SDQpro2, na.rm =TRUE)
+
+hist(covid_data_child$totalSDQ,col = "lightblue", main = NULL, xlab = "baseline SDQ mental health problems")
+hist(covid_data_child$SDQemo,col = "lightblue", main = NULL, xlab = "baseline SDQ emotional problems")
+hist(covid_data_child$SDQcon,col = "lightblue", main = NULL, xlab = "baseline SDQ conduct problems")
+hist(covid_data_child$SDQhyp,col = "lightblue", main = NULL, xlab = "baseline SDQ inattention-hyperactivity")
+hist(covid_data_child$SDQpeer,col = "lightblue", main = NULL, xlab = "baseline SDQ peer problems")
+hist(covid_data_child$SDQpro,col = "lightblue", main = NULL, xlab = "baseline SDQ prosocial problems")
+
+hist(covid_data_child$totalSDQ2,col = "lightblue", main = NULL, xlab = "change in SDQ mental health problems")
+hist(covid_data_child$SDQemo2,col = "lightblue", main = NULL, xlab = "change in SDQ emotional problems")
+hist(covid_data_child$SDQcon2,col = "lightblue", main = NULL, xlab = "change in SDQ conduct problems")
+hist(covid_data_child$SDQhyp2,col = "lightblue", main = NULL, xlab = "change in SDQ inattention-hyperactivity problems")
+hist(covid_data_child$SDQpeer2,col = "lightblue", main = NULL, xlab = "change in SDQ peer problems")
+hist(covid_data_child$SDQpro2,col = "lightblue", main = NULL, xlab = "change in SDQ prosocial problems")
+
+table(covid_data_child$totalSDQ_cat, useNA = "ifany")
+table(covid_data_child$SDQemo_cat, useNA = "ifany")
+table(covid_data_child$SDQcon_cat, useNA = "ifany")
+table(covid_data_child$SDQhyp_cat, useNA = "ifany")
+table(covid_data_child$SDQpeer_cat, useNA = "ifany")
+table(covid_data_child$SDQpro_cat, useNA = "ifany")
+
+#PTSD Means, sds, range, histogram
+summary(covid_data_child[,c("totalPTSD")])
+sd(covid_data_child$totalPTSD, na.rm =TRUE)
+hist(covid_data_child$totalPTSD,col = "lightblue", main = NULL, xlab = "trauma symptoms")
+
+
+
+```
+
+
+```{r,SDQ_fig1 ,echo=FALSE}
 
 # SDQ - stacked bar plot
 
@@ -70,12 +346,76 @@ percforplot <- rbind(less, same, more)
 #Chnage order of the factors to chnage how th bars are stacked
 percforplot$change <- factor(percforplot$change, levels = c('same', 'less', 'more'))
 
-png("/Users/sarah/Dropbox/2020/COVID_parenting/paper/Fig1.png", width = 6.5, height = 3, res = 600, type = 'cairo', units='in') 
+png("figures/Fig1.png", width = 6.5, height = 3, res = 600, type = 'cairo', units='in') 
 ggplot(percforplot, aes(fill=change, y= Percent, x= varname)) + 
     geom_bar(stat = "identity") +
     theme(axis.text.x = element_text(angle = 45)) + labs(x = "Child mental health (SDQ) problems") + scale_color_viridis() + scale_fill_viridis(discrete = TRUE)
 dev.off()
 
+```
+
+```{r, PARQ}
+#Means, sds, range, histogram
+summary(covid_data_child[,c("totalPARQ", "PARQwarmth" ,  "PARQhostile", "PARQneglect", "PARQundiff", "PARQcontrol")])
+
+sd(covid_data_child$totalPARQ, na.rm =TRUE)
+sd(covid_data_child$PARQwarmth, na.rm =TRUE)
+sd(covid_data_child$PARQhostile, na.rm =TRUE)
+sd(covid_data_child$PARQneglect, na.rm =TRUE)
+sd(covid_data_child$PARQundiff, na.rm =TRUE)
+sd(covid_data_child$PARQcontrol, na.rm =TRUE)
+
+hist(covid_data_child$totalPARQ)
+hist(covid_data_child$PARQwarmth,col = "lightblue", main = NULL, xlab = "Parental warmth")
+hist(covid_data_child$PARQhostile,col = "lightblue", main = NULL, xlab = "Parental hostility")
+hist(covid_data_child$PARQneglect)
+hist(covid_data_child$PARQundiff)
+hist(covid_data_child$PARQcontrol)
+
+```
+
+```{r, big_corrlot, echo=FALSE}
+
+# Correlation plot --------------------------------------------------------------------------- 
+##Make the matrix
+
+corrmatrix <-  dplyr::select(covid_data_child, par_age, par_ed_ord, par_gender_num, ch_age, ch_gender_num, income_famsize,
+                             totalFES, Dep, Anx, Stress,
+                             totalPARQ, PARQwarmth, PARQhostile, PARQneglect, PARQundiff, PARQcontrol, 
+                             totalSDQ, SDQemo, SDQcon, SDQhyp, SDQpeer, SDQpro,
+                             totalSDQ2, SDQemo2, SDQcon2, SDQhyp2, SDQpeer2, SDQpro2)
+
+
+M <- cor(corrmatrix, use = "complete.obs")
+res1 <- cor.mtest(corrmatrix, use = "complete.obs", 
+                  conf.level = .95)
+
+corrplot.mixed(M,  order = "hclust", lower.col = "black", number.cex = .6,
+               tl.col = "black", tl.srt = 45,tl.cex = 0.8, tl.pos= "lt",
+               p.mat = res1$p, sig.level = .05, insig = "blank") 
+
+```
+
+```{r, followup}
+
+# Followups
+# how many people interested in followup survey?
+cov_ffllup <- covid_data[(covid_data$fllwup =="I am interested in being sent a follow-up survey in the future" | covid_data$fllwup == "Both please!") & !is.na(covid_data$fllwup),]
+
+summarytools::freq(as.factor(covid_data$fllwup), order = "freq")
+#How many people for a followup survey?
+nrow(cov_ffllup)
+#What country are they from?
+summarytools::freq(as.factor(cov_ffllup$country), order = "freq")
+#Check that DASS means aren't too different between the groups
+summary(cov_ffllup$DASSAnx)
+summary(covid_data$DASSAnx)
+
+summary(cov_ffllup$DASSDep)
+summary(covid_data$DASSDep)
+
+summary(cov_ffllup$DASSStress)
+summary(covid_data$DASSStress)
 ```
 
 
