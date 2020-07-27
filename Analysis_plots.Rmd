@@ -9,9 +9,10 @@ library(interactions)
 library(ggplot2)
 library(jtools) #apa theme
 library(ggpubr) #ggarrange
+library(viridis) #colour palette
 
 ```
-
+This script makes plots pertaining to the main analyses.
 
 ```{r, echo=FALSE, warning=FALSE}
 #theme_set(
@@ -68,16 +69,16 @@ theme(legend.position = "bottom", legend.box = "horizontal", aspect.ratio = 1) +
 #figure1
 
 # Save plots preserving resolution
-png("/Users/sarah/Dropbox/2020/COVID_parenting/paper/p1.png", width = 6.5, height = 3, res = 600, type = 'cairo', units='in') 
+png("figures/p1.png", width = 6.5, height = 3, res = 600, type = 'cairo', units='in') 
 p1
 dev.off()
-png("/Users/sarah/Dropbox/2020/COVID_parenting/paper/p2.png", width = 6.5, height = 3, res = 600, type = 'cairo', units='in') 
+png("figures/p2.png", width = 6.5, height = 3, res = 600, type = 'cairo', units='in') 
 p2
 dev.off()
-png("/Users/sarah/Dropbox/2020/COVID_parenting/paper/p3.png", width = 6.5, height = 3, res = 600, type = 'cairo', units='in') 
+png("figures/p3.png", width = 6.5, height = 3, res = 600, type = 'cairo', units='in') 
 p3
 dev.off()
-png("/Users/sarah/Dropbox/2020/COVID_parenting/paper/p4_2.png", width = 6.5, height = 3, res = 600, type = 'cairo', units='in') 
+png("figures/p4_2.png", width = 6.5, height = 3, res = 600, type = 'cairo', units='in') 
 p4
 dev.off()
 
@@ -384,22 +385,22 @@ theme(legend.position = "bottom", legend.box = "horizontal", aspect.ratio = 1) +
 #figureFAMint
 
 # Save plots preserving resolution
-png("/Users/sarah/Dropbox/2020/COVID_parenting/paper/PARQp1.png", width = 6.5, height = 3, res = 600, type = 'cairo', units='in') 
+png("figures/PARQp1.png", width = 6.5, height = 3, res = 600, type = 'cairo', units='in') 
 PARQp1
 dev.off()
-png("/Users/sarah/Dropbox/2020/COVID_parenting/paper/PARQp3.png", width = 6.5, height = 3, res = 600, type = 'cairo', units='in') 
+png("figures/PARQp3.png", width = 6.5, height = 3, res = 600, type = 'cairo', units='in') 
 PARQp3
 dev.off()
-png("/Users/sarah/Dropbox/2020/COVID_parenting/paper/Intp1.png", width = 6.5, height = 3, res = 600, type = 'cairo', units='in') 
+png("figures/Intp1.png", width = 6.5, height = 3, res = 600, type = 'cairo', units='in') 
 Intp1
 dev.off()
-png("/Users/sarah/Dropbox/2020/COVID_parenting/paper/Intp2.png", width = 6.5, height = 3, res = 600, type = 'cairo', units='in') 
+png("figures/Intp2.png", width = 6.5, height = 3, res = 600, type = 'cairo', units='in') 
 Intp2
 dev.off()
-png("/Users/sarah/Dropbox/2020/COVID_parenting/paper/FESp1.png", width = 6.5, height = 3, res = 600, type = 'cairo', units='in') 
+png("figures/FESp1.png", width = 6.5, height = 3, res = 600, type = 'cairo', units='in') 
 FESp1
 dev.off()
-png("/Users/sarah/Dropbox/2020/COVID_parenting/paper/FESp2.png", width = 6.5, height = 3, res = 600, type = 'cairo', units='in') 
+png("figures/FESp2.png", width = 6.5, height = 3, res = 600, type = 'cairo', units='in') 
 FESp2
 dev.off()
 
@@ -409,28 +410,28 @@ dev.off()
 #figureDASSint
 
 # Save plots preserving resolution
-png("/Users/sarah/Dropbox/2020/COVID_parenting/paper/DASSp2.png", width = 6.5, height = 3, res = 600, type = 'cairo', units='in') 
+png("figures/DASSp2.png", width = 6.5, height = 3, res = 600, type = 'cairo', units='in') 
 DASSp2
 dev.off()
-png("/Users/sarah/Dropbox/2020/COVID_parenting/paper/DASSp3.png", width = 6.5, height = 3, res = 600, type = 'cairo', units='in') 
+png("figures/DASSp3.png", width = 6.5, height = 3, res = 600, type = 'cairo', units='in') 
 DASSp3
 dev.off()
-png("/Users/sarah/Dropbox/2020/COVID_parenting/paper/DASSp4.png", width = 6.5, height = 3, res = 600, type = 'cairo', units='in') 
+png("figures/DASSp4.png", width = 6.5, height = 3, res = 600, type = 'cairo', units='in') 
 DASSp4
 dev.off()
-png("/Users/sarah/Dropbox/2020/COVID_parenting/paper/DASSp6.png", width = 6.5, height = 3, res = 600, type = 'cairo', units='in') 
+png("figures/DASSp6.png", width = 6.5, height = 3, res = 600, type = 'cairo', units='in') 
 DASSp6
 dev.off()
-png("/Users/sarah/Dropbox/2020/COVID_parenting/paper/Intp3.png", width = 6.5, height = 3, res = 600, type = 'cairo', units='in') 
+png("figures/Intp3.png", width = 6.5, height = 3, res = 600, type = 'cairo', units='in') 
 Intp3
 dev.off()
-png("/Users/sarah/Dropbox/2020/COVID_parenting/paper/Intp4.png", width = 6.5, height = 3, res = 600, type = 'cairo', units='in') 
+png("figures/Intp4.png", width = 6.5, height = 3, res = 600, type = 'cairo', units='in') 
 Intp4
 dev.off()
-png("/Users/sarah/Dropbox/2020/COVID_parenting/paper/stressp1.png", width = 6.5, height = 3, res = 600, type = 'cairo', units='in') 
+png("figures/stressp1.png", width = 6.5, height = 3, res = 600, type = 'cairo', units='in') 
 stressp1
 dev.off()
-png("/Users/sarah/Dropbox/2020/COVID_parenting/paper/stressp3.png", width = 6.5, height = 3, res = 600, type = 'cairo', units='in') 
+png("figures/stressp3.png", width = 6.5, height = 3, res = 600, type = 'cairo', units='in') 
 stressp3
 dev.off()
 
