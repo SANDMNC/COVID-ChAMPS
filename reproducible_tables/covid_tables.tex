@@ -1,0 +1,477 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+%
+\documentclass[
+  english,
+  man]{apa6}
+\usepackage{lmodern}
+\usepackage{amssymb,amsmath}
+\usepackage{ifxetex,ifluatex}
+\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math}
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{xcolor}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
+\hypersetup{
+  pdftitle={COVID-19 Child \& Adolescent Mental Health and Parenting Study},
+  pdflang={en-EN},
+  pdfkeywords={keywords},
+  hidelinks,
+  pdfcreator={LaTeX via pandoc}}
+\urlstyle{same} % disable monospaced font for URLs
+\usepackage{graphicx,grffile}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+% Set default figure placement to htbp
+\makeatletter
+\def\fps@figure{htbp}
+\makeatother
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+% Make \paragraph and \subparagraph free-standing
+\ifx\paragraph\undefined\else
+  \let\oldparagraph\paragraph
+  \renewcommand{\paragraph}[1]{\oldparagraph{#1}\mbox{}}
+\fi
+\ifx\subparagraph\undefined\else
+  \let\oldsubparagraph\subparagraph
+  \renewcommand{\subparagraph}[1]{\oldsubparagraph{#1}\mbox{}}
+\fi
+% Manuscript styling
+\usepackage{upgreek}
+\captionsetup{font=singlespacing,justification=justified}
+
+% Table formatting
+\usepackage{longtable}
+\usepackage{lscape}
+% \usepackage[counterclockwise]{rotating}   % Landscape page setup for large tables
+\usepackage{multirow}		% Table styling
+\usepackage{tabularx}		% Control Column width
+\usepackage[flushleft]{threeparttable}	% Allows for three part tables with a specified notes section
+\usepackage{threeparttablex}            % Lets threeparttable work with longtable
+
+% Create new environments so endfloat can handle them
+% \newenvironment{ltable}
+%   {\begin{landscape}\begin{center}\begin{threeparttable}}
+%   {\end{threeparttable}\end{center}\end{landscape}}
+\newenvironment{lltable}{\begin{landscape}\begin{center}\begin{ThreePartTable}}{\end{ThreePartTable}\end{center}\end{landscape}}
+
+% Enables adjusting longtable caption width to table width
+% Solution found at http://golatex.de/longtable-mit-caption-so-breit-wie-die-tabelle-t15767.html
+\makeatletter
+\newcommand\LastLTentrywidth{1em}
+\newlength\longtablewidth
+\setlength{\longtablewidth}{1in}
+\newcommand{\getlongtablewidth}{\begingroup \ifcsname LT@\roman{LT@tables}\endcsname \global\longtablewidth=0pt \renewcommand{\LT@entry}[2]{\global\advance\longtablewidth by ##2\relax\gdef\LastLTentrywidth{##2}}\@nameuse{LT@\roman{LT@tables}} \fi \endgroup}
+
+% \setlength{\parindent}{0.5in}
+% \setlength{\parskip}{0pt plus 0pt minus 0pt}
+
+% \usepackage{etoolbox}
+\makeatletter
+\patchcmd{\HyOrg@maketitle}
+  {\section{\normalfont\normalsize\abstractname}}
+  {\section*{\normalfont\normalsize\abstractname}}
+  {}{\typeout{Failed to patch abstract.}}
+\makeatother
+\shorttitle{COVID-ChAMPS}
+\author{Sarah Whittle\textsuperscript{1}\ \& Other authors\textsuperscript{2}}
+\affiliation{
+\vspace{0.5cm}
+\textsuperscript{1} Melbourne Neuropsychiatry Centre (MNC), Department of Psychiatry, The University of Melbourne \& Melbourne Health, Melbourne, Australia\\\textsuperscript{2} Other Institute}
+\authornote{Add complete departmental affiliations for each author here. Each new line herein must be indented, like this line.
+
+Enter author note here.
+
+
+Correspondence concerning this article should be addressed to Sarah Whittle, Postal address. E-mail: swhittle@unimelb.edu.au}
+\keywords{keywords\newline\indent Word count: X}
+\DeclareDelayedFloatFlavor{ThreePartTable}{table}
+\DeclareDelayedFloatFlavor{lltable}{table}
+\DeclareDelayedFloatFlavor*{longtable}{table}
+\makeatletter
+\renewcommand{\efloat@iwrite}[1]{\immediate\expandafter\protected@write\csname efloat@post#1\endcsname{}}
+\makeatother
+\usepackage{lineno}
+
+\linenumbers
+\usepackage{csquotes}
+\ifxetex
+  % Load polyglossia as late as possible: uses bidi with RTL langages (e.g. Hebrew, Arabic)
+  \usepackage{polyglossia}
+  \setmainlanguage[]{english}
+\else
+  \usepackage[shorthands=off,main=english]{babel}
+\fi
+
+\title{COVID-19 Child \& Adolescent Mental Health and Parenting Study}
+
+\date{}
+
+\begin{document}
+\maketitle
+
+\hypertarget{methods}{%
+\section{Methods}\label{methods}}
+
+\hypertarget{participants}{%
+\subsection{Participants}\label{participants}}
+
+\hypertarget{material}{%
+\subsection{Material}\label{material}}
+
+\hypertarget{procedure}{%
+\subsection{Procedure}\label{procedure}}
+
+\hypertarget{data-analysis}{%
+\subsection{Data analysis}\label{data-analysis}}
+
+We used R (Version 4.0.2; R Core Team, 2020) and the R-packages \emph{corrplot2017} (Wei \& Simko, 2017), \emph{corx} (Version 1.0.6.1; Conigrave, 2020), \emph{dplyr} (Version 1.0.0; Wickham, François, Henry, \& Müller, 2020), \emph{kableExtra} (Version 1.1.0; Zhu, 2019), \emph{papaja} (Version 0.1.0.9942; Aust \& Barth, 2020), \emph{psych} (Version 1.9.12.31; Revelle, 2019), and \emph{tidyselect} (Version 1.1.0; Henry \& Wickham, 2020) for all our analyses.
+
+\hypertarget{results}{%
+\section{Results}\label{results}}
+
+\hypertarget{reproducible-table-section}{%
+\subsection{Reproducible table section}\label{reproducible-table-section}}
+
+\hypertarget{things-to-do}{%
+\subsection{Things to do:}\label{things-to-do}}
+
+N's/stats for the sample used in analysis (i.e., those that completed SDQ1 or PTSD, n parents is 381):
+Frequencies,\% for demographic info - gender of parent and children, country, income, edu, occupation, ethnicity, biological vs other relationship to child
+stay at home (Y/N), stay at home length, job change
+COVID total distress and COVID positive - M/SD
+COVID communication - facts/emotion/self M/SD
+SDQ change since COVID - M/SD + frequencies based on number of items where more is reported (something to indicate the extent of kids who had worsening problems)
+
+\begin{table}[tbp]
+
+\begin{center}
+\begin{threeparttable}
+
+\caption{\label{tab:desctable}Descriptive statistics}
+
+\small{
+
+\begin{tabular}{lcc}
+\toprule
+Demographic measure & Frequency (or Mean) & Percentage (or Stnd. Dev.)\\
+\midrule
+Country &  & \\
+\ \ \ Australia & 133 & 34.55\\
+\ \ \ U.K. & 133 & 34.55\\
+\ \ \ U.S.A & 52 & 13.51\\
+\ \ \ New Zealand & 28 & 7.27\\
+\ \ \ Other & 39 & 10.13\\
+Age &  & \\
+\ \ \ Parent Age & 38 & 7.15\\
+\ \ \ Child Age & 10 & 3.61\\
+Parent Gender &  & \\
+\ \ \ Female & 362 & 94.03\\
+\ \ \ Male & 20 & 5.19\\
+\ \ \ Non-binary/gender-fluid & 1 & 0.26\\
+\ \ \ Other & 1 & 0.26\\
+\ \ \ Missing & 1 & 0.26\\
+Child Gender &  & \\
+\ \ \ Female & 252 & 51.12\\
+\ \ \ Male & 239 & 48.48\\
+\ \ \ Non-binary/gender-fluid & 1 & 0.20\\
+\ \ \ Other & 1 & 0.20\\
+\ \ \ Missing & 0 & 0.00\\
+Parent Education &  & \\
+\ \ \ Partial primary school & 3 & 0.78\\
+\ \ \ Completed primary school & 3 & 0.78\\
+\ \ \ Partial high school & 20 & 5.19\\
+\ \ \ Completed high school & 37 & 9.61\\
+\ \ \ TAFE & 56 & 14.55\\
+\ \ \ Partial University & 80 & 20.78\\
+\ \ \ Graduated Bachelor's degree & 53 & 13.77\\
+\ \ \ Honors degree & 29 & 7.53\\
+\ \ \ Partial graduate school & 21 & 5.45\\
+\ \ \ Completed graduate school & 81 & 21.04\\
+\ \ \ Missing & 2 & 0.52\\
+Another parent in the home &  & \\
+\ \ \ No & 104 & 21.10\\
+\ \ \ Yes & 388 & 78.70\\
+\ \ \ Missing & 1 & 0.20\\
+Household income &  & \\
+\ \ \ Less than AU\$36,400 per year & 0 & 0.00\\
+\ \ \ Up to AU\$36,400 per year & 22 & 5.71\\
+\ \ \ Up to AU\$52,000 per year & 39 & 10.13\\
+\ \ \ Up to AU\$90,000 per year & 64 & 16.62\\
+\ \ \ Up to AU\$140,000 per year) & 49 & 12.73\\
+\ \ \ > AU\$140,000 per year & 75 & 19.48\\
+\ \ \ Prefer not to say & 72 & 18.70\\
+\ \ \ Missing & 64 & 16.62\\
+\bottomrule
+\end{tabular}
+
+}
+
+\end{threeparttable}
+\end{center}
+
+\end{table}
+
+\begin{table}[tbp]
+
+\begin{center}
+\begin{threeparttable}
+
+\caption{\label{tab:clindesctable}Clinical scales - levels of symptoms}
+
+\small{
+
+\begin{tabular}{lcc}
+\toprule
+Clinical subscale & Frequency (or Mean) & Percentage (or Stnd. Dev.)\\
+\midrule
+Depression &  & \\
+\ \ \ Normal & 155 & 40.26\\
+\ \ \ Mild & 80 & 20.78\\
+\ \ \ Moderate & 86 & 22.34\\
+\ \ \ Severe & 31 & 8.05\\
+\ \ \ Ex\_severe & 33 & 8.57\\
+Anxiety &  & \\
+\ \ \ Normal & 215 & 55.84\\
+\ \ \ Mild & 42 & 10.91\\
+\ \ \ Moderate & 39 & 10.13\\
+\ \ \ Severe & 34 & 8.83\\
+\ \ \ Ex\_severe & 55 & 14.29\\
+Stress &  & \\
+\ \ \ Normal & 175 & 45.45\\
+\ \ \ Mild & 57 & 14.81\\
+\ \ \ Moderate & 79 & 20.52\\
+\ \ \ Severe & 56 & 14.55\\
+\ \ \ Ex\_severe & 18 & 4.68\\
+Emotional Problems &  & \\
+\ \ \ Ex\_severe & 18 & 4.68\\
+\ \ \ Average & 262 & 53.14\\
+\ \ \ S\_raised & 61 & 12.37\\
+\ \ \ High & 157 & 31.85\\
+Conduct Problems &  & \\
+\ \ \ <NA> & 13 & 2.64\\
+\ \ \ Average & 305 & 61.87\\
+\ \ \ S\_raised & 63 & 12.78\\
+\ \ \ High & 113 & 22.92\\
+Hyperactivity &  & \\
+\ \ \ <NA> & 12 & 2.43\\
+\ \ \ Average & 282 & 57.20\\
+\ \ \ S\_raised & 56 & 11.36\\
+\ \ \ High & 142 & 28.80\\
+Peer Problems &  & \\
+\ \ \ <NA> & 13 & 2.64\\
+\ \ \ Average & 280 & 56.80\\
+\ \ \ S\_raised & 53 & 10.75\\
+\ \ \ High & 148 & 30.02\\
+\bottomrule
+\end{tabular}
+
+}
+
+\end{threeparttable}
+\end{center}
+
+\end{table}
+
+\begin{lltable}
+
+\begin{TableNotes}[para]
+\normalsize{\textit{Note.} * p < 0.05; ** p < 0.01; *** p < 0.001. Not corrected for multiple comparisons. Full variable names: .}
+\end{TableNotes}
+
+\small{
+
+\begin{longtable}{lllllllllllllllllllllllllllll}\noalign{\getlongtablewidth\global\LTcapwidth=\longtablewidth}
+\caption{\label{tab:corrtable}Bivariate correlations for key variables and covariates (Pearson’s)}\\
+\toprule
+ & \multicolumn{1}{c}{1} & \multicolumn{1}{c}{2} & \multicolumn{1}{c}{3} & \multicolumn{1}{c}{4} & \multicolumn{1}{c}{5} & \multicolumn{1}{c}{6} & \multicolumn{1}{c}{7} & \multicolumn{1}{c}{8} & \multicolumn{1}{c}{9} & \multicolumn{1}{c}{10} & \multicolumn{1}{c}{11} & \multicolumn{1}{c}{12} & \multicolumn{1}{c}{13} & \multicolumn{1}{c}{14} & \multicolumn{1}{c}{15} & \multicolumn{1}{c}{16} & \multicolumn{1}{c}{17} & \multicolumn{1}{c}{18} & \multicolumn{1}{c}{19} & \multicolumn{1}{c}{20} & \multicolumn{1}{c}{21} & \multicolumn{1}{c}{22} & \multicolumn{1}{c}{23} & \multicolumn{1}{c}{24} & \multicolumn{1}{c}{25} & \multicolumn{1}{c}{26} & \multicolumn{1}{c}{27} & \multicolumn{1}{c}{28}\\
+\midrule
+\endfirsthead
+\caption*{\normalfont{Table \ref{tab:corrtable} continued}}\\
+\toprule
+ & \multicolumn{1}{c}{1} & \multicolumn{1}{c}{2} & \multicolumn{1}{c}{3} & \multicolumn{1}{c}{4} & \multicolumn{1}{c}{5} & \multicolumn{1}{c}{6} & \multicolumn{1}{c}{7} & \multicolumn{1}{c}{8} & \multicolumn{1}{c}{9} & \multicolumn{1}{c}{10} & \multicolumn{1}{c}{11} & \multicolumn{1}{c}{12} & \multicolumn{1}{c}{13} & \multicolumn{1}{c}{14} & \multicolumn{1}{c}{15} & \multicolumn{1}{c}{16} & \multicolumn{1}{c}{17} & \multicolumn{1}{c}{18} & \multicolumn{1}{c}{19} & \multicolumn{1}{c}{20} & \multicolumn{1}{c}{21} & \multicolumn{1}{c}{22} & \multicolumn{1}{c}{23} & \multicolumn{1}{c}{24} & \multicolumn{1}{c}{25} & \multicolumn{1}{c}{26} & \multicolumn{1}{c}{27} & \multicolumn{1}{c}{28}\\
+\midrule
+\endhead
+1. par\_age & - &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  & \\
+2. par\_gender\_num & .10 & - &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  & \\
+3. par\_ed\_ord & .43*** & .12* & - &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  & \\
+4. income\_famsize & .28*** & .15** & .42*** & - &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  & \\
+5. DASSDep & -.31*** & -.05 & -.36*** & -.28*** & - &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  & \\
+6. DASSAnx & -.36*** & -.10* & -.36*** & -.26*** & .67*** & - &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  & \\
+7. DASSStress & -.34*** & -.06 & -.22*** & -.20*** & .72*** & .70*** & - &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  & \\
+8. covid\_neg\_num & -.21*** & -.09 & -.18*** & -.13* & .52*** & .40*** & .53*** & - &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  & \\
+9. covid\_pos\_num & .06 & .02 & .05 & -.03 & -.21*** & -.07 & -.15** & -.31*** & - &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  & \\
+10. ch\_age & .38*** & -.07 & -.07 & -.06 & .08 & .05 & -.11* & .02 & .02 & - &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  & \\
+11. ch\_gender\_num & .01 & .01 & .01 & .01 & -.02 & -.03 & .02 & -.02 & .02 & .00 & - &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  & \\
+12. SDQemo & -.15** & -.06 & -.12** & -.13** & .20*** & .21*** & .20*** & .13** & -.06 & .00 & -.18*** & - &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  & \\
+13. SDQcon & -.23*** & -.02 & -.25*** & -.17*** & .20*** & .22*** & .17*** & .16*** & -.15** & -.05 & .04 & .33*** & - &  &  &  &  &  &  &  &  &  &  &  &  &  &  & \\
+14. SDQhyp & -.27*** & -.05 & -.15** & -.18*** & .12** & .16*** & .17*** & .18*** & -.13** & -.17*** & .15** & .28*** & .54*** & - &  &  &  &  &  &  &  &  &  &  &  &  &  & \\
+15. SDQpeer & -.11* & -.05 & -.26*** & -.21*** & .26*** & .28*** & .18*** & .10* & -.16*** & .22*** & -.01 & .40*** & .38*** & .28*** & - &  &  &  &  &  &  &  &  &  &  &  &  & \\
+16. SDQpro & -.04 & -.03 & .09 & .07 & -.01 & -.01 & .00 & -.05 & .11* & -.08 & -.09* & -.09 & -.48*** & -.34*** & -.28*** & - &  &  &  &  &  &  &  &  &  &  &  & \\
+17. SDQemo2 & -.12** & .04 & -.06 & .00 & .21*** & .28*** & .35*** & .36*** & -.12* & -.10* & -.06 & .32*** & .14** & .13** & .09* & .07 & - &  &  &  &  &  &  &  &  &  &  & \\
+18. SDQcon2 & -.16*** & .02 & .06 & .05 & .13** & .10* & .24*** & .25*** & -.11* & -.21*** & .00 & .07 & .24*** & .17*** & -.03 & -.10* & .41*** & - &  &  &  &  &  &  &  &  &  & \\
+19. SDQhyp2 & -.11* & .02 & -.04 & -.04 & .13** & .13** & .26*** & .29*** & -.12** & -.14** & .00 & .15** & .18*** & .28*** & .07 & -.07 & .48*** & .46*** & - &  &  &  &  &  &  &  &  & \\
+20. SDQpeer2 & .00 & .01 & -.02 & .02 & .12* & .12* & .13** & .15** & -.16*** & .00 & .03 & .02 & .12* & .08 & .06 & -.06 & .23*** & .16*** & .12* & - &  &  &  &  &  &  &  & \\
+21. SDQpro2 & .02 & -.02 & .00 & -.05 & -.06 & .04 & -.04 & -.06 & .09 & .09 & -.06 & -.01 & -.24*** & -.13** & -.02 & .15** & .03 & -.33*** & -.20*** & -.03 & - &  &  &  &  &  &  & \\
+22. PARQwarmth & -.08 & .13** & -.05 & -.07 & .10* & .09 & .09 & .08 & -.02 & .00 & .03 & .10* & .32*** & .23*** & .13** & -.25*** & .04 & .13** & .07 & .00 & -.18*** & - &  &  &  &  &  & \\
+23. PARQhostile & .03 & .07 & .05 & .00 & .08 & .06 & .20*** & .09 & .07 & -.11* & .05 & .16*** & .29*** & .20*** & .07 & -.19*** & .18*** & .24*** & .19*** & -.01 & -.26*** & .42*** & - &  &  &  &  & \\
+24. PARQneglect & .08 & .01 & .12* & -.01 & .06 & .05 & .15** & .08 & -.08 & -.04 & -.01 & .14** & .15** & .15** & .11* & -.11* & .09 & .16** & .09 & .02 & -.05 & .36*** & .48*** & - &  &  &  & \\
+25. PARQundiff & .03 & .00 & .07 & .03 & .06 & .05 & .16*** & .11* & -.11* & -.05 & .03 & .19*** & .28*** & .15** & .10* & -.19*** & .16** & .19*** & .17*** & .05 & -.14** & .30*** & .53*** & .44*** & - &  &  & \\
+26. PARQcontrol & -.02 & -.02 & -.02 & .04 & .02 & .01 & .14** & .11* & .00 & -.10* & .05 & .01 & .10* & .10* & -.06 & -.04 & .11* & .12* & .15** & .04 & -.10 & .09 & .26*** & .10* & .16*** & - &  & \\
+27. facts\_comm & .11* & -.02 & -.01 & .00 & .08 & .09 & .02 & .00 & .07 & .25*** & .01 & .01 & -.03 & -.13** & .03 & .11* & -.02 & -.07 & -.01 & .05 & .09* & -.08 & -.07 & -.02 & -.07 & .02 & - & \\
+28. emotion\_comm & -.07 & .01 & -.06 & .02 & .09 & .11* & .07 & .08 & .05 & -.07 & -.10* & .14** & -.02 & -.02 & .02 & .18*** & .18*** & .00 & .12* & .11* & .14** & -.30*** & -.17*** & -.20*** & -.15** & -.13** & .36*** & -\\
+29. self\_comm & -.27*** & -.03 & -.26*** & -.12** & .35*** & .35*** & .34*** & .31*** & -.13** & -.05 & -.02 & .26*** & .24*** & .24*** & .18*** & -.03 & .30*** & .21*** & .23*** & .05 & -.07 & .13** & .13** & .15** & .14** & .12* & -.06 & .06\\
+\bottomrule
+\addlinespace
+\insertTableNotes
+\end{longtable}
+
+}
+
+\end{lltable}
+
+\begin{table}[tbp]
+
+\begin{center}
+\begin{threeparttable}
+
+\caption{\label{tab:main_varstable}Means, standard deviations and range for the key measures}
+
+\begin{tabular}{lccccl}
+\toprule
+Measure of interest & N & Mean & SD & Minimum & Maximum\\
+\midrule
+DASS &  &  &  &  & \\
+\ \ \ Depression & 385 & 6.19 & 4.64 & 0.00 & 21.00\\
+\ \ \ Anxiety & 385 & 4.40 & 4.23 & 0.00 & 21.00\\
+\ \ \ Stress & 385 & 8.44 & 4.36 & 0.00 & 21.00\\
+FES & 384 & 5.62 & 1.75 & 1.00 & 8.00\\
+PARQ &  &  &  &  & \\
+\ \ \ Hostile & 428 & 8.15 & 2.51 & 6.00 & 20.00\\
+\ \ \ Warmth & 428 & 9.49 & 2.17 & 8.00 & 23.00\\
+SDQ &  &  &  &  & \\
+\ \ \ Emotional problems & 480 & 3.49 & 2.67 & 0.00 & 10.00\\
+\ \ \ Hyperactivity & 480 & 4.91 & 2.80 & 0.00 & 10.00\\
+\ \ \ Conduct & 481 & 2.20 & 2.04 & 0.00 & 10.00\\
+\ \ \ Peer problems & 481 & 2.53 & 2.17 & 0.00 & 9.00\\
+PTSD symptoms & 474 & 3.19 & 3.10 & 0.00 & 14.13\\
+Communication &  &  &  &  & \\
+\ \ \ Fact-focused & 482 & 3.14 & 1.63 & 0.00 & 6.00\\
+\ \ \ Emotion-focused & 482 & 6.73 & 2.72 & 0.00 & 12.00\\
+\ \ \ Self-focused & 482 & 0.65 & 1.10 & 0.00 & 6.00\\
+COVID Impact &  &  &  &  & \\
+\ \ \ Negative & 493 & 3.03 & 1.16 & 0.00 & 5.00\\
+\ \ \ Positive & 493 & 2.27 & 1.18 & 0.00 & 5.00\\
+\bottomrule
+\end{tabular}
+
+\end{threeparttable}
+\end{center}
+
+\end{table}
+
+\begin{lltable}
+
+\begin{TableNotes}[para]
+\normalsize{\textit{Note.} * p < 0.05; ** p < 0.01; *** p < 0.001. Not corrected for multiple comparisons. Full variable names: .}
+\end{TableNotes}
+
+\begin{longtable}{llllllll}\noalign{\getlongtablewidth\global\LTcapwidth=\longtablewidth}
+\caption{\label{tab:corrtablecomm}Bivariate correlations for key variables and covariates (Pearson’s)}\\
+\toprule
+ & \multicolumn{1}{c}{1} & \multicolumn{1}{c}{2} & \multicolumn{1}{c}{3} & \multicolumn{1}{c}{4} & \multicolumn{1}{c}{5} & \multicolumn{1}{c}{6} & \multicolumn{1}{c}{7}\\
+\midrule
+\endfirsthead
+\caption*{\normalfont{Table \ref{tab:corrtablecomm} continued}}\\
+\toprule
+ & \multicolumn{1}{c}{1} & \multicolumn{1}{c}{2} & \multicolumn{1}{c}{3} & \multicolumn{1}{c}{4} & \multicolumn{1}{c}{5} & \multicolumn{1}{c}{6} & \multicolumn{1}{c}{7}\\
+\midrule
+\endhead
+1. facts & - &  &  &  &  &  & \\
+2. information & .47*** & - &  &  &  &  & \\
+3. child emotions & .18*** & .34*** & - &  &  &  & \\
+4. parent emotions & .21*** & .25*** & .52*** & - &  &  & \\
+5. others' feelings & .27*** & .35*** & .58*** & .57*** & - &  & \\
+6. reassurance & .12** & .28*** & .67*** & .37*** & .44*** & - & \\
+7. didn't know what to say & -.07 & -.03 & .04 & .01 & -.02 & .13** & -\\
+8. too upset & -.03 & -.03 & .07 & .07 & .00 & .06 & .46***\\
+\bottomrule
+\addlinespace
+\insertTableNotes
+\end{longtable}
+
+\end{lltable}
+
+\hypertarget{discussion}{%
+\section{Discussion}\label{discussion}}
+
+\newpage
+
+\hypertarget{references}{%
+\section{References}\label{references}}
+
+\begingroup
+\setlength{\parindent}{-0.5in}
+\setlength{\leftskip}{0.5in}
+
+\hypertarget{refs}{}
+\leavevmode\hypertarget{ref-R-papaja}{}%
+Aust, F., \& Barth, M. (2020). \emph{papaja: Create APA manuscripts with R Markdown}. Retrieved from \url{https://github.com/crsh/papaja}
+
+\leavevmode\hypertarget{ref-R-corx}{}%
+Conigrave, J. (2020). \emph{Corx: Create and format correlation matrices}. Retrieved from \url{https://CRAN.R-project.org/package=corx}
+
+\leavevmode\hypertarget{ref-R-tidyselect}{}%
+Henry, L., \& Wickham, H. (2020). \emph{Tidyselect: Select from a set of strings}. Retrieved from \url{https://CRAN.R-project.org/package=tidyselect}
+
+\leavevmode\hypertarget{ref-R-base}{}%
+R Core Team. (2020). \emph{R: A language and environment for statistical computing}. Vienna, Austria: R Foundation for Statistical Computing. Retrieved from \url{https://www.R-project.org/}
+
+\leavevmode\hypertarget{ref-R-psych}{}%
+Revelle, W. (2019). \emph{Psych: Procedures for psychological, psychometric, and personality research}. Evanston, Illinois: Northwestern University. Retrieved from \url{https://CRAN.R-project.org/package=psych}
+
+\leavevmode\hypertarget{ref-R-corrplot2017}{}%
+Wei, T., \& Simko, V. (2017). \emph{R package "corrplot": Visualization of a correlation matrix}. Retrieved from \url{https://github.com/taiyun/corrplot}
+
+\leavevmode\hypertarget{ref-R-dplyr}{}%
+Wickham, H., François, R., Henry, L., \& Müller, K. (2020). \emph{Dplyr: A grammar of data manipulation}. Retrieved from \url{https://CRAN.R-project.org/package=dplyr}
+
+\leavevmode\hypertarget{ref-R-kableExtra}{}%
+Zhu, H. (2019). \emph{KableExtra: Construct complex table with 'kable' and pipe syntax}. Retrieved from \url{https://CRAN.R-project.org/package=kableExtra}
+
+\endgroup
+
+\end{document}
