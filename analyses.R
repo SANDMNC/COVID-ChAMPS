@@ -1,4 +1,6 @@
+## This script contains the main analyses.
 
+# Read in/load data
 # covid_data_child_scored.csv for robust lmm
 covid_data_child <- read.csv("scored_data/covid_data_child_scored_for_MI.csv", header=TRUE, stringsAsFactors = FALSE)
 # load in mi data
@@ -14,7 +16,9 @@ library(nlme) #v3.1-147
 #Remove the X column
 covid_data_child$X <- NULL
 
-# e.g. code to test normality of resisuals
+
+#Normality testing
+# e.g. code to test normality of residuals
 r<-residuals(model1, type = c("response", "pearson", "normalized"))
 shapiro.test(r)
 # Note that I have checked a number of models and residuals are not normally distributed. As such, procede with robust lmm,
