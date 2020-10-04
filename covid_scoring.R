@@ -218,6 +218,10 @@ covidnumvars <-ifelse(covid_data[,covid_vars] == "Not at all", 0,
 colnames(covidnumvars)<- c("covid_finance_num", "covid_uncertain_num", "covid_plans_num", "covid_worry_1_num", 
                            "covid_worry_2_num", "covid_worry_3_num", "covid_neg_num", "covid_pos_num")
 
+#compute Chronbach's alpha for neg scale (std.alpha is 0.84)
+covid_vars_neg <- subset(covidnumvars, select = -covid_pos_num)
+psych::alpha(covid_vars_neg)
+
 #join this dataframe to the main one
 covid_data<- cbind(covid_data, covidnumvars)
 
