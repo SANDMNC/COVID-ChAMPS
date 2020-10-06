@@ -27,8 +27,7 @@ covid_data <- read.csv("raw_data/covid_data.csv", header=TRUE, stringsAsFactors 
 id <- rownames(covid_data)
 covid_data <- cbind(id=id, covid_data)
 
-#Missing values - change them from "" to NA to make easier to work with
-covid_data[(covid_data=="")] <- NA
+
 
 #Age variable
 #Change one participant answer from "9y" to just "9" otherwise it gets cut
@@ -39,6 +38,9 @@ covid_data$ch3_age <- as.numeric(covid_data$ch3_age)
 covid_data$ch4_age <- as.numeric(covid_data$ch4_age)
 covid_data$ch5_age <- as.numeric(covid_data$ch5_age)
 covid_data$ch6_age <- as.numeric(covid_data$ch6_age)
+
+#Missing values - change them from "" to NA to make easier to work with
+covid_data[(covid_data=="")] <- NA
 
 
 # Inclusion criteria ---------------------------------------------------------------------------------
@@ -304,6 +306,7 @@ covid_data$AnxCat <- as.factor(car::recode(covid_data$DASSAnx, "NA=NA; 0:3='Norm
 
 covid_data$StressCat <- as.factor(car::recode(covid_data$DASSStress, "NA=NA; 0:7='Normal';8:9='Mild';10:12='Moderate'; 13:16='Severe'; 
                                               else='Ex_severe'"))
+
 
 
 # FES cohesion scoring -------------------------------------------------------------------------------------------
@@ -802,6 +805,46 @@ covid_data_child$income_famsize.c <- (covid_data_child$income_famsize-income_fam
 
 #Get rid of the 4 rows that have come into the dataset
 covid_data_child<- covid_data_child[!is.na(covid_data_child$id),]
+
+
+#Calcuate alphas
+alphas<- rep(NA, 14) 
+a<- psych::alpha(DASSnumvars, keys.listDASS$DASSDep)
+alphas[1]<- a$total[[1]]
+a<- psych::alpha(DASSnumvars, keys.listDASS$DASSAnx)
+alphas[2]<- a$total[[1]]
+a<- psych::alpha(DASSnumvars, keys.listDASS$DASSStress)
+alphas[3]<- a$total[[1]]
+a<- psych::alpha(FESnumvars, keys.listFES)
+alphas[4]<- a$total[[1]]
+a<- psych::alpha(PARQ1numvars, keys.listPARQ$PARQhostile)
+alphas[5]<- a$total[[1]]
+a<- psych::alpha(PARQ1numvars, keys.listPARQ$PARQwarmth)
+alphas[6]<- a$total[[1]]
+a<- psych::alpha(SDQ1numvars, keys.listSDQ$SDQemo)
+alphas[7]<- a$total[[1]]
+a<- psych::alpha(SDQ1numvars, keys.listSDQ$SDQhyp)
+alphas[8]<- a$total[[1]]
+a<- psych::alpha(SDQ1numvars, keys.listSDQ$SDQcon)
+alphas[9]<- a$total[[1]]
+a<- psych::alpha(SDQ1numvars, keys.listSDQ$SDQpeer)
+alphas[10]<- a$total[[1]]
+a<- psych::alpha(PTSDnumvars, keys.listPTSD)
+alphas[11]<- a$total[[1]]
+a<- psych::alpha(commnumvars, keys.list.cov.comm$facts_comm)
+alphas[12]<- a$total[[1]]
+a<- psych::alpha(commnumvars, keys.list.cov.comm$emotion_comm)
+alphas[13]<- a$total[[1]]
+a<- psych::alpha(commnumvars, keys.list.cov.comm$self_comm)
+alphas[14]<- a$total[[1]]
+
+alph_names <- c("Dep", "Anx", "Stress", "FES","PARQhostile","PARQwarmth","SDQemo", "SDQhyp","SDQcon",
+                "SDQpeer","PTSD","Comm_facts","Comm_emotion","Comm_self")
+
+alpha_df<- as.data.frame(cbind(alph_names, round(as.numeric(alphas), 2)))
+
+
+
 
 #prepare a smaller subset of the data to use for MI
 
