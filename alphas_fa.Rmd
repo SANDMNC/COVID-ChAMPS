@@ -1,0 +1,94 @@
+---
+title: "factor_analysis_SDQ"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(lavaan)
+library(psych)#For FA
+library(GPArotation) #required for oblique rotation options in FA
+
+# Read in the csv file
+covid_data <- read.csv("scored_data/covid_data_child_scored.csv", header=TRUE, 
+                       stringsAsFactors = FALSE)
+
+load("scored_data/covid_scoring_extras.RData")
+
+```
+
+## 
+
+
+```{r, alphas}
+
+#Calcuate alphas
+alphas<- rep(NA, 14) 
+a<- psych::alpha(DASSnumvars, keys.listDASS$DASSDep)
+alphas[1]<- a$total[[1]]
+a<- psych::alpha(DASSnumvars, keys.listDASS$DASSAnx)
+alphas[2]<- a$total[[1]]
+a<- psych::alpha(DASSnumvars, keys.listDASS$DASSStress)
+alphas[3]<- a$total[[1]]
+a<- psych::alpha(FESnumvars, keys.listFES)
+alphas[4]<- a$total[[1]]
+a<- psych::alpha(PARQ1numvars, keys.listPARQ$PARQhostile)
+alphas[5]<- a$total[[1]]
+a<- psych::alpha(PARQ1numvars, keys.listPARQ$PARQwarmth)
+alphas[6]<- a$total[[1]]
+a<- psych::alpha(SDQ1numvars, keys.listSDQ$SDQemo)
+alphas[7]<- a$total[[1]]
+a<- psych::alpha(SDQ1numvars, keys.listSDQ$SDQhyp)
+alphas[8]<- a$total[[1]]
+a<- psych::alpha(SDQ1numvars, keys.listSDQ$SDQcon)
+alphas[9]<- a$total[[1]]
+a<- psych::alpha(SDQ1numvars, keys.listSDQ$SDQpeer)
+alphas[10]<- a$total[[1]]
+a<- psych::alpha(PTSDnumvars, keys.listPTSD)
+alphas[11]<- a$total[[1]]
+a<- psych::alpha(commnumvars, keys.list.cov.comm$facts_comm)
+alphas[12]<- a$total[[1]]
+a<- psych::alpha(commnumvars, keys.list.cov.comm$emotion_comm)
+alphas[13]<- a$total[[1]]
+a<- psych::alpha(commnumvars, keys.list.cov.comm$self_comm)
+alphas[14]<- a$total[[1]]
+
+alph_names <- c("Dep", "Anx", "Stress", "FES","PARQhostile","PARQwarmth","SDQemo", "SDQhyp","SDQcon",
+                "SDQpeer","PTSD","Comm_facts","Comm_emotion","Comm_self")
+
+alpha_df<- as.data.frame(cbind(alph_names, round(as.numeric(alphas), 2)))
+
+
+alpha_df
+```
+
+
+
+```{r, fa}
+
+#2 different R functions for calculating fa
+
+#Using SEM to fit CFA
+
+SDQ.mod <- ' emo =~ ch_SDQ.1_3_num + ch_SDQ.1_8_num + ch_SDQ.1_13_num + ch_SDQ.1_16_num + ch_SDQ.1_24_num
+                   con =~ ch_SDQ.1_5_num + -ch_SDQ.1_7_num + ch_SDQ.1_12_num + ch_SDQ.1_18_num + ch_SDQ.1_22_num
+                   hyp =~ ch_SDQ.1_2_num + ch_SDQ.1_10_num + ch_SDQ.1_15_num + -ch_SDQ.1_21_num + -ch_SDQ.1_25_num
+                   peer =~ ch_SDQ.1_6_num + -ch_SDQ.1_11_num + -ch_SDQ.1_14_num + ch_SDQ.1_19_num + ch_SDQ.1_23_num
+                   pro =~ ch_SDQ.1_1_num + ch_SDQ.1_4_num + ch_SDQ.1_9_num + ch_SDQ.1_17_num + ch_SDQ.1_20_num '
+
+
+SDQ.fit <- sem(SDQ.mod, data=SDQ1numvars)
+summary(SDQ.fit, fit.measures=TRUE,
+        standardized  =TRUE,
+        rsquare  =TRUE)
+
+
+#Using fa
+SDQfa <- fa(SDQ1numvars, 5, rotate = 'oblimin', fm = 'minres')
+print(SDQfa, cut = .3, digits = 2, sort = TRUE)
+fa.diagram(SDQfa)
+
+```
+
+

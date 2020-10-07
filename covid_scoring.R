@@ -807,44 +807,6 @@ covid_data_child$income_famsize.c <- (covid_data_child$income_famsize-income_fam
 covid_data_child<- covid_data_child[!is.na(covid_data_child$id),]
 
 
-#Calcuate alphas
-alphas<- rep(NA, 14) 
-a<- psych::alpha(DASSnumvars, keys.listDASS$DASSDep)
-alphas[1]<- a$total[[1]]
-a<- psych::alpha(DASSnumvars, keys.listDASS$DASSAnx)
-alphas[2]<- a$total[[1]]
-a<- psych::alpha(DASSnumvars, keys.listDASS$DASSStress)
-alphas[3]<- a$total[[1]]
-a<- psych::alpha(FESnumvars, keys.listFES)
-alphas[4]<- a$total[[1]]
-a<- psych::alpha(PARQ1numvars, keys.listPARQ$PARQhostile)
-alphas[5]<- a$total[[1]]
-a<- psych::alpha(PARQ1numvars, keys.listPARQ$PARQwarmth)
-alphas[6]<- a$total[[1]]
-a<- psych::alpha(SDQ1numvars, keys.listSDQ$SDQemo)
-alphas[7]<- a$total[[1]]
-a<- psych::alpha(SDQ1numvars, keys.listSDQ$SDQhyp)
-alphas[8]<- a$total[[1]]
-a<- psych::alpha(SDQ1numvars, keys.listSDQ$SDQcon)
-alphas[9]<- a$total[[1]]
-a<- psych::alpha(SDQ1numvars, keys.listSDQ$SDQpeer)
-alphas[10]<- a$total[[1]]
-a<- psych::alpha(PTSDnumvars, keys.listPTSD)
-alphas[11]<- a$total[[1]]
-a<- psych::alpha(commnumvars, keys.list.cov.comm$facts_comm)
-alphas[12]<- a$total[[1]]
-a<- psych::alpha(commnumvars, keys.list.cov.comm$emotion_comm)
-alphas[13]<- a$total[[1]]
-a<- psych::alpha(commnumvars, keys.list.cov.comm$self_comm)
-alphas[14]<- a$total[[1]]
-
-alph_names <- c("Dep", "Anx", "Stress", "FES","PARQhostile","PARQwarmth","SDQemo", "SDQhyp","SDQcon",
-                "SDQpeer","PTSD","Comm_facts","Comm_emotion","Comm_self")
-
-alpha_df<- as.data.frame(cbind(alph_names, round(as.numeric(alphas), 2)))
-
-
-
 
 #prepare a smaller subset of the data to use for MI
 
@@ -862,3 +824,10 @@ covid_data_child_for_MI <- covid_data_child[,c("id", "par_age", "country_cat","p
 write.csv(covid_data, file = "scored_data/covid_data_scored.csv")
 write.csv(covid_data_child, file = "scored_data/covid_data_child_scored.csv")
 write.csv(covid_data_child_for_MI, file = "scored_data/covid_data_child_scored_for_MI.csv")
+
+# Save an Rdata file to store a bunch of useful stuff for later, including alpha, and names of 
+# variable groupings
+save(alpha_df, DASSnumvars,  keys.listDASS, FESnumvars, keys.listFES, PARQ1numvars, keys.listPARQ,
+     keys.listSDQ, SDQ1numvars, PTSDnumvars, keys.listPTSD, commnumvars, keys.list.cov.comm,
+     file = "scored_data/covid_scoring_extras.RData")
+
