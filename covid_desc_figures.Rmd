@@ -301,10 +301,10 @@ hist(covid_data_child$totalPTSD,col = "lightblue", main = NULL, xlab = "trauma s
 # SDQ - stacked bar plot
 
 childvarnames <- names(covid_data_child)
-SDQ2vars <- vars_select(childvarnames, contains("SDQ.2"), -ends_with("_1"), -ends_with("_4"), -ends_with("_9"), -ends_with("_17"), -ends_with("_20"))
-SDQdf<- covid_data_child[, SDQ2vars]
-sdqvarnames<- names(SDQdf)
-SDQ2numvars <- vars_select(sdqvarnames, contains("num"), -contains("_1_"), -contains("_4_"), -contains("_9_"), -contains("_17_"), -contains("_20_"))
+#Note this line excludes the subscales not examining (peer and prosocial)
+                     # SDQpeer=c("ch_SDQ.1_6_num","-ch_SDQ.1_11_num","-ch_SDQ.1_14_num" ,"ch_SDQ.1_19_num" , "ch_SDQ.1_23_num") ,
+                     # SDQpro=c("ch_SDQ.1_1_num" ,"ch_SDQ.1_4_num","ch_SDQ.1_9_num" ,"ch_SDQ.1_17_num" , "ch_SDQ.1_20_num"))
+SDQ2numvars <- vars_select(childvarnames, contains("SDQ.2") & contains("num"), -contains("_1_"), -contains("_4_"), -contains("_9_"), -contains("_17_"), -contains("_20_"),-contains("_6_"), -contains("_11_"), -contains("_14_"), -contains("_19_"), -contains("_23_") )
 SDQ2numdf<- covid_data_child[, SDQ2numvars]
 
 # empty dataframe
@@ -319,7 +319,7 @@ for (i in 1:ncol(SDQ2numdf)) {
   SDQ.c.freq[i,3] <- as.data.frame(table(SDQ2numdf[,i]))[3,2]
 }
 
-SDQ.c.freq$varname <- c("H - restless", "E - headaches", "C - temper","Pe - solitary", "C - obedient", "E - worries", "H - fidget", "Pe - friend", "C - fights", "E - unhappy", "Pe - liked", "H - distracted", "E - nervous", "C - lies", "Pe - bullied", "H - thinks", "C - steals", "Pe - adults", "E - fears", "H - attention")
+SDQ.c.freq$varname <- c("H - restless", "E - headaches", "C - temper", "C - obedient", "E - worries", "H - fidget", "C - fights", "E - unhappy",  "H - distracted", "E - nervous", "C - lies",  "H - thinks", "C - steals",  "E - fears", "H - attention")
 
 #calculating the percentage of things of more/less/same for each item
  SDQ.c.freq$percentmore<- (SDQ.c.freq$More/rowSums(SDQ.c.freq[,c(1:3)]))*100
