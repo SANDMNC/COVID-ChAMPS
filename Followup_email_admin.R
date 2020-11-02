@@ -45,7 +45,7 @@ if(ph1$ch2_trigger[i]=="Yes"){
 if(ph1$ch3_trigger[i]=="Yes"){ph1$ch3_details[i]<- paste(ph1$ch3_age[i], "year old", 
                                                          ph1$ch3_gender[i])}
 
-if(ph1$ch4_trigger[i]=="Yes"){ph1$ch3_details[i]<- paste(ph1$ch4_age[i], "year old", 
+if(ph1$ch4_trigger[i]=="Yes"){ph1$ch4_details[i]<- paste(ph1$ch4_age[i], "year old", 
                                                          ph1$ch4_gender[i])}
 }
 
