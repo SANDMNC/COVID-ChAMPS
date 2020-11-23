@@ -86,13 +86,52 @@ for (i in 1:nrow(ph2)){
   }
 }
 
+
+
+# Do the same thing with the people who interested in survey results
+#Grab only those participants who wanted to be part of ph2
+ph2_summary<- ph1[which(ph1$fllwup=="I am interested in being sent a summary of findings once available"), c("email", "ResponseId", "ch1_details", "ch2_details",
+                                                 "ch3_details", "ch4_details") ]
+
+#And only for people who have an email there
+ph2_summary<- ph2_summary[!is.na(ph2_summary$email),]
+
+#The group which we have only has max 3 children answered for
+
+ph2_summary$Children_T1_info <- rep(NA, nrow(ph2_summary))
+
+for (i in 1:nrow(ph2_summary)){
+  if(!is.na(ph2_summary$ch1_details[i]) & is.na(ph2_summary$ch2_details[i])){
+    ph2_summary$Children_T1_info[i] <- ph2_summary$ch1_details[i]
+  }
+  
+  if(!is.na(ph2_summary$ch1_details[i]) & !is.na(ph2_summary$ch2_details[i])){
+    ph2_summary$Children_T1_info[i] <- paste(ph2_summary$ch1_details[i], "and", ph2_summary$ch2_details[i])
+    
+    if(!is.na(ph2_summary$ch3_details[i])){
+      ph2_summary$Children_T1_info[i] <- paste(ph2_summary$Children_T1_info[i], "and", ph2_summary$ch3_details[i])
+      
+      if(!is.na(ph2_summary$ch4_details[i])){
+        ph2_summary$Children_T1_info[i] <- paste(ph2_summary$Children_T1_info[i], "and", ph2_summary$ch4_details[i])
+      }
+    }
+  }
+}
+
 #Rename the variables and just export the 3 columns needed to put into Qualtrics
 colnames(ph2)[colnames(ph2)=="email"] <- "Email"
+colnames(ph2_summary)[colnames(ph2_summary)=="email"] <- "Email"
 colnames(ph2)[colnames(ph2)=="ResponseId"] <- "Response_ID"
+colnames(ph2_summary)[colnames(ph2_summary)=="ResponseId"] <- "Response_ID"
 ph2$ch1_details <- NULL
 ph2$ch2_details <- NULL
 ph2$ch3_details <- NULL
 ph2$ch4_details <- NULL
+ph2_summary$ch1_details <- NULL
+ph2_summary$ch2_details <- NULL
+ph2_summary$ch3_details <- NULL
+ph2_summary$ch4_details <- NULL
 
 # Export--------------------------------------------------------------------------------------------
 write.csv(ph2, "scored_data/COVID_child_details.csv")
+write.csv(ph2_summary, "scored_data/COVID_child_details_summary.csv")
