@@ -1,5 +1,5 @@
 
-#Script made with R version 3.5.2 (2018-12-20)
+#Script made with R version 3.5.2 (2018-12-20) - edits made with R version 4.0.2 (2020-06-22)
 
 # Inputs:
 # csv file exported from Qualtrics
@@ -11,6 +11,8 @@
 # First csv each parent is a separate row.
 # Second csv each child is a separate row.
 
+# Open script after opening the project file - COVID-ChAMPS.Rproj
+
 # Load packages --------------------------------------------------------------------
 library(car) # for recode
 library(dplyr) # for %>%
@@ -21,26 +23,20 @@ library(psych) #for scoreItems etc.
 # General cleaning----------------------------------------------------------------------------------------------
 
 # Read in the csv file
-covid_data <- read.csv("/Users/sarah/Dropbox/Github_repos/COVID-ChAMPS-repo/COVID-ChAMPS/raw_data/covid_data_fu.csv", header=TRUE, stringsAsFactors = FALSE)
+covid_data <- read.csv("raw_data/covid_data_fu.csv", header=TRUE, stringsAsFactors = FALSE)
 
 #Add unique ID for each participant
 id <- rownames(covid_data)
 covid_data <- cbind(id=id, covid_data)
 
-
-
 #Age variable
-
 #Make the age variables numeric rather than characters
-covid_data$ch1_age_f <- as.numeric(covid_data$ch1_age_f) 
-covid_data$ch2_age_f <- as.numeric(covid_data$ch2_age_f) 
-covid_data$ch3_age_f <- as.numeric(covid_data$ch3_age_f)
-
-
+covid_data$ch1_age <- as.numeric(covid_data$ch1_age_f) 
+covid_data$ch2_age <- as.numeric(covid_data$ch2_age_f) 
+covid_data$ch3_age <- as.numeric(covid_data$ch3_age_f)
 
 #Missing values - change them from "" to NA to make easier to work with
 covid_data[(covid_data=="")] <- NA
-
 
 # Inclusion criteria ---------------------------------------------------------------------------------
 ## Participants should have completed at least 70% of either SDQ or PTSD for at least 1 child 
@@ -59,87 +55,33 @@ nrow(covid_data[which(rowSums(!is.na(covid_data[, grep("ch1_SDQ_f", varnames)]))
 #cutting ineligible people based on SDQ and PSD out of larger sample
 covid_data <- covid_data[which(rowSums(!is.na(covid_data[, grep("ch1_SDQ_f", varnames)]))>=10 | rowSums(!is.na(covid_data[, grep("ch1_PTSD_f", varnames)]))>=11), ]
 
-#Have a look at validity items - SW did we do these at FU??
-#Any person who answers top 2 positive categories for both questions will be removed
-#summarytools::freq(as.factor(covid_data$validity_1), order = "freq")
-#summarytools::freq(as.factor(covid_data$validity_2), order = "freq")
-
-#which(covid_data$validity_1=="Agree a lot" | covid_data$validity_1=="Agree")
-#which(covid_data$validity_2=="Yes")
-
-#No participants met this requirement so neither gets excluded
-
-
-
-
-
 # Demographics parents-------------------------------------------------------------------------------------------
 
-## Country family lives in
-# Turns the text data to a factor
-#covid_data$country <- as.factor(covid_data$country)
-
-
-#Make a number variable. Just first 5 countries all others are other
-#covid_data$country_cat<- ifelse(covid_data$country == "Australia ",1,
-#                                ifelse(covid_data$country == "United Kingdom ",2,
-#                                       ifelse(covid_data$country == "Canada ",3,
-#                                              ifelse(covid_data$country == "New Zealand ",4,5))))
-
-
-#Ethnicity
-# Move some of the 'other' into a group - 'English', 'British', 'british' and 'Welsh'
-
-#a <- grep("English|British|british|Welsh", covid_data$ethnicity_15_TEXT)
-#b <- which(covid_data$ethnicity=="Other (describe):")
-#covid_data[intersect(a,b), "ethnicity"] <-  "European - Western"
-
-
-## Gender of parent
-covid_data$par_gender <- as.factor(covid_data$par_gender)
-covid_data$par_gender_num<- ifelse(covid_data$par_gender == "Female", 1, 2)       
-       
-       
-## Relative Family Income - SW: Need to get number in home from baseline
-# Gross weekly family income was made equivalent to household size by taking the midpoint of each of the 15 income brackets in the LSAC data set 
-# and dividing by the square root of the number of people residing in the house. 
-# ref: Bradbury. Family size equivalence scales and survey evaluation of income and well-being. J Soc Policy, 18 (1989), pp. 383-408
-
-# First step is recode the '6 or more' to the number in the text
-
-#When I looked at the '6 or more' variable - 2 cases were NA. I filled these in with 6, as I thought the most likely answer they didn't fill it was that they had 6.
-#This selects the 2 NAs and puts a 6 in them
-#covid_data[which(covid_data$home_num == "6 or more: please indicate number in text box" & is.na(covid_data$home_num_6_TEXT)),"home_num_6_TEXT"] <- 6
-#Now replace the number from TEXT variable into the 6 or more option in home number variable
-#covid_data[which(covid_data$home_num == "6 or more: please indicate number in text box"),"home_num"]   <- covid_data[which(covid_data$home_num == "6 or more: please indicate number in text box"),"home_num_6_TEXT"]
-
-#Now recode the income to the midpoint - SW: Kate, can you check that I've done this correctly?
-covid_data$income_f_mid<- ifelse(covid_data$income_change == "Less than AU$699 per week (AU$36,400 or GBP£20,500 per year)", 18200, 
-                               ifelse(covid_data$income_change == "AU$700 to AU$999 per week (up to AU$52,000 or GBP£29,280 per year)", 44200,
-                                      ifelse(covid_data$income_change == "AU$1,000 to AU$1,730 per week (up to AU$90,000 or GBP£50,680 per year)", 71000, 
-                                             ifelse(covid_data$income_change == "AU$1,731 to AU$2,700 per week (up to AU$140,000 or GBP£78,800 per year)", 115000,
-                                                    ifelse(covid_data$income_change == "More than AU$2,700 per week (AU$140,000 or GBP£78,800 per year)", 140000, NA
+#Now recode the income to the midpoint 
+covid_data$income_mid<- ifelse(covid_data$income_change == "Less than AU$699 per week (AU$36,400 or GBPÂ£20,500 per year)", 18200, 
+                               ifelse(covid_data$income_change == "AU$700 to AU$999 per week (up to AU$52,000 or GBPÂ£29,280 per year)", 44200,
+                                      ifelse(covid_data$income_change == "AU$1,000 to AU$1,730 per week (up to AU$90,000 or GBPÂ£50,680 per year)", 71000, 
+                                             ifelse(covid_data$income_change == "AU$1,731 to AU$2,700 per week (up to AU$140,000 or GBPÂ£78,800 per year)", 115000,
+                                                    ifelse(covid_data$income_change == "More than AU$2,700 per week (AU$140,000 or GBPÂ£78,800 per year)", 140000, NA
                                                     )))))
 
-#Midpoint of bracket divided by the sqrt of people in the house
-covid_data$income_famsize_f<-covid_data$income_f_mid/sqrt(as.numeric(covid_data$home_num))
 
+#Use this later after the merge
+# #Midpoint of bracket divided by the sqrt of people in the house
+# covid_data$income_famsize_f<-covid_data$income_f_mid/sqrt(as.numeric(covid_data$home_num))
 
 #Other demographics relating to each child - contained in child section
-
-
 # COVID impact ------------------------------------------------------------------------------------------
 
 ##known 
-covid_data$other_covid_f <- as.factor(covid_data$other_covid)
+covid_data$other_covid <- as.factor(covid_data$other_covid)
 
 ##known hospitalized, 
-covid_data$other_hosp_f <- as.factor(covid_data$other_hosp)
-covid_data$other_hosp_num_f<- ifelse(covid_data$other_hosp == "No", 0,1)
+covid_data$other_hosp <- as.factor(covid_data$other_hosp)
+covid_data$other_hosp_num<- ifelse(covid_data$other_hosp == "No", 0,1)
 
 ##known died, 
-covid_data$other_died_f <- as.factor(covid_data$other_died)
-
+covid_data$other_died <- as.factor(covid_data$other_died)
 
 # COVID distress ------------------------------------------------------------
 
@@ -149,42 +91,42 @@ covid_data$other_died_f <- as.factor(covid_data$other_died)
 # negative life impact and positive - could reverse score for a distress measure - covid_neg and covid_pos
 
 #Grab the relevant variable names
-covid_vars_f <- vars_select(varnames, starts_with("covid"))
+covid_vars <- vars_select(varnames, starts_with("covid"))
 # Not all covid variables relevant - just pick the ones to score the distress
-covid_vars_f <- covid_vars[c(2:8, 11)]
+covid_vars <- covid_vars[c(2:8, 11)]
 
 #blank dataframe
-covidnumvars_f=data.frame(matrix(ncol=length(covid_vars_f),nrow=nrow(covid_data[,covid_vars_f])))
+covidnumvars=data.frame(matrix(ncol=length(covid_vars),nrow=nrow(covid_data[,covid_vars])))
 
 #recodes as ordinal
-covidnumvars_f <-ifelse(covid_data[,covid_vars_f] == "Not at all", 0, 
-                      ifelse(covid_data[,covid_vars_f] == "Very Slightly", 1, 
-                             ifelse(covid_data[,covid_vars_f] == "Slightly", 2,
-                                    ifelse(covid_data[,covid_vars_f] == "Moderately", 3,
-                                           ifelse(covid_data[,covid_vars_f] == "Quite a Bit", 4,
+covidnumvars <-ifelse(covid_data[,covid_vars] == "Not at all", 0, 
+                      ifelse(covid_data[,covid_vars] == "Very Slightly", 1, 
+                             ifelse(covid_data[,covid_vars] == "Slightly", 2,
+                                    ifelse(covid_data[,covid_vars] == "Moderately", 3,
+                                           ifelse(covid_data[,covid_vars] == "Quite a Bit", 4,
                                                   5)))))
 #Put new variable names in
-colnames(covidnumvars_f)<- c("covid_finance_num", "covid_uncertain_num", "covid_plans_num", "covid_worry_1_num", 
+colnames(covidnumvars)<- c("covid_finance_num", "covid_uncertain_num", "covid_plans_num", "covid_worry_1_num", 
                            "covid_worry_2_num", "covid_worry_3_num", "covid_neg_num", "covid_pos_num")
 
 #compute Chronbach's alpha for neg scale (std.alpha is 0.84)
-covid_vars_neg_f <- subset(covidnumvars_f, select = -covid_pos_num)
-psych::alpha(covid_vars_neg_f)
+covid_vars_neg <- subset(covidnumvars, select = -covid_pos_num)
+psych::alpha(covid_vars_neg)
 
 #join this dataframe to the main one
-covid_data<- cbind(covid_data, covidnumvars_f)
+covid_data<- cbind(covid_data, covidnumvars)
 
 #Scoring the covid distress - need to add the >70% impute missing
 #scoring code from psych package. Note "-" before items reverse scored.
 # Need to rearrange this in a better way than than just 1 total
-keys.list.cov.dist <- list(totalcov_dist_f=c("covid_finance_num", "covid_uncertain_num", "covid_plans_num", "covid_worry_1_num", 
+keys.list.cov.dist <- list(totalcov_dist=c("covid_finance_num", "covid_uncertain_num", "covid_plans_num", "covid_worry_1_num", 
                                            "covid_worry_2_num", "covid_worry_3_num", "covid_neg_num", "-covid_pos_num"))
 
-cov_dist_scored_f <- scoreItems(keys.list.cov.dist, covid_data, impute= "mean", totals=TRUE, min=0,max=5) # note - FALSE:average, TRUE:sum
+cov_dist_scored <- scoreItems(keys.list.cov.dist, covid_data, impute= "mean", totals=TRUE, min=0,max=5) # note - FALSE:average, TRUE:sum
 
-cov_dist_scored_f$scores #The scores themselves
-cov_dist_totals_f <- as.data.frame(cov_dist_scored_f$scores)#just the total scores
-covid_data <- cbind(covid_data, cov_dist_totals_f)#totals and raw scores
+cov_dist_scored$scores #The scores themselves
+cov_dist_totals <- as.data.frame(cov_dist_scored$scores)#just the total scores
+covid_data <- cbind(covid_data, cov_dist_totals)#totals and raw scores
 
 #Get rid of participants total scores who have less than 70% of items (need 6/8)
 ## This line tells you how people had more than 2 missing (but not the whole scale missing)
