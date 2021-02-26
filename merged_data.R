@@ -17,4 +17,6 @@ list.of.data.frames = list(covid_data_bl, covid_data_fu)
 merged_data= Reduce(function(...) merge(..., by = "ResponseId", all=T), list.of.data.frames)
 
 # Writing the scored files ----------------------------------------
-write.csv(merged_data, file = "scored_data/merged_data.csv")
+write.csv(merged_data, file = "scored_data/merged_data_all_of_baseline.csv")
+write.csv(merged_data[complete.cases(merged_data),], file = "scored_data/merged_data_fu_only.csv")
+
