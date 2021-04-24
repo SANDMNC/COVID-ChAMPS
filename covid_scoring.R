@@ -21,7 +21,7 @@ library(psych) #for scoreItems etc.
 # General cleaning----------------------------------------------------------------------------------------------
 
 # Read in the csv file
-covid_data <- read.csv("raw_data/covid_data.csv", header=TRUE, stringsAsFactors = FALSE)
+covid_data <- read.csv("/raw_data/covid_data.csv", header=TRUE, stringsAsFactors = FALSE)
 
 #Add unique ID for each participant
 id <- rownames(covid_data)
@@ -770,6 +770,7 @@ SDQpeer.mean <- mean(covid_data_child$SDQpeer, na.rm = TRUE)
 DASSDep.mean <- mean(covid_data_child$DASSDep, na.rm = TRUE)
 DASSAnx.mean <- mean(covid_data_child$DASSAnx, na.rm = TRUE)
 DASSStress.mean <- mean(covid_data_child$DASSStress, na.rm = TRUE)
+totalDASS.mean <- mean(covid_data_child$totalDASS, na.rm = TRUE)
 totalcov_dist.mean <- mean(covid_data_child$totalcov_dist, na.rm = TRUE)
 covid_pos_num.mean <- mean(covid_data_child$covid_pos_num, na.rm = TRUE)
 totalFES.mean <- mean(covid_data_child$totalFES, na.rm = TRUE)
@@ -793,6 +794,7 @@ covid_data_child$totalcov_dist.c <- (covid_data_child$totalcov_dist-totalcov_dis
 covid_data_child$DASSStress.c <- (covid_data_child$DASSStress-DASSStress.mean)
 covid_data_child$DASSAnx.c <- (covid_data_child$DASSAnx-DASSAnx.mean)
 covid_data_child$DASSDep.c <- (covid_data_child$DASSDep-DASSDep.mean)
+covid_data_child$totalDASS.c <- (covid_data_child$totalDASS-totalDASS.mean)
 covid_data_child$SDQpeer.c <- (covid_data_child$SDQpeer-SDQpeer.mean)
 covid_data_child$SDQcon.c <- (covid_data_child$SDQcon-SDQcon.mean)
 covid_data_child$SDQhyp.c <- (covid_data_child$SDQhyp-SDQhyp.mean)
@@ -815,15 +817,15 @@ covid_data_child_for_MI <- covid_data_child[,c("id", "par_age", "country_cat","p
                                                "SDQpro","totalSDQ2", "SDQemo2" ,"SDQcon2","SDQhyp2", "SDQpeer2" , 
                                                "PARQcontrol","facts_comm.c" ,"emotion_comm.c", "self_comm.c" ,
                                                "PARQwarmth.c", "PARQcontrol.c" , "covid_finance_num.c","totalFES.c" ,"covid_pos_num.c",
-                                               "totalcov_dist.c", "DASSStress.c", "DASSAnx.c" ,  "DASSDep.c" , "SDQpeer.c" , "SDQcon.c" ,
-                                               "SDQhyp.c" , "SDQemo.c","totalSDQ.c" ,"PARQhostile.c" ,"totalPTSD", "other_par_num")]
+                                               "totalcov_dist.c", "totalDASS.c","DASSStress.c", "DASSAnx.c" ,  "DASSDep.c" , "SDQpeer.c" , "SDQcon.c" ,
+                                               "SDQhyp.c" , "SDQemo.c","totalSDQ.c" ,"PARQhostile.c" ,"totalPTSD", "other_par_num","ch_age.c","ch_gender_num")]
 
 
 # Writing the scored files ----------------------------------------
 
-write.csv(covid_data, file = "scored_data/covid_data_scored.csv")
-write.csv(covid_data_child, file = "scored_data/covid_data_child_scored.csv")
-write.csv(covid_data_child_for_MI, file = "scored_data/covid_data_child_scored_for_MI.csv")
+write.csv(covid_data, file = "/scored_data/covid_data_scored.csv")
+write.csv(covid_data_child, file = "/scored_data/covid_data_child_scored.csv")
+write.csv(covid_data_child_for_MI, file = "/scored_data/covid_data_child_scored_for_MI.csv")
 
 # Save an Rdata file to store a bunch of useful stuff for later, including alpha, and names of 
 # variable groupings
