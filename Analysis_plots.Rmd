@@ -1,7 +1,7 @@
 
 ```{r setup, include=FALSE}
 
-covid_data_child <- read.csv("scored_data/covid_data_child_scored.csv", header=TRUE, stringsAsFactors = FALSE)
+covid_data_child <- read.csv("/scored_data/covid_data_child_scored.csv", header=TRUE, stringsAsFactors = FALSE)
 
 #read in packages
 library(tidyverse)
@@ -92,36 +92,29 @@ ggplot(covid_data_child, aes(x = covid_pos_num, y = SDQpeer2)) +
 # DASS -------------------------------------------------------------------
 
 
-DASSp2 <- ggplot(covid_data_child, aes(x = DASSDep, y = totalPTSD)) +
+DASSp2 <- ggplot(covid_data_child, aes(x = totalDASS, y = totalPTSD)) +
   geom_jitter(color = "blueviolet", size = 1.5, shape = 23, alpha = .5) +
   geom_smooth(color = "purple4", fill = "purple", method = lm) +
-  labs(x = "Parent Depressive Symptoms", y = "Trauma Symptoms") +
+  labs(x = "Parent Distress Symptoms", y = "Trauma Symptoms") +
   apatheme + theme(aspect.ratio = 1)
 
-DASSp3 <- ggplot(covid_data_child, aes(x = DASSAnx, y = SDQemo2)) +
+DASSp3 <- ggplot(covid_data_child, aes(x = totalDASS, y = SDQemo2)) +
   geom_jitter(color = "blueviolet", size = 1.5, shape = 23, alpha = .5) +
   geom_smooth(color = "purple4", fill = "purple", method = lm) +
-  labs(x = "Parent Anxiety Symptoms", y = "Change in\nEmotional Problems") +
+  labs(x = "Parent Distress Symptoms", y = "Change in\nEmotional Problems") +
   apatheme + theme(aspect.ratio = 1)
 
-DASSp4 <- ggplot(covid_data_child, aes(x = DASSAnx, y = SDQpeer2)) +
+DASSp4 <- ggplot(covid_data_child, aes(x = totalDASS, y = SDQcon2)) +
   geom_jitter(color = "blueviolet", size = 1.5, shape = 23, alpha = .5) +
   geom_smooth(color = "purple4", fill = "purple", method = lm) +
-  labs(x = "Parent Anxiety Symptoms", y = "Change in Peer Problems") +
+  labs(x = "Parent Distress Symptoms", y = "Change in Conduct\nProblems") +
   apatheme + theme(aspect.ratio = 1)
 
-DASSp5 <- ggplot(covid_data_child, aes(x = DASSStress, y = SDQpeer2)) +
+DASSp5 <- ggplot(covid_data_child, aes(x = totalDASS, y = SDQhyp2)) +
   geom_jitter(color = "blueviolet", size = 1.5, shape = 23, alpha = .5) +
   geom_smooth(color = "purple4", fill = "purple", method = lm) +
-  labs(x = "Parent Stress", y = "Change in Peer Problems") +
+  labs(x = "Parent Distress Symptoms", y = "Change in Inattention-\nHyperactivity") +
   apatheme + theme(aspect.ratio = 1)
-
-DASSp6 <- ggplot(covid_data_child, aes(x = DASSStress, y = totalPTSD)) +
-  geom_jitter(color = "blueviolet", size = 1.5, shape = 23, alpha = .5) +
-  geom_smooth(color = "purple4", fill = "purple", method = lm) +
-  labs(x = "Parent Stress", y = "Trauma Symptoms")  +
-  apatheme + theme(aspect.ratio = 1)
-
 
 #put these 5 plots in a row in one figure
 #figureDASS <- ggarrange(DASSp3, DASSp2, DASSp4, DASSp6, DASSp5,
@@ -129,90 +122,7 @@ DASSp6 <- ggplot(covid_data_child, aes(x = DASSStress, y = totalPTSD)) +
 #                    ncol = 3, nrow = 2)
 #figureDASS
 
-#Sarah I made the extra DASS plots to fit into a complete grid in case you want them
-DASSp7 <- ggplot(covid_data_child, aes(x = DASSDep, y = SDQpeer2)) +
-  geom_jitter(color = "blueviolet", size = 1.5, shape = 23, alpha = .5) +
-  geom_smooth(color = "purple4", fill = "purple", method = lm) +
-  labs(x = "Parent Depressive Symptoms", y = "Change in Peer Problems") +
-  apatheme
 
-DASSp8 <- ggplot(covid_data_child, aes(x = DASSAnx, y = totalPTSD)) +
-  geom_jitter(color = "blueviolet", size = 1.5, shape = 23, alpha = .5) +
-  geom_smooth(color = "purple4", fill = "purple", method = lm) +
-  labs(x = "Parent Anxiety Symptoms", y = "Trauma Symptoms") +
-  apatheme
-
-DASSp9 <- ggplot(covid_data_child, aes(x = DASSStress, y = SDQemo2)) +
-  geom_jitter(color = "blueviolet", size = 1.5, shape = 23, alpha = .5) +
-  geom_smooth(color = "purple4", fill = "purple", method = lm) +
-  labs(x = "Parent Stress", y = "Change in\nEmotional Problems") +
-  apatheme
-
-#add in the extra plotsa to make a 3x3 grid
-#figurefullDASS <- ggarrange(DASSp7, DASSp2, DASSp3, DASSp4, DASSp8, DASSp9, #DASSp5, DASSp6,
-#                    labels = c("A", "B", "C", "D", "E", "F", "G", "H"),
-#                    ncol = 3, nrow = 3)
-#figurefullDASS
-
-
-stressp1<- ggplot(covid_data_child, aes(x = DASSStress, y = SDQemo2, color = SDQemo_cat, fill = SDQemo_cat)) +
-  geom_jitter(size = 1.5, shape = 23, alpha = .5) +
-  geom_smooth(method = lm) +
-  labs(x = "Parent Stress", y = "Change in\nEmotional problems") +
-  scale_color_viridis(name="Baseline Problems",
-                       breaks=c("Average", "High", "S_raised"),
-                       labels=c("Average", "High", "Slightly Raised"), discrete = TRUE) +
-  scale_fill_viridis(name="Baseline Problems",
-                      breaks=c("Average", "High", "S_raised"),
-                      labels=c("Average", "High", "Slightly Raised"), discrete = TRUE)  +
-  apatheme +
-   theme(legend.position = "bottom", legend.box = "horizontal", aspect.ratio = 1) +
-  guides(color = guide_legend(nrow = 1))
-
-stressp2<- ggplot(covid_data_child, aes(x = DASSStress, y = SDQcon2, color = SDQcon_cat, fill = SDQcon_cat)) +
-  geom_jitter(size = 1.5, shape = 23, alpha = .5) +
-  geom_smooth(method = lm) +
-  labs(x = "Parent Stress", y = "Change in\nConduct problems") +
-  scale_color_viridis(name="Baseline Problems",
-                       breaks=c("Average", "High", "S_raised"),
-                       labels=c("Average", "High", "Slightly Raised"), discrete = TRUE) +
-  scale_fill_viridis(name="Baseline Problems",
-                      breaks=c("Average", "High", "S_raised"),
-                      labels=c("Average", "High", "Slightly Raised"), discrete = TRUE)  +
-  apatheme +
-  theme(legend.position = "bottom", legend.box = "horizontal") +
-  guides(color = guide_legend(nrow = 1))
-
-
-covid_data_child$ch_age_cat <- as.factor(car::recode(covid_data_child$ch_age, "NA=NA; 0:8='5-8';9:13='9-13'; else='14-17'"))
-table(covid_data_child$ch_age_cat, useNA = "ifany")
-
-stressp3<- ggplot(covid_data_child, aes(x = DASSStress, y = SDQhyp2, color = ch_age_cat, fill = ch_age_cat)) +
-  geom_jitter(size = 1.5, shape = 23, alpha = .5) +
-  geom_smooth(method = lm) +
-  labs(x = "Parent Stress", y = "Change in Inattention-\nHyperactivity Problems") +
-  scale_color_viridis(name="Child Age",
-                       breaks=c("14-17", "9-13", "5-8"),
-                       labels=c("14-17", "9-13", "5-8"), discrete = TRUE) +
-  scale_fill_viridis(name="Child Age",
-                      breaks=c("14-17", "9-13", "5-8"),
-                      labels=c("14-17", "9-13", "5-8"), discrete = TRUE)  +
-  apatheme + theme(legend.position = "bottom", legend.box = "horizontal", aspect.ratio = 1) +
-  guides(color = guide_legend(nrow = 1))
-
-#put these 3 plots in one figure
-#figureDASSstress <- ggarrange(stressp1, stressp2, stressp3,
-#                    labels = c("A", "B", "C"),
-#                    ncol = 2, nrow = 2)
-
-#figureDASSstress
-
-#put these 3 plots in with main DASS figure
-#figureDASSall <- ggarrange(DASSp3, DASSp2, DASSp4, DASSp6, DASSp5, stressp1, stressp2, stressp3,
-#                    labels = c("A", "B", "C", "D", "E", "F", "G", "H"),
-#                    ncol = 2, nrow = 4, vjust = 1)
-
-#figureDASSall
 
 # Parenting -----------------------------------------------------------------------------
 
@@ -410,17 +320,17 @@ dev.off()
 #figureDASSint
 
 # Save plots preserving resolution
-png("figures/DASSp2.png", width = 6.5, height = 3, res = 600, type = 'cairo', units='in') 
+png("/Users/sarah/Dropbox/Github_repos/COVID-ChAMPS-repo/COVID-ChAMPS/figures/DASStot1.png", width = 6.5, height = 3, res = 600, type = 'cairo', units='in') 
 DASSp2
 dev.off()
-png("figures/DASSp3.png", width = 6.5, height = 3, res = 600, type = 'cairo', units='in') 
+png("/Users/sarah/Dropbox/Github_repos/COVID-ChAMPS-repo/COVID-ChAMPS/figures/DASStot2.png", width = 6.5, height = 3, res = 600, type = 'cairo', units='in') 
 DASSp3
 dev.off()
-png("figures/DASSp4.png", width = 6.5, height = 3, res = 600, type = 'cairo', units='in') 
+png("/Users/sarah/Dropbox/Github_repos/COVID-ChAMPS-repo/COVID-ChAMPS/figures/DASStot3.png", width = 6.5, height = 3, res = 600, type = 'cairo', units='in') 
 DASSp4
 dev.off()
-png("figures/DASSp6.png", width = 6.5, height = 3, res = 600, type = 'cairo', units='in') 
-DASSp6
+png("/Users/sarah/Dropbox/Github_repos/COVID-ChAMPS-repo/COVID-ChAMPS/figures/DASStot4.png", width = 6.5, height = 3, res = 600, type = 'cairo', units='in') 
+DASSp5
 dev.off()
 png("figures/Intp3.png", width = 6.5, height = 3, res = 600, type = 'cairo', units='in') 
 Intp3
