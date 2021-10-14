@@ -8,7 +8,7 @@
 # Source of code and plots: https://datascienceplus.com/imputing-missing-data-with-r-mice-package/
 
 #read in data
-covid_data_child_for_MI <- read.csv("scored_data/covid_data_child_scored_for_MI.csv", header=TRUE, stringsAsFactors = FALSE)
+covid_data_child_for_MI <- read.csv("/scored_data/covid_data_child_scored_for_MI.csv", header=TRUE, stringsAsFactors = FALSE)
 
 
 #Load packages
@@ -23,10 +23,10 @@ library(finalfit) #another package which has functions to examine missing #v1.0.
 #Selecting the variables used in analysis
 covid_child_missing<- dplyr::select(covid_data_child_for_MI, id, ch_age.c, par_age, par_ed_ord, income_famsize.c, country_cat, 
                              ch_gender_num, PARQhostile.c, PARQcontrol.c, PARQwarmth.c, par_gender_num,
-                             totalSDQ.c,SDQemo.c, SDQhyp.c, SDQcon.c, SDQpeer.c,
+                             totalSDQ.c, SDQemo.c, SDQhyp.c, SDQcon.c, SDQpeer.c,
                              totalSDQ2, SDQemo2, SDQhyp2, SDQcon2, SDQpeer2,
-                             DASSDep.c, DASSAnx.c, DASSStress.c,
-                             totalFES.c, totalPTSD, totalDASS, iso,
+                             totalDASS.c, DASSDep.c, DASSAnx.c, DASSStress.c,
+                             totalFES.c, totalPTSD, iso,
                              totalcov_dist.c, covid_pos_num.c, covid_finance_num.c, 
                              facts_comm.c, emotion_comm.c, self_comm.c,
                              par_past_mh_num, other_hosp_num, other_par_num)
@@ -85,5 +85,5 @@ completedData <- complete(miData,2)
 
 
 #export data
-save(miData, file = "scored_data/miData.rda")
+save(miData, file = "/scored_data/miData.rda")
 

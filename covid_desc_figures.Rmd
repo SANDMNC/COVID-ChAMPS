@@ -18,7 +18,7 @@ library(viridis) #colour palette
 
 #read in data
 covid_data_child <- read.csv("scored_data/covid_data_child_scored.csv", header=TRUE, stringsAsFactors = FALSE)
-covid_data <- read.csv("scored_data/covid_data_scored.csv", header=TRUE, stringsAsFactors = FALSE)
+covid_data <- read.csv("/scored_data/covid_data_scored.csv", header=TRUE, stringsAsFactors = FALSE)
 
 ```
 
@@ -379,11 +379,9 @@ hist(covid_data_child$PARQcontrol)
 # Correlation plot --------------------------------------------------------------------------- 
 ##Make the matrix
 
-corrmatrix <-  dplyr::select(covid_data_child, par_age, par_ed_ord, par_gender_num, ch_age, ch_gender_num, income_famsize,
-                             totalFES, Dep, Anx, Stress,
-                             totalPARQ, PARQwarmth, PARQhostile, PARQneglect, PARQundiff, PARQcontrol, 
-                             totalSDQ, SDQemo, SDQcon, SDQhyp, SDQpeer, SDQpro,
-                             totalSDQ2, SDQemo2, SDQcon2, SDQhyp2, SDQpeer2, SDQpro2)
+corrmatrix <-  dplyr::select(covid_data_child, par_age, par_ed_ord, par_gender_num, ch_age.c, ch_gender_num, income_famsize.c, other_par_num,
+                             totalDASS.c, totalcov_dist.c, covid_pos_num.c,
+                             PARQwarmth.c, PARQhostile.c, SDQemo.c, SDQcon.c, SDQhyp.c, SDQemo2, SDQcon2, SDQhyp2, totalPTSD)
 
 
 M <- cor(corrmatrix, use = "complete.obs")
