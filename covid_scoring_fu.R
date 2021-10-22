@@ -139,6 +139,8 @@ covid_data <- cbind(covid_data, cov_dist_totals)#totals and raw scores
 
 # Parent mental health-------------------------------------------------------------------------------------------
 
+
+
 # DASS scoring -------------------------------------------------------------------------------------------
 
 DASSvars <- vars_select(varnames, starts_with("DASS"))

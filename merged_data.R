@@ -1,5 +1,10 @@
 # Script to merge baseline and followup data
 
+#
+library(rlang)
+library(ggplot2)
+library(ggstatsplot)
+
 # Read in the csv file
 # Baseline
 covid_data_bl <- read.csv("scored_data/covid_data_child_scored.csv", header=TRUE, 
@@ -16,15 +21,34 @@ covid_data_bl$allchildage<- paste(round(covid_data_bl[,27],0),round(covid_data_b
 covid_data_bl$allchildgender<- paste(covid_data_bl[,33],covid_data_bl[,34],covid_data_bl[,35],
                                   covid_data_bl[,36],covid_data_bl[,37],covid_data_bl[,38])
 
+#DASS, covid stress, parental hostility/warmth
+# "DASSAnx"  "DASSDep"  "DASSStress"
+# [511] "totalPARQ"             "PARQwarmth"           
+# [513] "PARQhostile"           "PARQneglect"          
+# [515] "PARQundiff"            "PARQcontrol"
+# 
+
+
+
 # Select variables to merge
 bl_select <- covid_data_bl[,c("ResponseId","ch_age","ch_gender", "child_num", "allchildage","allchildgender",
-                              "SDQemo","SDQhyp", "SDQcon", "totalPTSD", "EndDate", "Progress")]
+                              "SDQemo","SDQhyp", "SDQcon", "totalPTSD", 
+                              "PARQwarmth",  "PARQhostile",  "PARQneglect", "PARQcontrol","PARQundiff" ,
+                              "DASSAnx", "DASSDep" , "DASSStress",
+                              "totalcov_dist" ,
+                              "EndDate", "Progress")]
 
 bl_select$ch_age <- round(bl_select$ch_age, 0)
 
 fu_select <- covid_data_fu[,c("Response_ID_f","ch_age_f_f", "ch_gender_f_f","SDQemo_f",
-                                  "SDQhyp_f","SDQcon_f","totalPTSD_f", "EndDate_f", "Progress_f")]
+                              "SDQhyp_f","SDQcon_f","totalPTSD_f", 
+                             
+                              "DASSAnx_f", "DASSDep_f" , "DASSStress_f",
+                              "totalcov_dist_f" ,
+                              "EndDate_f", "Progress_f")]
 
+# "PARQwarmth_f",  "PARQhostile_f",  "PARQneglect_f", "PARQcontrol_f","PARQundiff_f" ,
+#don't think it is scored
 
 # Missing data checks-------------------------------------------------------------------------------
 
@@ -118,7 +142,7 @@ edited_nested_list
 for (i in 1:length(edited_nested_list)) {
   
   # Add in a third element to the list, which is for the children which did both baseline and followup and could be merged
-  edited_nested_list[[i]][[3]] <- data.frame(matrix(ncol = 21, nrow = nrow(edited_nested_list[[i]][[2]])))
+  edited_nested_list[[i]][[3]] <- data.frame(matrix(ncol = 50, nrow = nrow(edited_nested_list[[i]][[2]])))
   
   # Loop through 
   for (j in 1:nrow(edited_nested_list[[i]][[2]])) {
@@ -182,9 +206,14 @@ followup[,c("child_num","allchildage","allchildgender","ch_gender_f_f", "Progres
 # Reshape from wide to long ------------------------------------------------------------------------
 reshaped <- reshape(followup, varying=list(SDQemo= c("SDQemo", "SDQemo_f"), 
                                            SDQhyp= c("SDQhyp","SDQhyp_f"), 
-                                           Qcon= c("SDQcon","SDQcon_f"), 
-                                           totalPTSD= c("totalPTSD","totalPTSD_f") ), 
-        v.names=c("SDQemo", "SDQhyp", "SDQcon", "totalPTSD"), 
+                                           SDQcon= c("SDQcon","SDQcon_f"),
+                                           totalPTSD= c("totalPTSD", "totalPTSD_f"),
+                                           DASSAnx= c("DASSAnx","DASSAnx_f"),
+                                           DASSDep= c("DASSDep","DASSDep_f"),
+                                           DASSStress= c("DASSStress","DASSStress_f"),
+                                           totalcov_dist= c("totalcov_dist","totalcov_dist_f")), 
+        v.names=c("SDQemo", "SDQhyp", "SDQcon", "totalPTSD", "DASSAnx", "DASSDep", "DASSStress",
+                  "totalcov_dist"), 
         direction="long",  
         times=1:2,        # substitutes number for T1 and T2
         timevar="times")  # to name the time col
@@ -192,21 +221,65 @@ reshaped <- reshape(followup, varying=list(SDQemo= c("SDQemo", "SDQemo_f"),
 #First basic look at T1 and T2 symptoms change over time
 interaction.plot(reshaped$times,reshaped$id, reshaped$SDQemo,
                  xlab="time", ylab="SDQemo", col=c(1:10), legend=F) 
-
 interaction.plot(reshaped$times,reshaped$id, reshaped$SDQhyp,
                  xlab="time", ylab="SDQhyp", col=c(1:10), legend=F) 
-
 interaction.plot(reshaped$times,reshaped$id, reshaped$SDQcon,
                  xlab="time", ylab="SDQcon", col=c(1:10), legend=F)
-
 interaction.plot(reshaped$times,reshaped$id, reshaped$totalPTSD,
                  xlab="time", ylab="totalPTSD", col=c(1:10), legend=F) 
-
+interaction.plot(reshaped$times,reshaped$id, reshaped$DASSAnx,
+                 xlab="time", ylab="DASSAnx", col=c(1:10), legend=F) 
 
   
+# Box plots and group differences-------------------------------------------------------------------
+
+# ggplot paired boxplots
+
+
+myviolinplot <- function(mydf, myxcol, myycol){
+  ggplot(mydf, aes(x={{myxcol}}, y={{myycol}})) + 
+  geom_violin() +
+  geom_boxplot(width=0.1) +
+  stat_compare_means(method = "wilcox.test", paired = TRUE,
+                     label.x = 1.5,
+                     label.y.npc = "top") +
+  stat_compare_means(method = "t.test", paired = TRUE,
+                     label.x = 0.5,
+                     label.y.npc = "top")
   
+}
 
 
+reshaped$times<- as.factor(reshaped$times)
+
+
+p1 <- myviolinplot(reshaped, times, SDQemo)
+p2 <- myviolinplot(reshaped, times, SDQhyp)
+p3 <- myviolinplot(reshaped, times, SDQcon)
+
+desiredid <- reshaped[is.na(reshaped$totalPTSD),"id"]
+p4 <- myviolinplot(reshaped[!reshaped$id==desiredid,], times, totalPTSD)
+
+p5 <- myviolinplot(reshaped, times, DASSAnx)
+p6 <- myviolinplot(reshaped, times, DASSDep)
+p7 <- myviolinplot(reshaped, times, DASSStress)
+p8 <- myviolinplot(reshaped, times, totalcov_dist)
+
+
+ggarrange(p1, p2, p3, p4,
+          ncol = 2, nrow = 2)
+
+ggarrange(p5, p6, p7,p8,
+          ncol = 2, nrow = 2)
+
+#ttest
+t.test(SDQemo ~ times, data = reshaped, paired = TRUE)
+t.test(SDQhyp ~ times, data = reshaped, paired = TRUE)
+t.test(SDQcon ~ times, data = reshaped, paired = TRUE)
+t.test(totalPTSD ~ times, data = reshaped, paired = TRUE)
+t.test(DASSAnx ~ times, data = reshaped, paired = TRUE)
+t.test(DASSDep ~ times, data = reshaped, paired = TRUE)
+t.test(DASSStress ~ times, data = reshaped, paired = TRUE)
 
 
 
