@@ -139,9 +139,7 @@ covid_data <- cbind(covid_data, cov_dist_totals)#totals and raw scores
 
 # Parent mental health-------------------------------------------------------------------------------------------
 
-
-
-# DASS scoring -------------------------------------------------------------------------------------------
+## DASS scoring -------------------------------------------------------------------------------------------
 
 DASSvars <- vars_select(varnames, starts_with("DASS"))
 
@@ -549,17 +547,20 @@ covid_data_child<- cbind(covid_data_child, PARQnumvars)
 
 # #Scoring the total PARQ and subscales - need to add the >70% impute missing
 # #scoring code from psych package. Note "-" before items reverse scored.
-# keys.listPARQ <- list(totalPARQ=c("-ch_parenting.1_1_num" , "ch_parenting.1_2_num" , "-ch_parenting.1_4_num" , "ch_parenting.1_5_num" , "ch_parenting.1_6_num" , 
-#                                   "ch_parenting.1_8_num" , "ch_parenting.1_9_num" , "ch_parenting.1_10_num" , "-ch_parenting.1_11_num" , "ch_parenting.1_12_num" , "ch_parenting.1_13_num" , "ch_parenting.1_14_num" ,
-#                                   "-ch_parenting.1_15_num" , "-ch_parenting.1_16_num" , "ch_parenting.1_17_num" , "ch_parenting.1_18_num" , "ch_parenting.1_19_num" , 
-#                                   "-ch_parenting.1_21_num" , "ch_parenting.1_22_num" , "-ch_parenting.1_23_num" , "ch_parenting.1_24_num" , "ch_parenting.1_25_num", "-ch_parenting.1_27_num", "ch_parenting.1_28_num", "-ch_parenting.1_29_num"),
-#                       PARQwarmth=c("-ch_parenting.1_1_num","-ch_parenting.1_4_num","-ch_parenting.1_11_num","-ch_parenting.1_15_num","-ch_parenting.1_21_num","-ch_parenting.1_23_num","-ch_parenting.1_27_num","-ch_parenting.1_29_num"), 
-#                       PARQhostile=c("ch_parenting.1_5_num","ch_parenting.1_8_num","ch_parenting.1_12_num","ch_parenting.1_17_num","ch_parenting.1_22_num","ch_parenting.1_24_num"),
-#                       PARQneglect=c("ch_parenting.1_2_num","ch_parenting.1_9_num","ch_parenting.1_13_num","-ch_parenting.1_16_num","ch_parenting.1_18_num","ch_parenting.1_28_num"),
-#                       PARQundiff=c("ch_parenting.1_6_num","ch_parenting.1_10_num","ch_parenting.1_19_num","ch_parenting.1_25_num"),
-#                       PARQcontrol=c("ch_parenting.1_3_num","ch_parenting.1_7_num","ch_parenting.1_14_num","-ch_parenting.1_20_num","ch_parenting.1_26_num"))
+ keys.listPARQ <- list(totalPARQ=c("-ch_parenting.f_1_num","-ch_parenting.f_2_num","-ch_parenting.f_5_num",
+                                   "-ch_parenting.f_7_num","-ch_parenting.f_10_num","-ch_parenting.f_12_num",
+                                   "-ch_parenting.f_13_num", "ch_parenting.f_3_num","ch_parenting.f_4_num",
+                                   "ch_parenting.f_6_num","ch_parenting.f_8_num","ch_parenting.f_9_num",
+                                   "ch_parenting.f_11_num"),
+                       PARQwarmth=c("-ch_parenting.f_1_num","-ch_parenting.f_2_num", "-ch_parenting.f_5_num",
+                                    "-ch_parenting.f_7_num","-ch_parenting.f_10_num","-ch_parenting.f_12_num",
+                                    "-ch_parenting.f_13_num"), 
+                       PARQhostile=c("ch_parenting.f_3_num","ch_parenting.f_4_num","ch_parenting.f_6_num",
+                                     "ch_parenting.f_8_num","ch_parenting.f_9_num","ch_parenting.f_11_num"))
+
 # 
-# PARQscored <- scoreItems(keys.listPARQ, covid_data_child, impute= "mean", totals=TRUE, min=1,max=4) # note - FALSE:average, TRUE:sum
+ PARQscored <- scoreItems(keys.listPARQ, covid_data_child, impute= "mean", totals=TRUE, min=1,max=4)
+ # note - FALSE:average, TRUE:sum
 # PARQscored$scores #The scores themselves
 # PARQ_totals <- as.data.frame(PARQscored$scores)#just the total scores
 # covid_data_child <- cbind(covid_data_child, PARQ_totals)#totals and raw scores

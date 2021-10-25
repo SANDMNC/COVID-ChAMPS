@@ -36,7 +36,7 @@ bl_select <- covid_data_bl[,c("ResponseId","ch_age","ch_gender", "child_num", "a
                               "PARQwarmth",  "PARQhostile",  "PARQneglect", "PARQcontrol","PARQundiff" ,
                               "DASSAnx", "DASSDep" , "DASSStress",
                               "totalcov_dist" ,
-                              "EndDate", "Progress")]
+                              "country", "aus_postcode","EndDate", "Progress")]
 
 bl_select$ch_age <- round(bl_select$ch_age, 0)
 
@@ -45,7 +45,7 @@ fu_select <- covid_data_fu[,c("Response_ID_f","ch_age_f_f", "ch_gender_f_f","SDQ
                              
                               "DASSAnx_f", "DASSDep_f" , "DASSStress_f",
                               "totalcov_dist_f" ,
-                              "EndDate_f", "Progress_f")]
+                              "aus_postcode_f", "EndDate_f", "Progress_f")]
 
 # "PARQwarmth_f",  "PARQhostile_f",  "PARQneglect_f", "PARQcontrol_f","PARQundiff_f" ,
 #don't think it is scored
@@ -198,6 +198,10 @@ for (i in 1:length(edited_nested_list)) {
     edited_nested_list[[i]][[3]][!is.na(edited_nested_list[[i]][[3]]$ResponseId),]
 }
 followup
+
+# Country
+
+table(followup$country)
 
 # Remove some unnecessary columns for data analysis
 followup[,c("child_num","allchildage","allchildgender","ch_gender_f_f", "Progress_f", "Progress", 
